@@ -1,0 +1,28 @@
+.attester {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 300;
+  margin-top: 10px;
+}
+
+.join {
+  width: 260px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.bg {
+  position: absolute;
+  right: 0px;
+  z-index: 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  bottom: 0px;
+  margin: 10px 10px 0 10px;
+}

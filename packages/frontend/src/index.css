@@ -1,0 +1,15 @@
+body {
+  font-family: sans-serif, helvetica;
+  /*font-family: 'Azeret Mono';*/
+  font-weight: 200;
+  max-width: 1000px;
+  margin: auto;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}

@@ -1,0 +1,6 @@
+[submodule "packages/circuits/circuits/unirep"]
+	path = packages/circuits/circuits/unirep
+	url = https://github.com/Unirep/Unirep.git
+[submodule "packages/circuits/circuits/circom-ecdsa"]
+	path = packages/circuits/circuits/circom-ecdsa
+	url = https://github.com/vimwitch/circom-ecdsa.git

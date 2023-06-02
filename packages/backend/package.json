@@ -1,0 +1,19 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "> TODO: description",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "start": "node ./src/index.mjs"
+  },
+  "dependencies": {
+    "anondb": "^0.0.13",
+    "dotenv": "^16.0.3",
+    "especial": "^0.1.0-beta-3",
+    "ethers": "^5.7.2",
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.0"
+  },
+  "main": "index.js"
+}

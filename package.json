@@ -1,0 +1,22 @@
+{
+  "name": "trusted-setup",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "install": "lerna bootstrap",
+    "frontend": "yarn workspace frontend run",
+    "backend": "yarn workspace backend run",
+    "lint": "prettier ."
+  },
+  "devDependencies": {
+    "lerna": "^6.0.1"
+  },
+  "dependencies": {
+    "prettier": "^2.8.4"
+  }
+}

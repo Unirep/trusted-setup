@@ -1,0 +1,9 @@
+node_modules/
+
+.DS_Store
+config.js
+!packages/**/config.js
+
+zksnarkBuild/
+
+packages/contracts/contracts/verifiers/
