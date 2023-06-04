@@ -51,6 +51,13 @@ export default observer(() => {
             <div>
               <div>It's your turn!</div>
               <div>Please wait while your machine makes contributions.</div>
+              <div>
+                {ceremony.contributionUpdates.map((text, i) => (
+                  <div key={i} style={{ fontSize: '10px' }}>
+                    {text}
+                  </div>
+                ))}
+              </div>
             </div>
           ) : null}
           {ceremony.contributionHashes ? (

@@ -18,6 +18,8 @@ export default class Queue {
   contributionName = null
   contributionHashes = null
 
+  contributionUpdates = []
+
   constructor(state) {
     makeAutoObservable(this)
     this.state = state
@@ -84,6 +86,11 @@ ${hashText}
     this.timeoutAt = _data.timeoutAt
     // start the keepalive
     this.startKeepalive()
+    this.contributionUpdates = []
+  }
+
+  updateContributionStatus(text) {
+    this.contributionUpdates = [...this.contributionUpdates, text]
   }
 
   async contribute() {
@@ -97,6 +104,9 @@ ${hashText}
       })
       const downloadPromises = Object.entries(data.latestContributions).reduce(
         (acc, [circuitName, id]) => {
+          this.updateContributionStatus(
+            `Downloading ${circuitName} last contribution`
+          )
           return {
             ...acc,
             [circuitName]: this.downloadContribution(circuitName, id),
@@ -113,6 +123,7 @@ ${hashText}
         const latest = await downloadPromises[circuitName]
         const out = { type: 'mem' }
         if (this.activeContributor !== this.userId) break
+        this.updateContributionStatus(`Computing ${circuitName} contribution`)
         const hash = await snarkjs.zKey.contribute(
           latest,
           out,
@@ -123,14 +134,23 @@ ${hashText}
             .join('')
         )
         if (this.activeContributor !== this.userId) break
+        this.updateContributionStatus(`Uploading ${circuitName} contribution`)
         uploadPromises.push(this.uploadContribution(out.data, circuitName))
         contributionHashes[circuitName] = formatHash(hash)
+      }
+      try {
+        await Promise.all(uploadPromises)
+      } catch (_err) {
+        console.log(_err)
+        console.log('Contribution upload failed')
+        this.updateContributionStatus(
+          `! One or more contributions failed to process !`
+        )
       }
       this.contributionHashes = contributionHashes
       this.stopKeepalive()
       this.timeoutAt = null
       this.contributing = false
-      await Promise.all(uploadPromises)
     } catch (err) {
       console.log('Error making contribution')
       console.log(err)
