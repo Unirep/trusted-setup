@@ -16,6 +16,7 @@ export default class Queue {
   activeContributor = null
   contributing = false
   contributionName = null
+  contributionHashes = null
 
   constructor(state) {
     makeAutoObservable(this)
@@ -33,6 +34,17 @@ export default class Queue {
 
   get isActive() {
     return this.activeContributor === this.userId && !!this.userId
+  }
+
+  get contributionText() {
+    const hashText = Object.entries(this.contributionHashes ?? {})
+      .map(([circuitName, hash]) => `${circuitName}: ${hash}`)
+      .join('\n\n')
+    return `I just contributed to the unirep dev trusted setup ceremony. You can too [here](https://dev.trusted-setup.unirep.io).
+My circuit hashes are as follows:
+
+${hashText}
+    `
   }
 
   async load() {
@@ -60,6 +72,7 @@ export default class Queue {
   }
 
   async join(name) {
+    this.contributionHashes = null
     this.contributionName = name.trim()
     // join the queue
     const { data: _data } = await this.client.send('ceremony.join', {
@@ -89,6 +102,7 @@ export default class Queue {
         {}
       )
       const uploadPromises = []
+      const contributionHashes = {}
       for (const [circuitName, id] of Object.entries(
         data.latestContributions
       )) {
@@ -96,7 +110,7 @@ export default class Queue {
         const latest = await downloadPromises[circuitName]
         const out = { type: 'mem' }
         if (this.activeContributor !== this.userId) break
-        await snarkjs.zKey.contribute(
+        const hash = await snarkjs.zKey.contribute(
           latest,
           out,
           this.contributionName || 'anonymous contributor',
@@ -107,11 +121,13 @@ export default class Queue {
         )
         if (this.activeContributor !== this.userId) break
         uploadPromises.push(this.uploadContribution(out.data, circuitName))
+        contributionHashes[circuitName] = formatHash(hash)
       }
-      await Promise.all(uploadPromises)
+      this.contributionHashes = contributionHashes
       this.stopKeepalive()
       this.timeoutAt = null
       this.contributing = false
+      await Promise.all(uploadPromises)
     } catch (err) {
       console.log('Error making contribution')
       console.log(err)
@@ -222,4 +238,19 @@ export default class Queue {
     // const { data, message, status } = await this.client.send('info')
     // this.info = data
   }
+}
+
+function formatHash(b) {
+  if (!b) return null
+  const a = new DataView(b.buffer, b.byteOffset, b.byteLength)
+  let S = ''
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      S += a
+        .getUint32(i * 16 + j * 4)
+        .toString(16)
+        .padStart(8, '0')
+    }
+  }
+  return S
 }

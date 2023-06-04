@@ -24,8 +24,8 @@ try {
   await fs.mkdir(DB_PATH)
 }
 export const dbpath = (name) => path.join(DB_PATH, name)
-export const contribpath = (name) =>
-  dbpath(name.toLowerCase().split(' ').join('_'))
+export const normalize = (name) => name.toLowerCase().split(' ').join('_')
+export const contribpath = (name) => dbpath(normalize(name))
 
 export const KEEPALIVE_INTERVAL = 20 * 1000
 export const CONTRIBUTION_TIMEOUT = 90 * 1000

@@ -23,41 +23,91 @@ export default observer(() => {
           flexWrap: 'wrap',
         }}
       >
-        {!ceremony.inQueue ? (
-          <div>
-            <div>Join ceremony</div>
-            <div style={{ display: 'flex' }}>
-              <input
-                type="text"
-                placeholder="contributor name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <div style={{ width: '4px' }} />
-              <Tooltip text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique." />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {!ceremony.inQueue ? (
+            <div>
+              <div>Join ceremony</div>
+              <div style={{ display: 'flex' }}>
+                <input
+                  type="text"
+                  placeholder="contributor name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                <div style={{ width: '4px' }} />
+                <Tooltip text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique." />
+              </div>
+              <div style={{ height: '4px' }} />
+              <Button onClick={() => ceremony.join(name)}>Join!</Button>
             </div>
-            <div style={{ height: '4px' }} />
-            <Button onClick={() => ceremony.join(name)}>Join!</Button>
-          </div>
-        ) : null}
-        {!ceremony.isActive && ceremony.inQueue ? (
-          <div>
-            <div>Ceremony</div>
-            <div>You are in the queue, please wait until your turn.</div>
-          </div>
-        ) : null}
-        {ceremony.isActive && ceremony.inQueue ? (
-          <div>
-            <div>It's your turn!</div>
-            <div>Please wait while your machine makes contributions.</div>
-          </div>
-        ) : null}
-        <div>
+          ) : null}
+          {!ceremony.isActive && ceremony.inQueue ? (
+            <div>
+              <div>Ceremony</div>
+              <div>You are in the queue, please wait until your turn.</div>
+            </div>
+          ) : null}
+          {ceremony.isActive && ceremony.inQueue ? (
+            <div>
+              <div>It's your turn!</div>
+              <div>Please wait while your machine makes contributions.</div>
+            </div>
+          ) : null}
+          {ceremony.contributionHashes ? (
+            <div style={{ marginTop: '8px' }}>
+              <div style={{ display: 'flex' }}>
+                <div>
+                  <div>
+                    <strong>Thank you for contributing!</strong>
+                  </div>
+                  <div>
+                    Share this text publicly, perhaps{' '}
+                    <a
+                      href="https://github.com/Unirep/trusted-setup/issues/1"
+                      target="_blank"
+                    >
+                      here
+                    </a>
+                    ?
+                  </div>
+                </div>
+                <div style={{ flex: 1, minWidth: '4px' }} />
+                <Button
+                  onClick={async () => {
+                    navigator.clipboard.writeText(ceremony.contributionText)
+                    await new Promise((r) => setTimeout(r, 1000))
+                  }}
+                  loadingText="Copied!"
+                >
+                  Copy
+                </Button>
+              </div>
+              <div style={{ maxWidth: '400px', overflow: 'scroll' }}>
+                <code>{ceremony.contributionText}</code>
+              </div>
+            </div>
+          ) : null}
+        </div>
+        <div style={{ marginTop: ui.isMobile ? '8px' : null }}>
           <div>Ceremony stats</div>
           <div style={{ height: '4px' }} />
           {ceremony.ceremonyState.circuitStats?.map((c) => (
-            <div key={c.name}>
-              <strong>{c.name}</strong>: {c.contributionCount} contributions
+            <div key={c.name} style={{ display: 'flex', marginBottom: '2px' }}>
+              <div>
+                <strong>{c.name}</strong>: {c.contributionCount} contributions
+              </div>
+              <div style={{ flex: 1 }} />
+              <a
+                href={new URL(
+                  `/contribution/${c.name}/latest`,
+                  SERVER
+                ).toString()}
+              >
+                <img
+                  src={require('../../public/download-arrow.png')}
+                  width={16}
+                />
+              </a>
             </div>
           ))}
           <div style={{ height: '4px' }} />
