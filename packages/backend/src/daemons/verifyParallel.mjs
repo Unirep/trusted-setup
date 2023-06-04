@@ -6,10 +6,11 @@ import path from 'path'
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 
 class ThreadManager {
-  maxThreads = Math.max(0, os.cpus().length - 1)
+  maxThreads = Math.max(1, os.cpus().length - 1)
   index = 0
 
   constructor() {
+    console.log(`${this.maxThreads} verification threads`)
     this.promises = Array(this.maxThreads)
       .fill()
       .map(() => Promise.resolve())
