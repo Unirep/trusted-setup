@@ -34,18 +34,38 @@ export const CONTRIBUTION_TIMEOUT = 90 * 1000
 
 const ptauPath = path.join(
   __dirname,
-  '../circuits/powersOfTau28_hez_final_18.ptau'
+  '../circuits/powersOfTau28_hez_final_17.ptau'
 )
 
 export const circuits = [
   {
-    name: 'User State Transition',
-    zkeyPath: path.join(__dirname, '../circuits/userStateTransition.zkey'),
+    name: 'Sign Up',
+    zkeyPath: path.join(__dirname, '../circuits/signup.zkey'),
     ptauPath,
   },
   {
-    name: 'Sign Up',
-    zkeyPath: path.join(__dirname, '../circuits/signup.zkey'),
+    name: 'Epoch Key Lite',
+    zkeyPath: path.join(__dirname, '../circuits/epochKeyLite.zkey'),
+    ptauPath,
+  },
+  {
+    name: 'Epoch Key',
+    zkeyPath: path.join(__dirname, '../circuits/epochKey.zkey'),
+    ptauPath,
+  },
+  {
+    name: 'Prove Reputation',
+    zkeyPath: path.join(__dirname, '../circuits/proveReputation.zkey'),
+    ptauPath,
+  },
+  {
+    name: 'Double Action',
+    zkeyPath: path.join(__dirname, '../circuits/preventDoubleAction.zkey'),
+    ptauPath,
+  },
+  {
+    name: 'User State Transition',
+    zkeyPath: path.join(__dirname, '../circuits/userStateTransition.zkey'),
     ptauPath,
   },
 ]

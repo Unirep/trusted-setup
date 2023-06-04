@@ -1,5 +1,4 @@
 import { ethers } from 'ethers'
-import config from '../../../config'
 
 const prod = NODE_ENV === 'production'
 
