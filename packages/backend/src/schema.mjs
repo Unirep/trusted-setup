@@ -5,8 +5,16 @@ export default [
     name: 'Contribution',
     primaryKey: '_id',
     rows: [
-      ['index', 'Int', { unique: true }],
-      ['verified', 'Int'],
+      {
+        name: '_id',
+        type: 'String',
+        default: () => nanoid(),
+      },
+      ['index', 'Int'],
+      ['circuitName', 'String'],
+      ['queueId', 'String'],
+      ['userId', 'String'],
+      ['hash', 'String', { unique: true }],
     ],
   },
   {
@@ -18,20 +26,43 @@ export default [
         type: 'String',
         default: () => nanoid(),
       },
-      ['token', 'String'],
+      ['userId', 'String'],
       ['index', 'Int', { unique: true }],
       ['startedAt', 'Int', { optional: true }],
       ['completedAt', 'Int', { optional: true }],
+      // the time at which they will be removed from the queue
+      // if they don't send a keepalive
+      ['timeoutAt', 'Int'],
     ],
   },
   {
-    name: 'Auth',
-    primaryKey: 'token',
+    name: 'User',
+    primaryKey: '_id',
     rows: [
       {
         name: '_id',
         type: 'String',
         default: () => nanoid(),
+      },
+      {
+        name: 'createdAt',
+        type: 'Int',
+        default: () => +new Date(),
+      },
+    ],
+  },
+  {
+    name: 'Auth',
+    primaryKey: '_id',
+    rows: [
+      {
+        name: '_id',
+        type: 'String',
+        default: () => nanoid(),
+      },
+      {
+        name: 'userId',
+        type: 'String',
       },
       {
         name: 'token',

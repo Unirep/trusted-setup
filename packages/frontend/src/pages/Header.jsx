@@ -5,7 +5,7 @@ import './header.css'
 import state from '../contexts/state'
 
 export default observer(() => {
-  const { msg } = React.useContext(state)
+  const { ceremony } = React.useContext(state)
   return (
     <>
       <div className="header">
@@ -14,16 +14,17 @@ export default observer(() => {
             style={{
               width: '10px',
               height: '10px',
-              background: msg.connected ? 'green' : 'red',
+              background: ceremony.connected ? 'green' : 'red',
               borderRadius: '10px',
             }}
           />
           <div style={{ width: '4px' }} />
           <div style={{ fontSize: '12px' }}>
-            {msg.connected ? 'Connected' : 'Disconnected'}
+            {ceremony.connected ? 'Connected' : 'Disconnected'}
           </div>
         </div>
-        <div className="links">Queue Length: {msg.queueLength}</div>
+        <div className="links">Queue Length: {ceremony.queueLength}</div>
+        <div className="links">Active: {ceremony.activeContributor}</div>
       </div>
 
       <Outlet />

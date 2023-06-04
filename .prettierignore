@@ -5,3 +5,5 @@
 
 
 packages/relay/data
+**/db
+**/circuits

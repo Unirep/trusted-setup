@@ -7,3 +7,5 @@ config.js
 zksnarkBuild/
 
 packages/contracts/contracts/verifiers/
+db/
+circuits/

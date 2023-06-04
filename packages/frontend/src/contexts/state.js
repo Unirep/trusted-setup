@@ -1,18 +1,15 @@
 import { createContext } from 'react'
 import Interface from './interface'
-import User from './User'
-import Message from './Message'
+import Ceremony from './Ceremony'
 
 const state = {}
 
 const ui = new Interface(state)
-const user = new User(state)
-const msg = new Message(state)
+const ceremony = new Ceremony(state)
 
 Object.assign(state, {
   ui,
-  user,
-  msg,
+  ceremony,
 })
 
 export default createContext(state)

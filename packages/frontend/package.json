@@ -15,7 +15,8 @@
     "especial": "^0.1.0-beta-3",
     "ethers": "^5.7.2",
     "file-loader": "^6.2.0",
-    "mobx-react-lite": "^3.4.0"
+    "mobx-react-lite": "^3.4.0",
+    "randomf": "^0.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.19.6",

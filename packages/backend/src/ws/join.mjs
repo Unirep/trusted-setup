@@ -1,27 +1,19 @@
+import { KEEPALIVE_INTERVAL } from '../config.mjs'
+
 export default ({ wsApp, db, ceremony }) => {
   wsApp.handle('ceremony.join', async (data, send, next) => {
     const { token } = data
-    if (!token) return send(1, 'No token')
+    if (!token) return send('no token', 1)
     const auth = await db.findOne('Auth', {
       where: { token },
     })
-    if (!auth) return send(1, 'unauthorized')
-    await db.transaction(async (_db) => {
-      const existing = await db.findOne('CeremonyQueue', {
-        where: {
-          token,
-          completedAt: null,
-        },
-      })
-      if (existing) throw new Error('Already in queue')
-      const index = await db.count('CeremonyQueue', {})
-      _db.create('CeremonyQueue', {
-        token,
-        index,
-      })
+    if (!auth) return send('unauthorized', 1)
+    const timeoutAt = await ceremony.addToQueue(auth.userId)
+    const activeContributor = await ceremony.activeContributor()
+
+    send({
+      timeoutAt,
+      active: activeContributor?.userId === auth.userId,
     })
-    const queueLength = await db.count('CeremonyQueue', {})
-    wsApp.broadcast('queueLength', { queueLength })
-    send(0)
   })
 }

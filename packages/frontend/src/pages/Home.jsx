@@ -9,18 +9,49 @@ import { SERVER } from '../config'
 import state from '../contexts/state'
 
 export default observer(() => {
-  const { ui, user } = React.useContext(state)
+  const [username, setUsername] = React.useState('')
+  const { ui, ceremony } = React.useContext(state)
 
   return (
     <div className="container">
-      <div style={{ padding: '4px', border: '1px solid black' }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-          }}
-        ></div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          borderTop: '1px solid black',
+          paddingTop: '4px',
+          flexWrap: 'wrap',
+        }}
+      >
+        {!ceremony.inQueue ? (
+          <div>
+            <div>Join ceremony</div>
+            {/*<input type="text" placeholder="username" value={username} onChange={e => setUsername(e.target.value)} />*/}
+            <div style={{ height: '4px' }} />
+            <Button onClick={() => ceremony.join()}>Join!</Button>
+          </div>
+        ) : null}
+        {!ceremony.isActive && ceremony.inQueue ? (
+          <div>
+            <div>Ceremony</div>
+            <div>You are in the queue, please wait until your turn.</div>
+          </div>
+        ) : null}
+        {ceremony.isActive && ceremony.inQueue ? (
+          <div>
+            <div>It's your turn!</div>
+            <div>Please wait while your machine makes contributions.</div>
+          </div>
+        ) : null}
+        <div>
+          <div>Ceremony stats</div>
+          <div style={{ height: '4px' }} />
+          {ceremony.ceremonyState.circuitStats?.map((c) => (
+            <div key={c.name}>
+              <strong>{c.name}</strong>: {c.contributionCount} contributions
+            </div>
+          ))}
+        </div>
       </div>
       <div style={{ flex: 1 }} />
       <div
