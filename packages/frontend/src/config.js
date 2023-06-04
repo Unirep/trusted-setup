@@ -1,5 +1,3 @@
-import { ethers } from 'ethers'
-
 const prod = NODE_ENV === 'production'
 
 export const SERVER = prod

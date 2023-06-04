@@ -1,6 +1,9 @@
 name = "trusted-setup"
-main = "worker.js"
 compatibility_date = "2022-10-18"
+main = "dist/index.js"
 
 [site]
 bucket = "./build"
+
+[build]
+command = "yarn && yarn build:worker && echo '{\"name\": \"trusted-setup\",\"main\":\"index.js\"}' > dist/package.json"

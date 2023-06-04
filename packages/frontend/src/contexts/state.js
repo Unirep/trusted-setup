@@ -6,14 +6,17 @@ configure({
   enforceActions: 'never',
 })
 
-const state = {}
+export const buildState = () => {
+  const state = {}
 
-const ui = new Interface(state)
-const ceremony = new Ceremony(state)
+  const ui = new Interface(state)
+  const ceremony = new Ceremony(state)
 
-Object.assign(state, {
-  ui,
-  ceremony,
-})
+  Object.assign(state, {
+    ui,
+    ceremony,
+  })
+  return state
+}
 
-export default createContext(state)
+export default createContext(buildState())

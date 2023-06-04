@@ -104,6 +104,7 @@ export default observer(() => {
                 ).toString()}
               >
                 <img
+                  style={{ width: '16px', height: '16px' }}
                   src={require('../../public/download-arrow.png')}
                   width={16}
                 />

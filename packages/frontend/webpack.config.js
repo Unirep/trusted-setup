@@ -2,7 +2,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 // const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin')
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-// const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const webpack = require('webpack')
 
 module.exports = (env, argv) => ({
@@ -23,7 +23,7 @@ module.exports = (env, argv) => ({
     publicPath: '/',
   },
   resolve: {
-    extensions: ['*', '.js', '.jsx', '.json', '.scss'],
+    extensions: ['*', '.js', '.jsx', '.json'],
     fallback: {
       path: require.resolve('path-browserify'),
       crypto: require.resolve('crypto-browserify'),
@@ -94,4 +94,7 @@ module.exports = (env, argv) => ({
       return data
     }),
   ],
+  optimization: {
+    minimizer: [`...`, new CssMinimizerPlugin()],
+  },
 })
