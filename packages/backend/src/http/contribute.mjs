@@ -7,7 +7,7 @@ import {
 import multer from 'multer'
 import path from 'path'
 import fs from 'fs/promises'
-import * as snarkjs from 'snarkjs'
+import zkeyManager from '../daemons/verifyParallel.mjs'
 
 const uploadsPath = dbpath('uploads')
 const upload = multer({
@@ -16,21 +16,6 @@ const upload = multer({
     fieldSize: 30 * 1024 * 1024,
   },
 })
-
-function formatHash(b) {
-  if (!b) return null
-  const a = new DataView(b.buffer, b.byteOffset, b.byteLength)
-  let S = ''
-  for (let i = 0; i < 4; i++) {
-    for (let j = 0; j < 4; j++) {
-      S += a
-        .getUint32(i * 16 + j * 4)
-        .toString(16)
-        .padStart(8, '0')
-    }
-  }
-  return S
-}
 
 export default ({ app, wsApp, db, ceremony }) => {
   app.post('/contribution', upload.single('contribution'), async (req, res) => {
@@ -89,15 +74,10 @@ export default ({ app, wsApp, db, ceremony }) => {
       try {
         // if no existing contributions verify the genesis zkey
         // otherwise verify the last contribution
-        const mpcParams = await snarkjs.zKey.verifyFromInit(
+        const mpcParams = await zkeyManager.verify(
           path.join(contribpath(circuitName), `0.zkey`),
           circuit.ptauPath,
-          req.file.path,
-          {
-            debug: console.log,
-            error: console.log,
-            info: console.log,
-          }
+          req.file.path
         )
         if (!mpcParams) {
           // remove from queue
@@ -107,7 +87,7 @@ export default ({ app, wsApp, db, ceremony }) => {
         // take the latest contribution hash
         const { contributionHash, name } = mpcParams.contributions.pop()
         contributionName = name
-        hash = formatHash(contributionHash)
+        hash = contributionHash
         if (!hash) {
           await ceremony.removeFromQueue(auth.userId)
           return res
@@ -116,9 +96,8 @@ export default ({ app, wsApp, db, ceremony }) => {
         }
         // and check the second to last contribution to make sure
         // it's what we expect
-        const lastHash = formatHash(
-          mpcParams.contributions.pop()?.contributionHash
-        )
+        const lastHash = mpcParams.contributions.pop()?.contributionHash
+
         const contributionCount = await db.count('Contribution', {
           circuitName,
         })

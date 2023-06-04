@@ -1,6 +1,10 @@
 import { createContext } from 'react'
+import { configure } from 'mobx'
 import Interface from './interface'
 import Ceremony from './Ceremony'
+configure({
+  enforceActions: 'never',
+})
 
 const state = {}
 

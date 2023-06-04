@@ -79,11 +79,21 @@ export default class Queue {
       const { data } = await this.client.send('user.info', {
         token: this.authToken,
       })
+      const downloadPromises = Object.entries(data.latestContributions).reduce(
+        (acc, [circuitName, id]) => {
+          return {
+            ...acc,
+            [circuitName]: this.downloadContribution(circuitName, id),
+          }
+        },
+        {}
+      )
+      const uploadPromises = []
       for (const [circuitName, id] of Object.entries(
         data.latestContributions
       )) {
         console.log(circuitName, id)
-        const latest = await this.downloadContribution(circuitName, id)
+        const latest = await downloadPromises[circuitName]
         const out = { type: 'mem' }
         if (this.activeContributor !== this.userId) break
         await snarkjs.zKey.contribute(
@@ -96,8 +106,9 @@ export default class Queue {
             .join('')
         )
         if (this.activeContributor !== this.userId) break
-        await this.uploadContribution(out.data, circuitName)
+        uploadPromises.push(this.uploadContribution(out.data, circuitName))
       }
+      await Promise.all(uploadPromises)
       this.stopKeepalive()
       this.timeoutAt = null
       this.contributing = false
