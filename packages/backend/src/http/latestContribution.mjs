@@ -11,7 +11,9 @@ export default ({ app, db, ceremony }) => {
         return res.status(422).json({ error: 'invalid circuit name' })
       }
       const contribution = await db.findOne('Contribution', {
-        where: {},
+        where: {
+          circuitName,
+        },
         orderBy: {
           index: 'desc',
         },
