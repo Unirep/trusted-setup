@@ -44,6 +44,11 @@ export const circuits = [
     ptauPath,
   },
   {
+    name: 'User State Transition',
+    zkeyPath: path.join(__dirname, '../circuits/userStateTransition.zkey'),
+    ptauPath,
+  },
+  {
     name: 'Epoch Key Lite',
     zkeyPath: path.join(__dirname, '../circuits/epochKeyLite.zkey'),
     ptauPath,
@@ -61,11 +66,6 @@ export const circuits = [
   {
     name: 'Double Action',
     zkeyPath: path.join(__dirname, '../circuits/preventDoubleAction.zkey'),
-    ptauPath,
-  },
-  {
-    name: 'User State Transition',
-    zkeyPath: path.join(__dirname, '../circuits/userStateTransition.zkey'),
     ptauPath,
   },
 ]
