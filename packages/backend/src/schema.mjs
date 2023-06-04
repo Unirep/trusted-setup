@@ -15,6 +15,12 @@ export default [
       ['queueId', 'String'],
       ['userId', 'String'],
       ['hash', 'String', { unique: true }],
+      ['name', 'String'],
+      {
+        name: 'createdAt',
+        type: 'Int',
+        default: () => +new Date(),
+      },
     ],
   },
   {

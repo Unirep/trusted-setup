@@ -84,7 +84,7 @@ export default ({ app, wsApp, db, ceremony }) => {
       // verify the contribution we just received
       // if it fails verification remove the user from the queue
 
-      let hash
+      let hash, contributionName
 
       try {
         // if no existing contributions verify the genesis zkey
@@ -105,7 +105,9 @@ export default ({ app, wsApp, db, ceremony }) => {
           return res.status(422).json({ error: 'invalid contribution' })
         }
         // take the latest contribution hash
-        hash = formatHash(mpcParams.contributions.pop().contributionHash)
+        const { contributionHash, name } = mpcParams.contributions.pop()
+        contributionName = name
+        hash = formatHash(contributionHash)
         if (!hash) {
           await ceremony.removeFromQueue(auth.userId)
           return res
@@ -170,6 +172,7 @@ export default ({ app, wsApp, db, ceremony }) => {
           queueId: currentContributor._id,
           userId: auth.userId,
           hash,
+          name: contributionName,
         })
         await fs.rename(
           req.file.path,

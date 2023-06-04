@@ -9,7 +9,7 @@ import { SERVER } from '../config'
 import state from '../contexts/state'
 
 export default observer(() => {
-  const [username, setUsername] = React.useState('')
+  const [name, setName] = React.useState('')
   const { ui, ceremony } = React.useContext(state)
 
   return (
@@ -26,9 +26,18 @@ export default observer(() => {
         {!ceremony.inQueue ? (
           <div>
             <div>Join ceremony</div>
-            {/*<input type="text" placeholder="username" value={username} onChange={e => setUsername(e.target.value)} />*/}
+            <div style={{ display: 'flex' }}>
+              <input
+                type="text"
+                placeholder="contributor name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <div style={{ width: '4px' }} />
+              <Tooltip text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique." />
+            </div>
             <div style={{ height: '4px' }} />
-            <Button onClick={() => ceremony.join()}>Join!</Button>
+            <Button onClick={() => ceremony.join(name)}>Join!</Button>
           </div>
         ) : null}
         {!ceremony.isActive && ceremony.inQueue ? (
@@ -51,6 +60,12 @@ export default observer(() => {
               <strong>{c.name}</strong>: {c.contributionCount} contributions
             </div>
           ))}
+          <div style={{ height: '4px' }} />
+          <div>
+            <a href={new URL('/transcript', SERVER).toString()} target="_blank">
+              Full transcript
+            </a>
+          </div>
         </div>
       </div>
       <div style={{ flex: 1 }} />

@@ -145,7 +145,7 @@ export default class Ceremony {
     await this.sendState()
   }
 
-  async sendState() {
+  async buildState() {
     const activeContributor = await this.activeContributor()
     const completedCount = await this.state.db.count('CeremonyQueue', {
       completedAt: { ne: null },
@@ -159,11 +159,15 @@ export default class Ceremony {
         }),
       }))
     )
-    this.state.wsApp.broadcast('ceremonyState', {
+    return {
       activeContributor,
       completedCount,
       queueLength,
       circuitStats,
-    })
+    }
+  }
+
+  async sendState() {
+    this.state.wsApp.broadcast('ceremonyState', await this.buildState())
   }
 }

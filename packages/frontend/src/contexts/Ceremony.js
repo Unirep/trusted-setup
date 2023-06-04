@@ -15,6 +15,7 @@ export default class Queue {
   timeoutAt = null
   activeContributor = null
   contributing = false
+  contributionName = null
 
   constructor(state) {
     makeAutoObservable(this)
@@ -37,13 +38,13 @@ export default class Queue {
   async load() {
     await this.connect()
     this.authToken = localStorage.getItem('authToken')
+    // don't block here
+    this.loadState().catch(console.log)
     if (!this.authenticated) await this.auth()
     const { data } = await this.client.send('user.info', {
       token: this.authToken,
     })
-    this.queueLength = data.queueLength
     this.userId = data.userId
-    this.activeContributor = data.activeContributor?.userId
     if (data.inQueue) {
       this.timeoutAt = data.timeoutAt
       this.startKeepalive()
@@ -53,7 +54,13 @@ export default class Queue {
     }
   }
 
-  async join() {
+  async loadState() {
+    const { data } = await this.client.send('ceremony.state')
+    this.ingestState(data)
+  }
+
+  async join(name) {
+    this.contributionName = name.trim()
     // join the queue
     const { data: _data } = await this.client.send('ceremony.join', {
       token: this.authToken,
@@ -82,7 +89,7 @@ export default class Queue {
         await snarkjs.zKey.contribute(
           latest,
           out,
-          'contributor name' + Math.random(),
+          this.contributionName || 'anonymous contributor',
           Array(32)
             .fill(null)
             .map(() => randomf(2n ** 256n))
@@ -170,6 +177,12 @@ export default class Queue {
     })
   }
 
+  ingestState(data) {
+    this.ceremonyState = data
+    this.activeContributor = data.activeContributor?.userId ?? 'none'
+    this.queueLength = data.queueLength
+  }
+
   async connect() {
     if (this.connected) return console.log('Already connected')
     try {
@@ -189,11 +202,7 @@ export default class Queue {
       this.connected = this.client.connected
     })
     // this.client.listen('msg', ({ data }) => this.ingestMessages(data))
-    this.client.listen('ceremonyState', ({ data }) => {
-      this.ceremonyState = data
-      this.activeContributor = data.activeContributor?.userId ?? 'none'
-      this.queueLength = data.queueLength
-    })
+    this.client.listen('ceremonyState', ({ data }) => this.ingestState(data))
     this.client.listen('activeContributor', ({ data }) => {
       this.activeContributor = data.activeContributor?.userId ?? 'none'
       this.queueLength = data.queueLength
