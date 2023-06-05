@@ -183,7 +183,7 @@ ${hashText}
     if (this.keepaliveTimer) return
     if (!this.timeoutAt) throw new Error('No timeout known')
     this.keepaliveTimer = true
-    const padding = 2000
+    const padding = 5000
     const nextPing = Math.max(0, +(this.timeoutAt - padding) - +new Date())
     for (;;) {
       if (!this.keepaliveTimer) return

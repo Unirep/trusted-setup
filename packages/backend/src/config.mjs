@@ -27,8 +27,8 @@ export const dbpath = (name) => path.join(DB_PATH, name)
 export const normalize = (name) => name.toLowerCase().split(' ').join('_')
 export const contribpath = (name) => dbpath(normalize(name))
 
-export const KEEPALIVE_INTERVAL = 20 * 1000
-export const CONTRIBUTION_TIMEOUT = 100 * 1000
+export const KEEPALIVE_INTERVAL = 25 * 1000
+export const CONTRIBUTION_TIMEOUT = 160 * 1000
 
 // CIRCUIT CONFIG
 
