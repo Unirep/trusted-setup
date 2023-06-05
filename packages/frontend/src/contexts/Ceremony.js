@@ -17,6 +17,8 @@ export default class Queue {
   contributing = false
   contributionName = null
   contributionHashes = null
+  loadingInitial = true
+  inQueue = false
 
   contributionUpdates = []
 
@@ -28,10 +30,6 @@ export default class Queue {
 
   get authenticated() {
     return !!this.authToken
-  }
-
-  get inQueue() {
-    return !!this.timeoutAt
   }
 
   get isActive() {
@@ -61,14 +59,26 @@ ${hashText}
     const { data } = await this.client.send('user.info', {
       token: this.authToken,
     })
-    this.userId = data.userId
+    this.inQueue = data.inQueue
     if (data.inQueue) {
       this.timeoutAt = data.timeoutAt
       this.startKeepalive()
     }
+    this.userId = data.userId
     if (data.active) {
       this.contribute()
     }
+    this.loadingInitial = false
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        console.log('starting keepalive')
+        this.startKeepalive()
+      } else {
+        // leave the queue if the page is minimized or tabbed out of
+        console.log('stopping keepalive')
+        this.stopKeepalive()
+      }
+    })
   }
 
   async loadState() {
@@ -84,6 +94,7 @@ ${hashText}
       token: this.authToken,
     })
     this.timeoutAt = _data.timeoutAt
+    this.inQueue = true
     // start the keepalive
     this.startKeepalive()
     this.contributionUpdates = []
@@ -180,15 +191,28 @@ ${hashText}
   }
 
   async startKeepalive() {
-    if (this.keepaliveTimer) return
-    if (!this.timeoutAt) throw new Error('No timeout known')
-    this.keepaliveTimer = true
+    if (!this.connected) throw new Error('Not connected')
+    const _keepaliveTimer = randomf(2n ** 256n).toString(16)
+    this.keepaliveTimer = _keepaliveTimer
+    if (!this.timeoutAt) {
+      const { data } = await this.client.send('user.info', {
+        token: this.authToken,
+      })
+      this.inQueue = data.inQueue
+      if (!data.inQueue) {
+        console.log('Not in queue. Stopping keepalive')
+        this.keepaliveTimer = null
+        return
+      }
+      if (this.keepaliveTimer !== _keepaliveTimer) return
+      this.timeoutAt = data.timeoutAt
+    }
     const padding = 5000
-    const nextPing = Math.max(0, +(this.timeoutAt - padding) - +new Date())
     for (;;) {
-      if (!this.keepaliveTimer) return
+      const nextPing = Math.max(0, +(this.timeoutAt - padding) - +new Date())
+      if (this.keepaliveTimer !== _keepaliveTimer) return
       await new Promise((r) => setTimeout(r, nextPing))
-      if (!this.keepaliveTimer) return
+      if (this.keepaliveTimer !== _keepaliveTimer) return
       console.log('sending keepalive')
       try {
         const { data } = await this.client.send('ceremony.keepalive', {
@@ -200,11 +224,13 @@ ${hashText}
         console.log(err)
         this.keepaliveTimer = null
         this.timeoutAt = null
+        this.inQueue = false
       }
     }
   }
 
   stopKeepalive() {
+    this.timeoutAt = null
     this.keepaliveTimer = null
   }
 

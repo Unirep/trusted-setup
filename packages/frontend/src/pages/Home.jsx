@@ -24,7 +24,8 @@ export default observer(() => {
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {!ceremony.inQueue ? (
+          {ceremony.loadingInitial ? <div>Loading...</div> : null}
+          {!ceremony.inQueue && !ceremony.loadingInitial ? (
             <div>
               <div>Join ceremony</div>
               <div style={{ display: 'flex' }}>
@@ -44,7 +45,18 @@ export default observer(() => {
           {!ceremony.isActive && ceremony.inQueue ? (
             <div>
               <div>Ceremony</div>
+              <div style={{ height: '4px' }} />
               <div>You are in the queue, please wait until your turn.</div>
+              <div style={{ height: '4px' }} />
+              <div>
+                > This tab <strong>must</strong> remain active for you to stay
+                in the queue!
+              </div>
+              <div style={{ height: '4px' }} />
+              <div>
+                Try pulling this tab into it's own window. Don't minimize the
+                window.
+              </div>
             </div>
           ) : null}
           {ceremony.isActive && ceremony.inQueue ? (
