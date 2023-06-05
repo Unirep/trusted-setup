@@ -119,9 +119,16 @@ export default observer(() => {
             </div>
           ))}
           <div style={{ height: '4px' }} />
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <a href={new URL('/transcript', SERVER).toString()} target="_blank">
               Full transcript
+            </a>
+            <div style={{ height: '4px' }} />
+            <a
+              href="https://github.com/unirep/trusted-setup/issues/1"
+              target="_blank"
+            >
+              Public attestations
             </a>
           </div>
         </div>
