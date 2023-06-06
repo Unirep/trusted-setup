@@ -160,10 +160,10 @@ export default ({ app, wsApp, db, ceremony }) => {
       })
       res.status(204).end()
 
-      wsApp.broadcast('activeContributor', {
-        currentContributor: await ceremony.activeContributor(),
-        queueLength: await ceremony.queueLength(),
-      })
+      // wsApp.broadcast('activeContributor', {
+      //   activeContributor: await ceremony.activeContributor(),
+      //   queueLength: await ceremony.queueLength(),
+      // })
       // do it async
       ceremony.sendState().catch(console.log)
     } catch (err) {

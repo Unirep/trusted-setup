@@ -7,6 +7,7 @@ import { dbpath } from './config.mjs'
 import schema from './schema.mjs'
 import { SQLiteConnector } from 'anondb/node.js'
 import Ceremony from './daemons/ceremony.mjs'
+import Backup from './daemons/backup.mjs'
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 
@@ -35,6 +36,13 @@ let wsApp, httpApp
   })
   app.use(express.json())
   httpApp = app
+}
+
+try {
+  const backup = new Backup(db)
+  backup.start()
+} catch (err) {
+  console.log('Error starting backup system, aborting')
 }
 
 const state = { app: httpApp, wsApp, db }

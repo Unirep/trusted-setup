@@ -37,6 +37,7 @@ export default ({ wsApp, db, ceremony }) => {
       latestContributions,
       queueLength: await ceremony.queueLength(),
       userId: auth.userId,
+      queueEntry,
     })
   })
 }

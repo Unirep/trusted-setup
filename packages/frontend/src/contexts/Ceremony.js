@@ -162,10 +162,12 @@ ${hashText}
       this.stopKeepalive()
       this.timeoutAt = null
       this.contributing = false
+      this.inQueue = false
     } catch (err) {
       console.log('Error making contribution')
       console.log(err)
       this.contributing = false
+      this.inQueue = false
     }
   }
 
@@ -257,6 +259,7 @@ ${hashText}
     this.ceremonyState = data
     this.activeContributor = data.activeContributor?.userId ?? 'none'
     this.queueLength = data.queueLength
+    if (this.isActive) this.contribute()
   }
 
   async connect() {
@@ -282,10 +285,7 @@ ${hashText}
     this.client.listen('activeContributor', ({ data }) => {
       this.activeContributor = data.activeContributor?.userId ?? 'none'
       this.queueLength = data.queueLength
-      if (this.isActive) this.contribute()
     })
-    // const { data, message, status } = await this.client.send('info')
-    // this.info = data
   }
 }
 

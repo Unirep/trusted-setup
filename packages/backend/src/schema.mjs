@@ -21,6 +21,7 @@ export default [
         type: 'Int',
         default: () => +new Date(),
       },
+      ['uploadedAt', 'Int', { optional: true }],
     ],
   },
   {
