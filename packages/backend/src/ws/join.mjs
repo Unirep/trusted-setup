@@ -10,10 +10,14 @@ export default ({ wsApp, db, ceremony }) => {
     if (!auth) return send('unauthorized', 1)
     const timeoutAt = await ceremony.addToQueue(auth.userId)
     const activeContributor = await ceremony.activeContributor()
+    const queuePosition = await db.count('CeremonyQueue', {
+      completedAt: null,
+    })
 
     send({
       timeoutAt,
       active: activeContributor?.userId === auth.userId,
+      queuePosition,
     })
   })
 }

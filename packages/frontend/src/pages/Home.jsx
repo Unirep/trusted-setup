@@ -46,7 +46,10 @@ export default observer(() => {
             <div>
               <div>Ceremony</div>
               <div style={{ height: '4px' }} />
-              <div>You are in the queue, please wait until your turn.</div>
+              <div>
+                You are currently number {ceremony.queuePosition} in the queue,
+                please wait until your turn.
+              </div>
               <div style={{ height: '4px' }} />
               <div>
                 > This tab <strong>must</strong> remain active for you to stay

@@ -24,8 +24,13 @@ export default ({ wsApp, db, ceremony }) => {
         timeoutAt,
       },
     })
+    const queuePosition = await db.count('CeremonyQueue', {
+      completedAt: null,
+      index: { lt: queueEntry.index },
+    })
     send({
       timeoutAt,
+      queuePosition,
     })
   })
 }

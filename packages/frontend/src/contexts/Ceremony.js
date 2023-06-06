@@ -13,12 +13,13 @@ export default class Queue {
   ceremonyState = {}
   queueLength = 0
   timeoutAt = null
-  activeContributor = null
   contributing = false
   contributionName = null
   contributionHashes = null
   loadingInitial = true
   inQueue = false
+  queueEntry = null
+  activeQueueEntry = null
 
   contributionUpdates = []
 
@@ -33,7 +34,11 @@ export default class Queue {
   }
 
   get isActive() {
-    return this.activeContributor === this.userId && !!this.userId
+    return this.activeQueueEntry?.userId === this.userId && !!this.userId
+  }
+
+  get activeContributor() {
+    return this.activeQueueEntry?.userId ?? 'none'
   }
 
   get contributionText() {
@@ -62,6 +67,7 @@ ${hashText}
     this.inQueue = data.inQueue
     if (data.inQueue) {
       this.timeoutAt = data.timeoutAt
+      this.queueEntry = data.queueEntry
       this.startKeepalive()
     }
     this.userId = data.userId
@@ -93,8 +99,8 @@ ${hashText}
     const { data: _data } = await this.client.send('ceremony.join', {
       token: this.authToken,
     })
-    this.timeoutAt = _data.timeoutAt
     this.inQueue = true
+    this.queuePosition = _data.queuePosition
     // start the keepalive
     this.startKeepalive()
     this.contributionUpdates = []
@@ -202,6 +208,7 @@ ${hashText}
       })
       this.inQueue = data.inQueue
       if (!data.inQueue) {
+        this.queueEntry = data.queueEntry
         console.log('Not in queue. Stopping keepalive')
         this.keepaliveTimer = null
         return
@@ -220,6 +227,7 @@ ${hashText}
         const { data } = await this.client.send('ceremony.keepalive', {
           token: this.authToken,
         })
+        this.queuePosition = data.queuePosition
         this.timeoutAt = data.timeoutAt
       } catch (err) {
         console.log('Keepalive errored')
@@ -257,7 +265,7 @@ ${hashText}
 
   ingestState(data) {
     this.ceremonyState = data
-    this.activeContributor = data.activeContributor?.userId ?? 'none'
+    this.activeQueueEntry = data.activeContributor
     this.queueLength = data.queueLength
     if (this.isActive) this.contribute()
   }
@@ -283,8 +291,9 @@ ${hashText}
     // this.client.listen('msg', ({ data }) => this.ingestMessages(data))
     this.client.listen('ceremonyState', ({ data }) => this.ingestState(data))
     this.client.listen('activeContributor', ({ data }) => {
-      this.activeContributor = data.activeContributor?.userId ?? 'none'
+      this.activeQueueEntry = data.activeContributor
       this.queueLength = data.queueLength
+      if (this.isActive) this.contribute()
     })
   }
 }
