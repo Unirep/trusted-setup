@@ -35,51 +35,61 @@ export default class Backup {
     this.id = id
 
     for (;;) {
-      if (this.id !== id) return
-      for (const circuit of circuits) {
-        const latest = await this.db.findOne('Contribution', {
-          where: {
-            circuitName: circuit.name,
-          },
-          orderBy: {
-            index: 'desc',
-          },
-        })
-        if (!latest) continue
-        const toUpload = await this.db.findMany('Contribution', {
-          where: {
-            circuitName: circuit.name,
-            _id: { ne: latest._id },
-            uploadedAt: null,
-          },
-        })
-        for (const contribution of toUpload) {
-          if (this.id !== id) return
-          const filepath = path.join(
-            contribpath(circuit.name),
-            `${contribution.index}.zkey`
-          )
-          const file = await fs.open(filepath)
-          const name = `${normalize(circuit.name)}_${contribution.index}.zkey`
-          console.log(`Uploading ${name}`)
-          const req = new PutObjectCommand({
-            Body: file.createReadStream(),
-            Bucket: this.bucketName,
-            Key: name,
-          })
-          await this.s3.send(req)
-          await this.db.update('Contribution', {
-            where: {
-              _id: contribution._id,
-            },
-            update: {
-              uploadedAt: +new Date(),
-            },
-          })
-          await fs.unlink(filepath)
-        }
+      try {
+        await this._backup(id)
+      } catch (err) {
+        console.log('Backup error')
+        console.log(err)
       }
+      if (this.id !== id) return
       await new Promise((r) => setTimeout(r, 60000))
+    }
+  }
+
+  async _backup(id) {
+    if (id !== this.id) return
+    for (const circuit of circuits) {
+      const latest = await this.db.findOne('Contribution', {
+        where: {
+          circuitName: circuit.name,
+        },
+        orderBy: {
+          index: 'desc',
+        },
+      })
+      if (!latest) continue
+      const toUpload = await this.db.findMany('Contribution', {
+        where: {
+          circuitName: circuit.name,
+          _id: { ne: latest._id },
+          uploadedAt: null,
+        },
+      })
+      for (const contribution of toUpload) {
+        if (this.id !== id) return
+        const filepath = path.join(
+          contribpath(circuit.name),
+          `${contribution.index}.zkey`
+        )
+        const file = await fs.open(filepath)
+        const name = `${normalize(circuit.name)}_${contribution.index}.zkey`
+        console.log(`Uploading ${name}`)
+        const req = new PutObjectCommand({
+          Body: file.createReadStream(),
+          Bucket: this.bucketName,
+          Key: name,
+        })
+        await this.s3.send(req)
+        await this.db.update('Contribution', {
+          where: {
+            _id: contribution._id,
+          },
+          update: {
+            uploadedAt: +new Date(),
+          },
+        })
+        await fs.unlink(filepath)
+      }
     }
   }
 
