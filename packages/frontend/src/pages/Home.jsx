@@ -24,6 +24,17 @@ export default observer(() => {
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div
+            style={{
+              maxWidth: '200px',
+              border: '1px solid red',
+              padding: '4px',
+              marginBottom: '4px',
+            }}
+          >
+            There is no airdrop or NFT associated with this trusted setup. This
+            is <strong>pre-release</strong> software being publicly tested.
+          </div>
           {ceremony.loadingInitial ? <div>Loading...</div> : null}
           {!ceremony.inQueue && !ceremony.loadingInitial ? (
             <div>

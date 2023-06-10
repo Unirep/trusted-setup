@@ -157,6 +157,7 @@ ${hashText}
       }
       try {
         await Promise.all(uploadPromises)
+        this.contributionHashes = contributionHashes
       } catch (_err) {
         console.log(_err)
         console.log('Contribution upload failed')
@@ -164,7 +165,6 @@ ${hashText}
           `! One or more contributions failed to process !`
         )
       }
-      this.contributionHashes = contributionHashes
       this.stopKeepalive()
       this.timeoutAt = null
       this.contributing = false
