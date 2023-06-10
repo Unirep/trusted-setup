@@ -22,8 +22,16 @@ class ThreadManager {
       () =>
         new Promise((rs, rj) => {
           const p = child_process.fork(path.join(__dirname, 'verify.mjs'), args)
-          p.on('message', (msg) => rs(msg))
+          let receivedMsg = false
+          p.on('message', (msg) => {
+            receivedMsg = true
+            rs(msg)
+          })
           p.on('exit', (code) => {
+            if (!receivedMsg && code === 0) {
+              console.log('exited 0 without receiving msg!')
+              rj(new Error('verification process exited without msg'))
+            }
             if (code !== 0) rj(new Error('zkey verification failed'))
           })
         })

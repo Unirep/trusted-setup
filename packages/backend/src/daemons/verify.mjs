@@ -1,5 +1,6 @@
 import * as snarkjs from 'snarkjs'
 
+const TIMEOUT = 40000
 const args = process.argv.slice(2)
 
 function formatHash(b) {
@@ -18,13 +19,15 @@ function formatHash(b) {
 }
 
 try {
-  const mpcParams = await snarkjs.zKey.verifyFromInit(...args, {
-    debug: console.log,
-    error: console.log,
-    info: console.log,
-  })
+  setTimeout(() => {
+    console.log('Timed out verifying', ...args)
+    process.exit(1)
+  }, TIMEOUT)
+  console.log('verifying', ...args)
+  const mpcParams = await snarkjs.zKey.verifyFromInit(...args)
 
   if (!mpcParams) {
+    console.log('no mpcParams')
     process.send(mpcParams)
     process.exit(0)
   }
