@@ -37,6 +37,18 @@ const ptauPath = path.join(
   '../circuits/powersOfTau28_hez_final_17.ptau'
 )
 
+export const queues = [
+  {
+    name: 'open',
+  },
+  {
+    name: 'github-1-year',
+  },
+  {
+    name: 'github-5-year',
+  },
+]
+
 export const circuits = [
   {
     name: 'Sign Up',

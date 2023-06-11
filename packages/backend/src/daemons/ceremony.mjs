@@ -2,6 +2,7 @@ import {
   circuits,
   KEEPALIVE_INTERVAL,
   CONTRIBUTION_TIMEOUT,
+  queues,
 } from '../config.mjs'
 
 export default class Ceremony {
@@ -22,6 +23,7 @@ export default class Ceremony {
       where: {
         startedAt: { ne: null },
         completedAt: null,
+        name: queues.map(({ name }) => name),
       },
     })
     return activeContributor
@@ -30,6 +32,7 @@ export default class Ceremony {
   async queueLength() {
     return this.state.db.count('CeremonyQueue', {
       completedAt: null,
+      name: queues.map(({ name }) => name),
     })
   }
 
@@ -37,25 +40,50 @@ export default class Ceremony {
     const activeContributor = await this.activeContributor()
     if (activeContributor) return
     await this.state.db.transaction(async (_db) => {
-      const next = await this.state.db.findOne('CeremonyQueue', {
+      const prev = await this.state.db.findOne('CeremonyQueue', {
         where: {
-          startedAt: null,
-          completedAt: null,
+          completedAt: { ne: null },
+          name: queues.map(({ name }) => name),
+          prunedAt: null,
         },
         orderBy: {
-          index: 'asc',
+          completedAt: 'desc',
         },
       })
-      // queue is empty
-      if (!next) return
-      _db.update('CeremonyQueue', {
-        where: {
-          _id: next._id,
-        },
-        update: {
-          startedAt: +new Date(),
-        },
-      })
+      let activeQueueIndex = 0
+      if (prev) {
+        const lastQueueIndex = queues.findIndex(
+          ({ name }) => name === prev.name
+        )
+        activeQueueIndex = (lastQueueIndex + 1) % queues.length
+      }
+      const nextByQueue = await Promise.all(
+        queues.map(({ name }) =>
+          this.state.db.findOne('CeremonyQueue', {
+            where: {
+              startedAt: null,
+              completedAt: null,
+              name,
+            },
+            orderBy: {
+              index: 'asc',
+            },
+          })
+        )
+      )
+      for (let x = 0; x < queues.length; x++) {
+        const next = nextByQueue[(activeQueueIndex + x) % queues.length]
+        if (!next) continue
+        _db.update('CeremonyQueue', {
+          where: {
+            _id: next._id,
+          },
+          update: {
+            startedAt: +new Date(),
+          },
+        })
+        break
+      }
     })
     this.state.wsApp.broadcast('activeContributor', {
       activeContributor: await this.activeContributor(),
@@ -63,22 +91,28 @@ export default class Ceremony {
     })
   }
 
-  async addToQueue(userId) {
+  async addToQueue(userId, queueName) {
     let timeoutAt
+    const queue = queues.find(({ name }) => name === queueName)
+    if (!queue) {
+      throw new Error(`Invalid queue name: "${queueName}`)
+    }
     await this.state.db.transaction(async (_db) => {
       const existing = await this.state.db.findOne('CeremonyQueue', {
         where: {
           userId,
           completedAt: null,
+          name: queues.map(({ name }) => name),
         },
       })
-      if (existing) throw new Error('Already in queue')
+      if (existing) throw new Error('Already in a queue')
       const index = await this.state.db.count('CeremonyQueue', {})
       timeoutAt = +new Date() + KEEPALIVE_INTERVAL
       _db.create('CeremonyQueue', {
         userId,
         index,
         timeoutAt,
+        name: queueName,
       })
       console.log('added queue entry')
     })
@@ -94,6 +128,7 @@ export default class Ceremony {
       },
       update: {
         completedAt: +new Date(),
+        prunedAt: +new Date(),
       },
     })
     await this.updateActiveContributor()
@@ -107,24 +142,27 @@ export default class Ceremony {
   // remove members that have not sent a keepalive
   // TODO: figure out how contributors will handle this
   async pruneQueue() {
+    const currentContributor = await this.activeContributor()
     const prunedCount = await this.state.db.update('CeremonyQueue', {
       where: {
         completedAt: null,
         timeoutAt: {
           lt: +new Date(),
         },
+        _id: currentContributor ? { ne: currentContributor._id } : undefined,
       },
       update: {
+        prunedAt: +new Date(),
         completedAt: +new Date(),
       },
     })
     if (prunedCount > 0) {
       console.log(`pruned ${prunedCount} entries`)
     }
-    const currentContributor = await this.activeContributor()
     if (
       currentContributor &&
-      currentContributor.startedAt + CONTRIBUTION_TIMEOUT <= +new Date()
+      (currentContributor.startedAt + CONTRIBUTION_TIMEOUT <= +new Date() ||
+        currentContributor.timeoutAt < +new Date())
     ) {
       await this.state.db.update('CeremonyQueue', {
         where: {

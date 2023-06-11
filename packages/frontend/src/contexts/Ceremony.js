@@ -92,12 +92,13 @@ ${hashText}
     this.ingestState(data)
   }
 
-  async join(name) {
+  async join(name, queueName) {
     this.contributionHashes = null
     this.contributionName = name.trim()
     // join the queue
     const { data: _data } = await this.client.send('ceremony.join', {
       token: this.authToken,
+      queueName,
     })
     this.inQueue = true
     this.queuePosition = _data.queuePosition

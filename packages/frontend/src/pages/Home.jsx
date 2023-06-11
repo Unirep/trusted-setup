@@ -37,21 +37,42 @@ export default observer(() => {
           </div>
           {ceremony.loadingInitial ? <div>Loading...</div> : null}
           {!ceremony.inQueue && !ceremony.loadingInitial ? (
-            <div>
-              <div>Join ceremony</div>
-              <div style={{ display: 'flex' }}>
-                <input
-                  type="text"
-                  placeholder="contributor name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <div style={{ width: '4px' }} />
-                <Tooltip text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique." />
+            <>
+              <div>
+                <div>Join open queue</div>
+                <div style={{ display: 'flex' }}>
+                  <input
+                    type="text"
+                    placeholder="contributor name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                  <div style={{ width: '4px' }} />
+                  <Tooltip text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique." />
+                </div>
+                <div style={{ height: '4px' }} />
+                <Button onClick={() => ceremony.join(name, 'open')}>
+                  Join!
+                </Button>
               </div>
-              <div style={{ height: '4px' }} />
-              <Button onClick={() => ceremony.join(name)}>Join!</Button>
-            </div>
+              <div>
+                <div>Join github 1 year</div>
+                <div style={{ display: 'flex' }}>
+                  <input
+                    type="text"
+                    placeholder="contributor name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                  <div style={{ width: '4px' }} />
+                  <Tooltip text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique." />
+                </div>
+                <div style={{ height: '4px' }} />
+                <Button onClick={() => ceremony.join(name, 'github-1-year')}>
+                  Join!
+                </Button>
+              </div>
+            </>
           ) : null}
           {!ceremony.isActive && ceremony.inQueue ? (
             <div>

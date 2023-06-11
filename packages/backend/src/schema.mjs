@@ -37,9 +37,12 @@ export default [
       ['index', 'Int', { unique: true }],
       ['startedAt', 'Int', { optional: true }],
       ['completedAt', 'Int', { optional: true }],
+      ['prunedAt', 'Int', { optional: true }],
       // the time at which they will be removed from the queue
       // if they don't send a keepalive
       ['timeoutAt', 'Int'],
+      // the name of the queue the item is in
+      ['name', 'String'],
     ],
   },
   {
