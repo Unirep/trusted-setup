@@ -52,6 +52,18 @@ ${hashText}
     `
   }
 
+  get queueNames() {
+    return this.ceremonyState?.queueLengths.map(({ name }) => name) ?? []
+  }
+
+  queueLengthByName(_name) {
+    if (!this.ceremonyState) return 0
+    const entry = this.ceremonyState.queueLengths.find(
+      ({ name }) => name === _name
+    )
+    return entry?.count ?? 0
+  }
+
   async load() {
     if (window.CEREMONY_STATE) {
       this.ingestState(JSON.parse(window.CEREMONY_STATE))
@@ -90,6 +102,15 @@ ${hashText}
   async loadState() {
     const { data } = await this.client.send('ceremony.state')
     this.ingestState(data)
+  }
+
+  async oauth() {
+    const url = new URL('/oauth/github', SERVER)
+    url.searchParams.set('token', this.authToken)
+    const currentUrl = new URL(window.location.href)
+    const dest = new URL('/', currentUrl.origin)
+    url.searchParams.set('redirectDestination', dest.toString())
+    window.location.replace(url.toString())
   }
 
   async join(name, queueName) {

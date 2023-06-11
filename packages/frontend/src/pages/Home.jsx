@@ -35,45 +35,34 @@ export default observer(() => {
             There is no airdrop or NFT associated with this trusted setup. This
             is <strong>pre-release</strong> software being publicly tested.
           </div>
+          <Button onClick={() => ceremony.oauth()}>OAuth</Button>
           {ceremony.loadingInitial ? <div>Loading...</div> : null}
-          {!ceremony.inQueue && !ceremony.loadingInitial ? (
-            <>
-              <div>
-                <div>Join open queue</div>
-                <div style={{ display: 'flex' }}>
-                  <input
-                    type="text"
-                    placeholder="contributor name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                  <div style={{ width: '4px' }} />
-                  <Tooltip text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique." />
+          {!ceremony.inQueue && !ceremony.loadingInitial
+            ? ceremony.queueNames.map((queueName) => (
+                <div key={queueName}>
+                  <div>
+                    Join queue <strong>{queueName.replace('-', ' ')}</strong>
+                  </div>
+                  <div>
+                    Queue Length: {ceremony.queueLengthByName(queueName)}
+                  </div>
+                  <div style={{ display: 'flex' }}>
+                    <input
+                      type="text"
+                      placeholder="contributor name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                    <div style={{ width: '4px' }} />
+                    <Tooltip text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique." />
+                  </div>
+                  <div style={{ height: '4px' }} />
+                  <Button onClick={() => ceremony.join(name, queueName)}>
+                    Join!
+                  </Button>
                 </div>
-                <div style={{ height: '4px' }} />
-                <Button onClick={() => ceremony.join(name, 'open')}>
-                  Join!
-                </Button>
-              </div>
-              <div>
-                <div>Join github 1 year</div>
-                <div style={{ display: 'flex' }}>
-                  <input
-                    type="text"
-                    placeholder="contributor name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                  <div style={{ width: '4px' }} />
-                  <Tooltip text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique." />
-                </div>
-                <div style={{ height: '4px' }} />
-                <Button onClick={() => ceremony.join(name, 'github-1-year')}>
-                  Join!
-                </Button>
-              </div>
-            </>
-          ) : null}
+              ))
+            : null}
           {!ceremony.isActive && ceremony.inQueue ? (
             <div>
               <div>Ceremony</div>

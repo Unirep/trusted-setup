@@ -15,7 +15,7 @@
     "ethers": "^5.7.2",
     "express": "^4.18.2",
     "multer": "^1.4.5-lts.1",
-    "node-fetch": "^3.3.0",
+    "node-fetch": "^3.3.1",
     "snarkjs": "git+https://github.com/vimwitch/snarkjs.git"
   },
   "main": "index.js"

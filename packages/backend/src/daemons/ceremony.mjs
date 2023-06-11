@@ -191,10 +191,21 @@ export default class Ceremony {
         }),
       }))
     )
+    const queueLengths = await Promise.all(
+      queues.map(({ name }) =>
+        this.state.db
+          .count('CeremonyQueue', {
+            completedAt: null,
+            name,
+          })
+          .then((count) => ({ name, count }))
+      )
+    )
     return {
       activeContributor,
       completedCount,
       queueLength,
+      queueLengths,
       circuitStats,
     }
   }

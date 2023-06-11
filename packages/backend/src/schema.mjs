@@ -2,6 +2,37 @@ import { nanoid } from 'nanoid'
 
 export default [
   {
+    name: 'OAuthState',
+    primaryKey: '_id',
+    rows: [
+      {
+        name: '_id',
+        type: 'String',
+        default: () => nanoid(),
+      },
+      {
+        name: 'createdAt',
+        type: 'Int',
+        default: () => +new Date(),
+      },
+      ['type', 'String'],
+      ['redirectDestination', 'String'],
+      ['data', 'String', { optional: true }],
+      ['userId', 'String'],
+    ],
+  },
+  {
+    name: 'OAuth',
+    primaryKey: '_id',
+    rows: [
+      // a unique identifier for the account
+      ['_id', 'String'],
+      ['type', 'String'],
+      ['userId', 'String'],
+      ['accountAgeMs', 'Int'],
+    ],
+  },
+  {
     name: 'Contribution',
     primaryKey: '_id',
     rows: [
