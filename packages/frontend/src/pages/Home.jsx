@@ -35,7 +35,17 @@ export default observer(() => {
             There is no airdrop or NFT associated with this trusted setup. This
             is <strong>pre-release</strong> software being publicly tested.
           </div>
-          <Button onClick={() => ceremony.oauth()}>OAuth</Button>
+          <div
+            style={{
+              maxWidth: '200px',
+              border: '1px solid black',
+              padding: '4px',
+              marginBottom: '4px',
+            }}
+          >
+            <div>To join a github queue you'll need to oauth with github</div>
+            <Button onClick={() => ceremony.oauth()}>OAuth</Button>
+          </div>
           {ceremony.loadingInitial ? <div>Loading...</div> : null}
           {!ceremony.inQueue && !ceremony.loadingInitial
             ? ceremony.queueNames.map((queueName) => (
