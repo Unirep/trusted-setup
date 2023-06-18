@@ -50,9 +50,10 @@ app.get('/user', async (req, res) => {
   if (!validTokens[token])
     return res.status(401).json({ error: 'invalid token' })
 
+  const elevenYearsAgo = +new Date() - 11 * 365 * 24 * 60 * 60 * 1000
   res.json({
     id: `${token}-id`,
-    created_at: new Date(1),
+    created_at: elevenYearsAgo,
   })
 })
 

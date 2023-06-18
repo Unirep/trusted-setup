@@ -58,7 +58,15 @@ export default class Ceremony {
           .map(() => randomf(2n ** 256n))
           .join('')
       )
-      uploadPromises.push(this.uploadContribution(out.data, circuitName))
+      uploadPromises.push(
+        this.uploadContribution(out.data, circuitName).then(async (r) => {
+          if (!r.ok) {
+            const b = await r.json()
+            console.log(b)
+            throw new Error(b)
+          }
+        })
+      )
       contributionHashes[circuitName] = formatHash(hash)
     }
     await Promise.all(uploadPromises)
@@ -66,6 +74,7 @@ export default class Ceremony {
     this.stopKeepalive()
     this.timeoutAt = null
     this.inQueue = false
+    return contributionHashes
   }
 
   async downloadContribution(circuitName, id = 'latest') {

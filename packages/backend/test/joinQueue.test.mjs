@@ -1,6 +1,7 @@
 import test from 'ava'
 import './server.mjs'
 import Ceremony from './ceremony.mjs'
+import fetch from 'node-fetch'
 
 test('should join queue', async (t) => {
   const ceremony = new Ceremony()
@@ -11,6 +12,54 @@ test('should join queue', async (t) => {
     token: ceremony.authToken,
     queueName: 'open',
   })
+  const { data } = await ceremony.client.send('user.info', {
+    token: ceremony.authToken,
+  })
+  t.is(data.inQueue, true)
+})
+
+test('should fail to join oauth queue without meeting requirement', async (t) => {
+  const ceremony = new Ceremony()
+  await ceremony.connect()
+  await ceremony.auth()
+
+  const url = new URL(`http://127.0.0.1:${process.env.HTTP_PORT}/oauth/github`)
+  url.searchParams.append('token', ceremony.authToken)
+  const r = await fetch(url.toString())
+  t.is(r.status, 204)
+
+  try {
+    await ceremony.client.send('ceremony.join', {
+      token: ceremony.authToken,
+      queueName: 'github-30-year',
+    })
+    t.fail()
+  } catch (err) {
+    t.is(err.payload?.message, 'oauth requirement not met')
+  }
+  const { data } = await ceremony.client.send('user.info', {
+    token: ceremony.authToken,
+  })
+  t.is(data.inQueue, false)
+})
+
+test('should join oauth queue', async (t) => {
+  const ceremony = new Ceremony()
+  await ceremony.connect()
+  await ceremony.auth()
+
+  const url = new URL(`http://127.0.0.1:${process.env.HTTP_PORT}/oauth/github`)
+  url.searchParams.append('token', ceremony.authToken)
+  const r = await fetch(url.toString())
+  t.is(r.status, 204)
+
+  {
+    const { status } = await ceremony.client.send('ceremony.join', {
+      token: ceremony.authToken,
+      queueName: 'github-1-year',
+    })
+    t.is(status, 0)
+  }
   const { data } = await ceremony.client.send('user.info', {
     token: ceremony.authToken,
   })
