@@ -2,6 +2,7 @@ import {
   circuits,
   KEEPALIVE_INTERVAL,
   CONTRIBUTION_TIMEOUT,
+  PRUNE_INTERVAL,
   queues,
 } from '../config.mjs'
 
@@ -14,7 +15,7 @@ export default class Ceremony {
   async start() {
     for (;;) {
       await this.pruneQueue()
-      await new Promise((r) => setTimeout(r, 12000))
+      await new Promise((r) => setTimeout(r, PRUNE_INTERVAL))
     }
   }
 
