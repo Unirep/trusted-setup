@@ -83,7 +83,7 @@ export default class Ceremony {
     formData.append('contribution', new Blob([data]))
     formData.append('token', this.authToken)
     formData.append('circuitName', circuitName)
-    await fetch(url.toString(), {
+    return fetch(url.toString(), {
       method: 'POST',
       body: formData,
     })
@@ -124,7 +124,6 @@ export default class Ceremony {
       if (this.keepaliveTimer !== _keepaliveTimer) return
       await new Promise((r) => setTimeout(r, nextPing))
       if (this.keepaliveTimer !== _keepaliveTimer) return
-      log('sending keepalive')
       try {
         const { data } = await this.client.send('ceremony.keepalive', {
           token: this.authToken,
