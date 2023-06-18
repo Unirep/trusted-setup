@@ -23,7 +23,7 @@ try {
     console.log('Timed out verifying', ...args)
     process.exit(1)
   }, TIMEOUT)
-  console.log('verifying', ...args)
+  // console.log('verifying', ...args)
   const mpcParams = await snarkjs.zKey.verifyFromInit(...args)
 
   if (!mpcParams) {

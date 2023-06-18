@@ -3,26 +3,62 @@ workflows:
   test:
     jobs:
       - lint
-      - deploy:
-          context: cloudflare
-          filters:
-            branches:
-              only:
-                - main
+      - test-backend
+      # - deploy:
+      #     context: cloudflare
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main
 
 # Just for reusing below
 step_defs:
   - run: &node_version
       name: Set Node version
       command: |
-        nvm install v16
-        nvm alias default v16
+        nvm install v18
+        nvm alias default v18
         echo "nvm use default" >> $BASH_ENV
   - run: &check_version
       name: Check Node version
-      command: node -v | grep v16
+      command: node -v | grep v18
 
 jobs:
+  test-backend:
+    resource_class: large
+    machine:
+      image: ubuntu-2204:2022.04.1
+    steps:
+      - checkout
+      - run: *node_version
+      - run: *check_version
+      - run:
+          name: Install Packages
+          command: yarn
+      - run:
+          name: Download Circuits
+          command: |
+            cd packages/backend
+            wget https://pub-4c6a367a0d1b43b39b344703b032a675.r2.dev/circuits.tar.gz
+            tar -xzf circuits.tar.gz
+            rm circuits.tar.gz
+      - run:
+          name: Test
+          command: cd packages/backend && yarn test
+  lint:
+    resource_class: medium
+    machine:
+      image: ubuntu-2204:2022.04.1
+    steps:
+      - checkout
+      - run: *node_version
+      - run: *check_version
+      - run:
+          name: Install Packages
+          command: yarn
+      - run:
+          name: Lint
+          command: yarn lint --check
   deploy:
     resource_class: large
     machine:
@@ -51,17 +87,3 @@ jobs:
           command: |
             cd packages/frontend
             npx wrangler@2.1 publish
-  lint:
-    resource_class: medium
-    machine:
-      image: ubuntu-2204:2022.04.1
-    steps:
-      - checkout
-      - run: *node_version
-      - run: *check_version
-      - run:
-          name: Install Packages
-          command: yarn
-      - run:
-          name: Test
-          command: yarn lint --check

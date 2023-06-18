@@ -34,7 +34,7 @@ export default ({ app, wsApp, db, ceremony }) => {
 
       const _currentContributor = await ceremony.activeContributor()
       if (auth.userId !== _currentContributor?.userId || !_currentContributor)
-        return res.status(401).json({ error: 'unauthorized' })
+        return res.status(401).json({ error: 'not current contributor' })
 
       const existingContribution = await db.findOne('Contribution', {
         where: {
@@ -48,7 +48,7 @@ export default ({ app, wsApp, db, ceremony }) => {
       // everything is in order. Let's bump the user timeoutAt
       // so they don't get pruned during verification
 
-      const timeoutAt = +new Date() + KEEPALIVE_INTERVAL
+      const timeoutAt = +new Date() + Math.min(KEEPALIVE_INTERVAL, 20000)
       await db.update('CeremonyQueue', {
         where: {
           _id: _currentContributor._id,
@@ -85,6 +85,7 @@ export default ({ app, wsApp, db, ceremony }) => {
           return res.status(422).json({ error: 'invalid contribution' })
         }
         // take the latest contribution hash
+        const mpcContributionsLength = mpcParams.contributions.length
         const { contributionHash, name } = mpcParams.contributions.pop()
         contributionName = name
         hash = contributionHash
@@ -109,6 +110,12 @@ export default ({ app, wsApp, db, ceremony }) => {
             index: 'desc',
           },
         })
+        if (mpcContributionsLength - 1 !== contributionCount) {
+          await ceremony.removeFromQueue(auth.userId)
+          return res
+            .status(422)
+            .json({ error: 'invalid final contribution count' })
+        }
         if (contributionCount > 0 && lastHash !== latestContribution.hash) {
           await ceremony.removeFromQueue(auth.userId)
           return res
@@ -126,7 +133,7 @@ export default ({ app, wsApp, db, ceremony }) => {
         // check that we are the current contributor a final time
         // to make sure we didn't get pruned during verification
         const currentContributor = await ceremony.activeContributor()
-        if (auth.userId !== currentContributor.userId)
+        if (auth.userId !== currentContributor?.userId)
           return res.status(401).json({ error: 'pruned' })
         const queueContributionCount = await db.count('Contribution', {
           queueId: currentContributor._id,
@@ -158,6 +165,7 @@ export default ({ app, wsApp, db, ceremony }) => {
           path.join(contribpath(circuitName), `${contributionCount + 1}.zkey`)
         )
       })
+      await ceremony.updateActiveContributor()
       res.status(204).end()
 
       // wsApp.broadcast('activeContributor', {

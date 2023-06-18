@@ -5,7 +5,8 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "start": "node ./src/index.mjs"
+    "start": "node ./src/index.mjs",
+    "test": "ava --no-worker-threads --timeout=5m ./test/*.test.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.345.0",
@@ -18,5 +19,11 @@
     "node-fetch": "^3.3.1",
     "snarkjs": "git+https://github.com/vimwitch/snarkjs.git"
   },
-  "main": "index.js"
+  "main": "index.js",
+  "devDependencies": {
+    "ava": "^5.3.1",
+    "formdata-node": "^5.0.1",
+    "get-port": "^7.0.0",
+    "randomf": "^0.0.3"
+  }
 }
