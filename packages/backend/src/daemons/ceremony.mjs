@@ -115,7 +115,7 @@ export default class Ceremony {
         timeoutAt,
         name: queueName,
       })
-      console.log('added queue entry')
+      if (!process.env.CI) console.log('added queue entry')
     })
     await this.updateActiveContributor()
     return timeoutAt

@@ -4,6 +4,11 @@ import ws from 'ws'
 import fetch from 'node-fetch'
 import { FormData, Blob } from 'formdata-node'
 
+function log(...args) {
+  if (process.env.CI) return
+  console.log(...args)
+}
+
 function formatHash(b) {
   if (!b) return null
   const a = new DataView(b.buffer, b.byteOffset, b.byteLength)
@@ -108,9 +113,7 @@ export default class Ceremony {
       })
       this.inQueue = data.inQueue
       if (!data.inQueue) {
-        console.log('Not in queue. Stopping keepalive')
-        this.keepaliveTimer = null
-        return
+        throw new Error('not in queue')
       }
       if (this.keepaliveTimer !== _keepaliveTimer) return
       this.timeoutAt = data.timeoutAt
@@ -121,7 +124,7 @@ export default class Ceremony {
       if (this.keepaliveTimer !== _keepaliveTimer) return
       await new Promise((r) => setTimeout(r, nextPing))
       if (this.keepaliveTimer !== _keepaliveTimer) return
-      console.log('sending keepalive')
+      log('sending keepalive')
       try {
         const { data } = await this.client.send('ceremony.keepalive', {
           token: this.authToken,
