@@ -1,11 +1,87 @@
 import EspecialClient from 'especial/client.js'
 import randomf from 'randomf'
 import ws from 'ws'
+import fetch from 'node-fetch'
+import { FormData, Blob } from 'formdata-node'
+
+function formatHash(b) {
+  if (!b) return null
+  const a = new DataView(b.buffer, b.byteOffset, b.byteLength)
+  let S = ''
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      S += a
+        .getUint32(i * 16 + j * 4)
+        .toString(16)
+        .padStart(8, '0')
+    }
+  }
+  return S
+}
 
 export default class Ceremony {
   constructor({ WS_SERVER, HTTP_SERVER } = {}) {
     this.WS_SERVER = process.env.WS_SERVER ?? WS_SERVER
     this.HTTP_SERVER = process.env.HTTP_SERVER ?? HTTP_SERVER
+  }
+
+  async contribute() {
+    const snarkjs = await import('snarkjs')
+    const { data } = await this.client.send('user.info', {
+      token: this.authToken,
+    })
+    const downloadPromises = Object.entries(data.latestContributions).reduce(
+      (acc, [circuitName, id]) => {
+        return {
+          ...acc,
+          [circuitName]: this.downloadContribution(circuitName, id),
+        }
+      },
+      {}
+    )
+    const uploadPromises = []
+    const contributionHashes = {}
+    for (const [circuitName, id] of Object.entries(data.latestContributions)) {
+      const latest = await downloadPromises[circuitName]
+      const out = { type: 'mem' }
+      const hash = await snarkjs.zKey.contribute(
+        latest,
+        out,
+        this.contributionName || 'anonymous contributor',
+        Array(32)
+          .fill(null)
+          .map(() => randomf(2n ** 256n))
+          .join('')
+      )
+      uploadPromises.push(this.uploadContribution(out.data, circuitName))
+      contributionHashes[circuitName] = formatHash(hash)
+    }
+    await Promise.all(uploadPromises)
+    this.contributionHashes = contributionHashes
+    this.stopKeepalive()
+    this.timeoutAt = null
+    this.inQueue = false
+  }
+
+  async downloadContribution(circuitName, id) {
+    const url = new URL(`/contribution/${id}`, this.HTTP_SERVER)
+    url.searchParams.set('circuitName', circuitName)
+    url.searchParams.set('token', this.authToken)
+    const res = await fetch(url.toString())
+    const data = await res.arrayBuffer()
+    return new Uint8Array(data)
+  }
+
+  async uploadContribution(data, circuitName) {
+    const url = new URL(`/contribution`, this.HTTP_SERVER)
+    const formData = new FormData()
+    formData.append('contribution', new Blob([data]))
+    formData.append('token', this.authToken)
+    formData.append('circuitName', circuitName)
+    await fetch(url.toString(), {
+      method: 'POST',
+      body: formData,
+    })
   }
 
   async join(name, queueName) {
@@ -40,7 +116,7 @@ export default class Ceremony {
       if (this.keepaliveTimer !== _keepaliveTimer) return
       this.timeoutAt = data.timeoutAt
     }
-    const padding = 5000
+    const padding = 200
     for (;;) {
       const nextPing = Math.max(0, +(this.timeoutAt - padding) - +new Date())
       if (this.keepaliveTimer !== _keepaliveTimer) return
