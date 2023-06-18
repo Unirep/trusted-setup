@@ -115,7 +115,7 @@ export default class Ceremony {
       if (this.keepaliveTimer !== _keepaliveTimer) return
       this.timeoutAt = data.timeoutAt
     }
-    const padding = 1000
+    const padding = 3000
     for (;;) {
       const nextPing = Math.max(0, +(this.timeoutAt - padding) - +new Date())
       if (this.keepaliveTimer !== _keepaliveTimer) return
