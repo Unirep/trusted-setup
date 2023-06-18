@@ -18,6 +18,42 @@ test('should join queue', async (t) => {
   t.is(data.inQueue, true)
 })
 
+test('should be removed from queue after contribution timeout', async (t) => {
+  t.timeout(
+    +process.env.CONTRIBUTION_TIMEOUT + process.env.PRUNE_INTERVAL + 10000
+  )
+  const ceremony = new Ceremony()
+  await ceremony.connect()
+  await ceremony.auth()
+
+  // join the open queue
+  await ceremony.client.send('ceremony.join', {
+    token: ceremony.authToken,
+    queueName: 'open',
+  })
+  const keepalivePromise = ceremony.startKeepalive().catch(() => {})
+  for (;;) {
+    const { data } = await ceremony.client.send('user.info', {
+      token: ceremony.authToken,
+    })
+    t.is(data.inQueue, true)
+    if (data.active) break
+    await new Promise((r) => setTimeout(r, 1000))
+  }
+  await new Promise((r) =>
+    setTimeout(
+      r,
+      +process.env.CONTRIBUTION_TIMEOUT + +process.env.PRUNE_INTERVAL
+    )
+  )
+  const { data } = await ceremony.client.send('user.info', {
+    token: ceremony.authToken,
+  })
+  t.is(data.inQueue, false)
+  t.falsy(data.active)
+  await keepalivePromise
+})
+
 test('should fail to join oauth queue without meeting requirement', async (t) => {
   const ceremony = new Ceremony()
   await ceremony.connect()
