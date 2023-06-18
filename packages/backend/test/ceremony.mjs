@@ -172,6 +172,11 @@ export default class Ceremony {
       const _client = new EspecialClient(this.WS_SERVER, ws)
 
       this.client = _client
+      this.client.listen('ceremonyState', ({ data }) => this.ingestState(data))
+      this.client.listen('activeContributor', ({ data }) => {
+        this.activeContributor = data.activeContributor?.userId ?? 'none'
+        this.queueLength = data.queueLength
+      })
       await _client.connect()
       this.connected = _client.connected
     } catch (err) {
@@ -180,11 +185,6 @@ export default class Ceremony {
     }
     this.client.addConnectedHandler(() => {
       this.connected = this.client.connected
-    })
-    this.client.listen('ceremonyState', ({ data }) => this.ingestState(data))
-    this.client.listen('activeContributor', ({ data }) => {
-      this.activeContributor = data.activeContributor?.userId ?? 'none'
-      this.queueLength = data.queueLength
     })
     // const { data, message, status } = await this.client.send('info')
     // this.info = data
