@@ -19,7 +19,7 @@ test('should stay in queue', async (t) => {
       token: ceremony.authToken,
     })
     await new Promise((r) =>
-      setTimeout(r, +process.env.KEEPALIVE_INTERVAL - 100)
+      setTimeout(r, +process.env.KEEPALIVE_INTERVAL - 800)
     )
   }
   const { data } = await ceremony.client.send('user.info', {
@@ -43,7 +43,7 @@ test('should be removed from queue without keepalive', async (t) => {
       token: ceremony.authToken,
     })
     await new Promise((r) =>
-      setTimeout(r, +process.env.KEEPALIVE_INTERVAL - 100)
+      setTimeout(r, +process.env.KEEPALIVE_INTERVAL - 800)
     )
   }
   {
