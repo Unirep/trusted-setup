@@ -22,7 +22,7 @@ test('should make contribution to ceremony', async (t) => {
   t.pass()
 })
 
-test('should fail to make invalid contribution (bad)', async (t) => {
+test.serial('should fail to make invalid contribution (bad)', async (t) => {
   const snarkjs = await import('snarkjs')
   const ceremony = new Ceremony()
   await ceremony.connect()
