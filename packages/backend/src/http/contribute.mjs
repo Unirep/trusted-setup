@@ -126,7 +126,7 @@ export default ({ app, wsApp, db, ceremony }) => {
         // check that we are the current contributor a final time
         // to make sure we didn't get pruned during verification
         const currentContributor = await ceremony.activeContributor()
-        if (auth.userId !== currentContributor.userId)
+        if (auth.userId !== currentContributor?.userId)
           return res.status(401).json({ error: 'pruned' })
         const queueContributionCount = await db.count('Contribution', {
           queueId: currentContributor._id,
