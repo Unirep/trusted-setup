@@ -95,7 +95,6 @@ export default class Ceremony {
     this.timeoutAt = _data.timeoutAt
     this.inQueue = true
     // start the keepalive
-    this.startKeepalive()
     this.contributionUpdates = []
   }
 
@@ -116,7 +115,7 @@ export default class Ceremony {
       if (this.keepaliveTimer !== _keepaliveTimer) return
       this.timeoutAt = data.timeoutAt
     }
-    const padding = 1000
+    const padding = 1
     for (;;) {
       const nextPing = Math.max(0, +(this.timeoutAt - padding) - +new Date())
       if (this.keepaliveTimer !== _keepaliveTimer) return
@@ -134,6 +133,7 @@ export default class Ceremony {
         this.keepaliveTimer = null
         this.timeoutAt = null
         this.inQueue = false
+        throw err
       }
     }
   }
