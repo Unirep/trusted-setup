@@ -68,8 +68,13 @@ export default class Ceremony {
     this.inQueue = false
   }
 
-  async downloadContribution(circuitName, id) {
-    const url = new URL(`/contribution/${id}`, this.HTTP_SERVER)
+  async downloadContribution(circuitName, id = 'latest') {
+    let url
+    if (id === 'latest') {
+      url = new URL(`/contribution/${circuitName}/latest`, this.HTTP_SERVER)
+    } else {
+      url = new URL(`/contribution/${id}`, this.HTTP_SERVER)
+    }
     url.searchParams.set('circuitName', circuitName)
     url.searchParams.set('token', this.authToken)
     const res = await fetch(url.toString())

@@ -1,6 +1,7 @@
 import test from 'ava'
 import './server.mjs'
 import Ceremony from './ceremony.mjs'
+import randomf from 'randomf'
 
 test('should make contribution to ceremony', async (t) => {
   const ceremony = new Ceremony()
@@ -21,7 +22,8 @@ test('should make contribution to ceremony', async (t) => {
   t.pass()
 })
 
-test('should fail to make duplicate contribution', async (t) => {
+test('should fail to make invalid contribution (bad)', async (t) => {
+  const snarkjs = await import('snarkjs')
   const ceremony = new Ceremony()
   await ceremony.connect()
   await ceremony.auth()
@@ -35,12 +37,47 @@ test('should fail to make duplicate contribution', async (t) => {
     })
     if (data.active) break
   }
-  await ceremony.contribute()
+  const latestContribution = await ceremony.downloadContribution(
+    'Epoch Key Lite'
+  )
+  // make two contributions and submit the second one
+  // the second one should be rejected because it's not
+  // based on the latest ceremony contribution
+  const out1 = { type: 'mem' }
+  await snarkjs.zKey.contribute(
+    latestContribution,
+    out1,
+    'anonymous contributor',
+    Array(32)
+      .fill(null)
+      .map(() => randomf(2n ** 256n))
+      .join('')
+  )
+  const out2 = { type: 'mem' }
+  await snarkjs.zKey.contribute(
+    out1,
+    out2,
+    'anonymous contributor',
+    Array(32)
+      .fill(null)
+      .map(() => randomf(2n ** 256n))
+      .join('')
+  )
+  ceremony.stopKeepalive()
+  const r = await ceremony.uploadContribution(out2.data, 'Epoch Key Lite')
+  t.is(r.status, 422)
+
+  // check that we're removed from the queue
+  const { data } = await ceremony.client.send('user.info', {
+    token: ceremony.authToken,
+  })
+  t.falsy(data.active)
+  t.is(data.inQueue, false)
+
   await keepalivePromise
-  t.pass()
 })
 
-test('should fail to submit invalid contribution', async (t) => {
+test('should fail to submit invalid contribution (random)', async (t) => {
   const ceremony = new Ceremony()
   await ceremony.connect()
   await ceremony.auth()

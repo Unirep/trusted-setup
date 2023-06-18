@@ -85,6 +85,7 @@ export default ({ app, wsApp, db, ceremony }) => {
           return res.status(422).json({ error: 'invalid contribution' })
         }
         // take the latest contribution hash
+        const mpcContributionsLength = mpcParams.contributions.length
         const { contributionHash, name } = mpcParams.contributions.pop()
         contributionName = name
         hash = contributionHash
@@ -109,6 +110,12 @@ export default ({ app, wsApp, db, ceremony }) => {
             index: 'desc',
           },
         })
+        if (mpcContributionsLength - 1 !== contributionCount) {
+          await ceremony.removeFromQueue(auth.userId)
+          return res
+            .status(422)
+            .json({ error: 'invalid final contribution count' })
+        }
         if (contributionCount > 0 && lastHash !== latestContribution.hash) {
           await ceremony.removeFromQueue(auth.userId)
           return res
