@@ -168,12 +168,10 @@ export default class Ceremony {
     this.client.addConnectedHandler(() => {
       this.connected = this.client.connected
     })
-    // this.client.listen('msg', ({ data }) => this.ingestMessages(data))
     this.client.listen('ceremonyState', ({ data }) => this.ingestState(data))
     this.client.listen('activeContributor', ({ data }) => {
       this.activeContributor = data.activeContributor?.userId ?? 'none'
       this.queueLength = data.queueLength
-      if (this.isActive) this.contribute()
     })
     // const { data, message, status } = await this.client.send('info')
     // this.info = data
