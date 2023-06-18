@@ -30,12 +30,52 @@ export const contribpath = (name) => dbpath(normalize(name))
 export const KEEPALIVE_INTERVAL = 25 * 1000
 export const CONTRIBUTION_TIMEOUT = 160 * 1000
 
+export const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID
+export const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET
+export const GITHUB_REDIRECT_URI =
+  process.env.GITHUB_REDIRECT_URI ??
+  'http://localhost:8000/oauth/github/callback'
+
 // CIRCUIT CONFIG
 
 const ptauPath = path.join(
   __dirname,
   '../circuits/powersOfTau28_hez_final_17.ptau'
 )
+
+export const queues = [
+  {
+    name: 'open',
+  },
+  {
+    name: 'github-1-year',
+    oauthRequire: {
+      type: 'github',
+      accountAgeMs: { gt: 365 * 24 * 60 * 60 * 1000 },
+    },
+  },
+  {
+    name: 'github-5-year',
+    oauthRequire: {
+      type: 'github',
+      accountAgeMs: { gt: 5 * 365 * 24 * 60 * 60 * 1000 },
+    },
+  },
+  {
+    name: 'github-10-year',
+    oauthRequire: {
+      type: 'github',
+      accountAgeMs: { gt: 10 * 365 * 24 * 60 * 60 * 1000 },
+    },
+  },
+  {
+    name: 'github-30-year',
+    oauthRequire: {
+      type: 'github',
+      accountAgeMs: { gt: 30 * 365 * 24 * 60 * 60 * 1000 },
+    },
+  },
+]
 
 export const circuits = [
   {

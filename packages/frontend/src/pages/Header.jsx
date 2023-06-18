@@ -23,7 +23,6 @@ export default observer(() => {
             {ceremony.connected ? 'Connected' : 'Disconnected'}
           </div>
         </div>
-        <div className="links">Queue Length: {ceremony.queueLength}</div>
         <div className="links">Active: {ceremony.activeContributor}</div>
       </div>
 
