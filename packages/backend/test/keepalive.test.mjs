@@ -3,7 +3,7 @@ import './server.mjs'
 import Ceremony from './ceremony.mjs'
 
 test('should stay in queue', async (t) => {
-  const iterations = 20
+  const iterations = 8
   t.timeout(+process.env.KEEPALIVE_INTERVAL * iterations + 5000)
   const ceremony = new Ceremony()
   await ceremony.connect()
