@@ -5,6 +5,9 @@ import {
 } from '../config.mjs'
 import fetch from 'node-fetch'
 
+const GITHUB_URL = process.env.GITHUB_URL ?? 'https://github.com'
+const GITHUB_API_URL = process.env.GITHUB_URL ?? 'https://api.github.com'
+
 export default ({ app, wsApp, db, ceremony }) => {
   app.get('/oauth/github', async (req, res) => {
     const { token } = req.query
@@ -17,7 +20,7 @@ export default ({ app, wsApp, db, ceremony }) => {
       redirectDestination: req.query.redirectDestination,
       userId: auth.userId,
     })
-    const url = new URL('https://github.com/login/oauth/authorize')
+    const url = new URL('/login/oauth/authorize', GITHUB_URL)
     url.searchParams.append('client_id', GITHUB_CLIENT_ID)
     url.searchParams.append('redirect_uri', GITHUB_REDIRECT_URI)
     url.searchParams.append('state', state._id)
@@ -51,7 +54,7 @@ export default ({ app, wsApp, db, ceremony }) => {
       res.redirect(url.toString())
       return
     }
-    const url = new URL('https://github.com/login/oauth/access_token')
+    const url = new URL('/login/oauth/access_token', GITHUB_URL)
     url.searchParams.append('client_id', GITHUB_CLIENT_ID)
     url.searchParams.append('client_secret', GITHUB_CLIENT_SECRET)
     url.searchParams.append('code', code)
@@ -62,7 +65,8 @@ export default ({ app, wsApp, db, ceremony }) => {
       },
     })
     const { access_token, scope, token_type } = await auth.json()
-    const user = await fetch('https://api.github.com/user', {
+    const apiUrl = new URL('/user', GITHUB_API_URL)
+    const user = await fetch(apiUrl.toString(), {
       headers: {
         authorization: `token ${access_token}`,
       },
@@ -104,7 +108,11 @@ export default ({ app, wsApp, db, ceremony }) => {
       accountAgeMs: Math.max(0, +new Date() - +signupAt),
       type: 'github',
     })
-    const _url = new URL(_state.redirectDestination)
-    res.redirect(_url.toString())
+    if (!_state.redirectDestination) {
+      res.status(204).end()
+    } else {
+      const _url = new URL(_state.redirectDestination)
+      res.redirect(_url.toString())
+    }
   })
 }

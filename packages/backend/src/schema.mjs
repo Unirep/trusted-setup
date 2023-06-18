@@ -16,7 +16,7 @@ export default [
         default: () => +new Date(),
       },
       ['type', 'String'],
-      ['redirectDestination', 'String'],
+      ['redirectDestination', 'String', { optional: true }],
       ['data', 'String', { optional: true }],
       ['userId', 'String'],
     ],
