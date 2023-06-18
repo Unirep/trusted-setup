@@ -36,6 +36,13 @@ jobs:
           name: Install Packages
           command: yarn
       - run:
+          name: Download Circuits
+          command: |
+            cd packages/backend
+            wget https://pub-4c6a367a0d1b43b39b344703b032a675.r2.dev/circuits.tar.gz
+            tar -xzf circuits.tar.gz
+            rm circuits.tar.gz
+      - run:
           name: Test
           command: cd packages/backend && yarn test
   lint:
