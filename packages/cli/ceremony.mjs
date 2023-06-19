@@ -1,15 +1,37 @@
 import EspecialClient from 'especial/client.js'
-import { WS_SERVER, SERVER } from './config.mjs'
+import { WS_SERVER, HTTP_SERVER } from './config.mjs'
 import randomf from 'randomf'
 import ws from 'ws'
+import fetch from 'node-fetch'
+import { FormData, Blob } from 'formdata-node'
+
+function formatHash(b) {
+  if (!b) return null
+  const a = new DataView(b.buffer, b.byteOffset, b.byteLength)
+  let S = ''
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      S += a
+        .getUint32(i * 16 + j * 4)
+        .toString(16)
+        .padStart(8, '0')
+    }
+  }
+  return S
+}
 
 export default class Ceremony {
-  async join(name) {
+  get isActive() {
+    return this.activeQueueEntry?.userId === this.userId && !!this.userId
+  }
+
+  async join(name, queueName) {
     this.contributionHashes = null
     this.contributionName = name.trim()
     // join the queue
     const { data: _data } = await this.client.send('ceremony.join', {
       token: this.authToken,
+      queueName,
     })
     this.timeoutAt = _data.timeoutAt
     this.inQueue = true
@@ -41,7 +63,6 @@ export default class Ceremony {
       if (this.keepaliveTimer !== _keepaliveTimer) return
       await new Promise((r) => setTimeout(r, nextPing))
       if (this.keepaliveTimer !== _keepaliveTimer) return
-      console.log('sending keepalive')
       try {
         const { data } = await this.client.send('ceremony.keepalive', {
           token: this.authToken,
@@ -50,11 +71,85 @@ export default class Ceremony {
       } catch (err) {
         console.log('Keepalive errored')
         console.log(err)
+        process.exit(1)
         this.keepaliveTimer = null
         this.timeoutAt = null
         this.inQueue = false
       }
     }
+  }
+
+  async contribute() {
+    const snarkjs = await import('snarkjs')
+    const { data } = await this.client.send('user.info', {
+      token: this.authToken,
+    })
+    const downloadPromises = Object.entries(data.latestContributions).reduce(
+      (acc, [circuitName, id]) => {
+        return {
+          ...acc,
+          [circuitName]: this.downloadContribution(circuitName, id),
+        }
+      },
+      {}
+    )
+    const uploadPromises = []
+    const contributionHashes = {}
+    for (const [circuitName, id] of Object.entries(data.latestContributions)) {
+      const latest = await downloadPromises[circuitName]
+      const out = { type: 'mem' }
+      const hash = await snarkjs.zKey.contribute(
+        latest,
+        out,
+        this.contributionName || 'anonymous contributor',
+        Array(32)
+          .fill(null)
+          .map(() => randomf(2n ** 256n))
+          .join('')
+      )
+      uploadPromises.push(
+        this.uploadContribution(out.data, circuitName).then(async (r) => {
+          if (!r.ok) {
+            const b = await r.json()
+            console.log(b)
+            throw new Error(b)
+          }
+        })
+      )
+      contributionHashes[circuitName] = formatHash(hash)
+    }
+    await Promise.all(uploadPromises)
+    this.contributionHashes = contributionHashes
+    this.stopKeepalive()
+    this.timeoutAt = null
+    this.inQueue = false
+    return contributionHashes
+  }
+
+  async downloadContribution(circuitName, id = 'latest') {
+    let url
+    if (id === 'latest') {
+      url = new URL(`/contribution/${circuitName}/latest`, HTTP_SERVER)
+    } else {
+      url = new URL(`/contribution/${id}`, HTTP_SERVER)
+    }
+    url.searchParams.set('circuitName', circuitName)
+    url.searchParams.set('token', this.authToken)
+    const res = await fetch(url.toString())
+    const data = await res.arrayBuffer()
+    return new Uint8Array(data)
+  }
+
+  async uploadContribution(data, circuitName) {
+    const url = new URL(`/contribution`, HTTP_SERVER)
+    const formData = new FormData()
+    formData.append('contribution', new Blob([data]))
+    formData.append('token', this.authToken)
+    formData.append('circuitName', circuitName)
+    return fetch(url.toString(), {
+      method: 'POST',
+      body: formData,
+    })
   }
 
   stopKeepalive() {
@@ -67,7 +162,9 @@ export default class Ceremony {
     this.userId = data.userId
   }
 
-  ingestState() {}
+  ingestState(data) {
+    this.activeQueueEntry = data.activeContributor
+  }
 
   async connect() {
     if (this.connected) return console.log('Already connected')
@@ -88,8 +185,8 @@ export default class Ceremony {
     this.client.listen('ceremonyState', ({ data }) => this.ingestState(data))
     this.client.listen('activeContributor', ({ data }) => {
       this.activeContributor = data.activeContributor?.userId ?? 'none'
+      this.activeQueueEntry = data.activeContributor
       this.queueLength = data.queueLength
-      if (this.isActive) this.contribute()
     })
     // const { data, message, status } = await this.client.send('info')
     // this.info = data

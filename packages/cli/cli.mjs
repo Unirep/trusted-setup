@@ -1,11 +1,8 @@
 import EspecialClient from 'especial/client.js'
-import { WS_SERVER, SERVER } from './config.mjs'
-import randomf from 'randomf'
 import chalk from 'chalk'
 import Ceremony from './ceremony.mjs'
 import inquirer from 'inquirer'
-
-//
+import ora from 'ora'
 
 console.log('Welcome to the unirep trusted setup CLI')
 const { name, entropy } = await inquirer.prompt([
@@ -32,4 +29,29 @@ console.log('Authenticating...')
 await ceremony.auth()
 
 console.log('Joining queue...')
-await ceremony.join(name)
+await ceremony.join(name, 'open')
+
+const spinner = ora().start()
+
+for (;;) {
+  if (ceremony.isActive) break
+  // otherwise update our current queue position
+  const { data } = await ceremony.client.send('user.info', {
+    token: ceremony.authToken,
+  })
+  spinner.text = `You are number ${
+    1 + data.queueEntry?.index - data.activeContributor?.index
+  } in the queue`
+  await new Promise((r) => setTimeout(r, 5000))
+}
+
+spinner.text = 'Calculating contribution'
+const hashes = await ceremony.contribute()
+
+spinner.stop()
+
+console.log('Thank you for contributing! Your hashes are below.')
+
+console.log(hashes)
+
+process.exit(0)
