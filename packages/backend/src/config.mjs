@@ -39,6 +39,8 @@ export const GITHUB_REDIRECT_URI =
   process.env.GITHUB_REDIRECT_URI ??
   'http://localhost:8000/oauth/github/callback'
 
+export const WS_SERVER = process.env.WS_SERVER ?? `ws://127.0.0.1:8001`
+
 // CIRCUIT CONFIG
 
 const ptauPath = path.join(

@@ -9059,6 +9059,22 @@ snarkjs@^0.5.0:
     logplease "^1.2.15"
     r1csfile "0.0.41"
 
+snarkjs@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/snarkjs/-/snarkjs-0.7.0.tgz#9b4d193a0535c1903e45f1508aa7ad74cd130844"
+  integrity sha512-Vu5W+0Va6X1xvlCllpZ2r3/S7MafnL6IrAv09lk/F+VNDHuHEHx3xopR9Kr70p2KpbBBJ/HB9VCDZWism8WGlA==
+  dependencies:
+    "@iden3/binfileutils" "0.0.11"
+    bfj "^7.0.2"
+    blake2b-wasm "^2.4.0"
+    circom_runtime "0.1.22"
+    ejs "^3.1.6"
+    fastfile "0.0.20"
+    ffjavascript "0.2.59"
+    js-sha3 "^0.8.0"
+    logplease "^1.2.15"
+    r1csfile "0.0.45"
+
 "snarkjs@git+https://github.com/vimwitch/snarkjs.git":
   version "0.7.0"
   resolved "git+https://github.com/vimwitch/snarkjs.git#63be32b42c42961b60b697309a6f0ca85949c98c"
