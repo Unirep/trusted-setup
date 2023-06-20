@@ -1,5 +1,4 @@
 import EspecialClient from 'especial/client.js'
-import { WS_SERVER, HTTP_SERVER } from './config.mjs'
 import randomf from 'randomf'
 import ws from 'ws'
 import fetch from 'node-fetch'
@@ -24,6 +23,19 @@ function formatHash(b) {
 export default class Ceremony {
   get isActive() {
     return this.activeQueueEntry?.userId === this.userId && !!this.userId
+  }
+
+  async bootstrap(HTTP_SERVER) {
+    this.HTTP_SERVER = HTTP_SERVER
+    const url = new URL('/bootstrap', this.HTTP_SERVER)
+    const r = await fetch(url.toString())
+    if (!r.ok) {
+      console.log('Bad response during bootstrap, aborting')
+      process.exit(1)
+    }
+    const data = await r.json()
+    this.WS_SERVER = data.WS_SERVER
+    return data
   }
 
   async join(name, queueName) {
@@ -133,9 +145,9 @@ export default class Ceremony {
   async downloadContribution(circuitName, id = 'latest') {
     let url
     if (id === 'latest') {
-      url = new URL(`/contribution/${circuitName}/latest`, HTTP_SERVER)
+      url = new URL(`/contribution/${circuitName}/latest`, this.HTTP_SERVER)
     } else {
-      url = new URL(`/contribution/${id}`, HTTP_SERVER)
+      url = new URL(`/contribution/${id}`, this.HTTP_SERVER)
     }
     url.searchParams.set('circuitName', circuitName)
     url.searchParams.set('token', this.authToken)
@@ -145,7 +157,7 @@ export default class Ceremony {
   }
 
   async uploadContribution(data, circuitName) {
-    const url = new URL(`/contribution`, HTTP_SERVER)
+    const url = new URL(`/contribution`, this.HTTP_SERVER)
     const formData = new FormData()
     formData.append('contribution', new Blob([data]))
     formData.append('token', this.authToken)
@@ -173,7 +185,7 @@ export default class Ceremony {
   async connect() {
     if (this.connected) return console.log('Already connected')
     try {
-      const _client = new EspecialClient(WS_SERVER, ws)
+      const _client = new EspecialClient(this.WS_SERVER, ws)
 
       this.client = _client
       await _client.connect()

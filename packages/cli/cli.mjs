@@ -5,10 +5,15 @@ import chalk from 'chalk'
 import Ceremony from './ceremony.mjs'
 import inquirer from 'inquirer'
 import ora from 'ora'
-import { HTTP_SERVER } from './config.mjs'
 import fetch from 'node-fetch'
 
-console.log('Welcome to the unirep trusted setup CLI')
+const [HTTP_SERVER] = process.argv.slice(2)
+
+const ceremony = new Ceremony()
+const { authOptions, welcomeMessage } = await ceremony.bootstrap(HTTP_SERVER)
+
+console.log(welcomeMessage)
+
 const { name, entropy, authType } = await inquirer.prompt([
   {
     type: 'input',
@@ -26,11 +31,9 @@ const { name, entropy, authType } = await inquirer.prompt([
     type: 'list',
     name: 'authType',
     message: 'How would you like to auth',
-    choices: ['none', 'github'],
+    choices: authOptions,
   },
 ])
-
-const ceremony = new Ceremony()
 
 console.log('Connecting to ceremony...')
 await ceremony.connect()
