@@ -152,6 +152,10 @@ export default class Ceremony {
     url.searchParams.set('circuitName', circuitName)
     url.searchParams.set('token', this.authToken)
     const res = await fetch(url.toString())
+    if (!res.ok) {
+      console.log(await res.text())
+      throw new Error('bad response')
+    }
     const data = await res.arrayBuffer()
     return new Uint8Array(data)
   }

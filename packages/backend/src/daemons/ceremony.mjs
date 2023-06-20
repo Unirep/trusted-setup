@@ -203,6 +203,7 @@ export default class Ceremony {
       )
     )
     return {
+      transcriptLength: await this.state.db.count('Contribution', {}),
       activeContributor,
       completedCount,
       queueLength,

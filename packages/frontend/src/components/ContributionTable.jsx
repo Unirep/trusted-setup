@@ -6,19 +6,12 @@ import state from '../contexts/state'
 
 export default observer(() => {
   const { ui, ceremony } = React.useContext(state)
-  const [data, setData] = React.useState([])
   const [activeCircuit, setActiveCircuit] = React.useState()
   React.useEffect(() => {
     if (!activeCircuit) {
       setActiveCircuit(ceremony.circuitNames[0])
     }
   }, [ceremony.circuitNames])
-  React.useEffect(() => {
-    const url = new URL('/transcript', SERVER)
-    fetch(url.toString())
-      .then((r) => r.json())
-      .then((d) => setData(d))
-  }, [])
   return (
     <div style={{ marginTop: '8px' }}>
       <div
@@ -52,7 +45,7 @@ export default observer(() => {
             <div>timestamp</div>
           </div>
         </strong>
-        {data
+        {ceremony.transcript
           .filter((d) => d.circuitName === activeCircuit)
           .map((d) => (
             <div

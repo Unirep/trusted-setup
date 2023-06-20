@@ -23,6 +23,7 @@ export default class Queue {
   circuitNames = []
 
   contributionUpdates = []
+  transcript = []
 
   constructor(state) {
     makeAutoObservable(this)
@@ -71,7 +72,12 @@ ${hashText}
     }
     await this.connect()
     this.authToken = localStorage.getItem('authToken')
+    const hashText = localStorage.getItem('contributionHashes')
+    if (hashText) {
+      this.contributionHashes = JSON.parse(hashText)
+    }
     // don't block here
+    this.loadTranscript()
     this.loadState().catch(console.log)
     if (!this.authenticated) await this.auth()
     const { data } = await this.client.send('user.info', {
@@ -109,6 +115,25 @@ ${hashText}
     })
   }
 
+  async loadTranscript() {
+    const url = new URL('/transcript', SERVER)
+    if (this.transcript.length) {
+      url.searchParams.set('afterTimestamp', this.transcript[0].createdAt)
+    }
+    const data = await fetch(url.toString()).then((r) => r.json())
+    const transcriptIds = this.transcript.reduce(
+      (acc, obj) => ({
+        ...acc,
+        [obj._id]: true,
+      }),
+      {}
+    )
+    this.transcript = [
+      data.filter(({ _id }) => !transcriptIds[_id]),
+      this.transcript,
+    ].flat()
+  }
+
   async loadState() {
     const { data } = await this.client.send('ceremony.state')
     this.ingestState(data)
@@ -138,6 +163,12 @@ ${hashText}
     // start the keepalive
     this.startKeepalive()
     this.contributionUpdates = []
+    const { data: info } = await this.client.send('user.info', {
+      token: this.authToken,
+    })
+    if (info.active) {
+      this.contribute()
+    }
   }
 
   updateContributionStatus(text) {
@@ -192,6 +223,10 @@ ${hashText}
       try {
         await Promise.all(uploadPromises)
         this.contributionHashes = contributionHashes
+        window.localStorage.setItem(
+          'contributionHashes',
+          JSON.stringify(contributionHashes)
+        )
       } catch (_err) {
         console.log(_err)
         console.log('Contribution upload failed')
@@ -323,7 +358,12 @@ ${hashText}
       this.connected = this.client.connected
     })
     // this.client.listen('msg', ({ data }) => this.ingestMessages(data))
-    this.client.listen('ceremonyState', ({ data }) => this.ingestState(data))
+    this.client.listen('ceremonyState', ({ data }) => {
+      this.ingestState(data)
+      if (this.transcript.length !== data.transcriptLength) {
+        this.loadTranscript()
+      }
+    })
     this.client.listen('activeContributor', ({ data }) => {
       this.activeQueueEntry = data.activeContributor
       this.queueLength = data.queueLength

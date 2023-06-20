@@ -4,8 +4,11 @@ import { dbpath, contribpath, circuits } from '../config.mjs'
 export default ({ app, db, ceremony }) => {
   app.get('/transcript', async (req, res) => {
     try {
+      const { afterTimestamp } = req.query
       const contributions = await db.findMany('Contribution', {
-        where: {},
+        where: {
+          createdAt: afterTimestamp ? { gte: +afterTimestamp } : undefined,
+        },
         orderBy: { index: 'desc' },
       })
       res.set('content-type', 'application/json')
