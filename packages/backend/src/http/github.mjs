@@ -9,6 +9,58 @@ const GITHUB_URL = process.env.GITHUB_URL ?? 'https://github.com'
 const GITHUB_API_URL = process.env.GITHUB_URL ?? 'https://api.github.com'
 
 export default ({ app, wsApp, db, ceremony }) => {
+  app.get('/oauth/github/device', async (req, res) => {
+    const { token } = req.query
+    const auth = await db.findOne('Auth', {
+      where: { token },
+    })
+    if (!auth) return res.status(401).json({ error: 'unauthorized' })
+    const url = new URL('/login/device/code', GITHUB_URL)
+    url.searchParams.append('client_id', GITHUB_CLIENT_ID)
+    url.searchParams.append('scope', 'user')
+    const r = await fetch(url.toString(), {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+      },
+    })
+    if (!r.ok) {
+      return res.status(422).json(await r.json())
+    }
+    const { user_code, device_code, verification_uri, expires_in, interval } =
+      await r.json()
+
+    const expiresAt = +new Date() + +expires_in * 1000
+    await db.create('DeviceFlowAuth', {
+      type: 'github',
+      userId: auth.userId,
+      deviceCode: device_code,
+      expiresAt,
+      pollInterval: interval,
+      userCode: user_code,
+    })
+    res.json({
+      userCode: user_code,
+      expiresAt,
+      verificationUri: verification_uri,
+    })
+  })
+
+  app.get('/oauth/github/list', async (req, res) => {
+    const { token } = req.query
+    const auth = await db.findOne('Auth', {
+      where: { token },
+    })
+    if (!auth) return res.status(401).json({ error: 'unauthorized' })
+    const oauth = await db.findMany('OAuth', {
+      where: {
+        userId: auth.userId,
+        type: 'github',
+      },
+    })
+    res.json(oauth)
+  })
+
   app.get('/oauth/github', async (req, res) => {
     const { token } = req.query
     const auth = await db.findOne('Auth', {

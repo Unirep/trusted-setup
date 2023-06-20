@@ -8,6 +8,7 @@ import schema from './schema.mjs'
 import { SQLiteConnector } from 'anondb/node.js'
 import Ceremony from './daemons/ceremony.mjs'
 import Backup from './daemons/backup.mjs'
+import DeviceAuth from './daemons/deviceFlowAuth.mjs'
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 
@@ -44,6 +45,9 @@ try {
 } catch (err) {
   console.log('Error starting backup system, aborting')
 }
+
+const deviceAuth = new DeviceAuth(db)
+deviceAuth.start()
 
 const state = { app: httpApp, wsApp, db }
 const ceremony = new Ceremony(state)

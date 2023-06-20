@@ -3,9 +3,11 @@ import chalk from 'chalk'
 import Ceremony from './ceremony.mjs'
 import inquirer from 'inquirer'
 import ora from 'ora'
+import { HTTP_SERVER } from './config.mjs'
+import fetch from 'node-fetch'
 
 console.log('Welcome to the unirep trusted setup CLI')
-const { name, entropy } = await inquirer.prompt([
+const { name, entropy, authType } = await inquirer.prompt([
   {
     type: 'input',
     name: 'name',
@@ -18,6 +20,12 @@ const { name, entropy } = await inquirer.prompt([
     name: 'entropy',
     message: 'Enter any extra random data (may be blank)',
   },
+  {
+    type: 'list',
+    name: 'authType',
+    message: 'How would you like to auth',
+    choices: ['none', 'github'],
+  },
 ])
 
 const ceremony = new Ceremony()
@@ -27,6 +35,28 @@ await ceremony.connect()
 
 console.log('Authenticating...')
 await ceremony.auth()
+
+if (authType === 'github') {
+  // start
+  {
+    const url = new URL('/oauth/github/device', HTTP_SERVER)
+    url.searchParams.append('token', ceremony.authToken)
+    const data = await fetch(url.toString()).then((r) => r.json())
+
+    console.log(`To auth with github enter this code: ${data.userCode}`)
+    console.log(`At the following url: ${data.verificationUri}`)
+  }
+  const spinner = ora().start()
+  spinner.text = 'Waiting for Github auth...'
+  for (;;) {
+    await new Promise((r) => setTimeout(r, 2000))
+    const url = new URL('/oauth/github/list', HTTP_SERVER)
+    url.searchParams.append('token', ceremony.authToken)
+    const data = await fetch(url.toString()).then((r) => r.json())
+    if (data.length) break
+  }
+  spinner.stop()
+}
 
 console.log('Joining queue...')
 await ceremony.join(name, 'open')

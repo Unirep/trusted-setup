@@ -2,6 +2,33 @@ import { nanoid } from 'nanoid'
 
 export default [
   {
+    name: 'DeviceFlowAuth',
+    primaryKey: '_id',
+    rows: [
+      {
+        name: '_id',
+        type: 'String',
+        default: () => nanoid(),
+      },
+      {
+        name: 'createdAt',
+        type: 'Int',
+        default: () => +new Date(),
+      },
+      ['type', 'String'],
+      ['userId', 'String'],
+      ['deviceCode', 'String', { unique: true }],
+      ['expiresAt', 'Int'],
+      ['pollInterval', 'Int'],
+      ['userCode', 'String'],
+      {
+        name: 'nextPoll',
+        type: 'Int',
+        default: () => +new Date(),
+      },
+    ],
+  },
+  {
     name: 'OAuthState',
     primaryKey: '_id',
     rows: [
