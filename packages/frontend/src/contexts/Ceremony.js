@@ -20,6 +20,7 @@ export default class Queue {
   inQueue = false
   queueEntry = null
   activeQueueEntry = null
+  circuitNames = []
 
   contributionUpdates = []
 
@@ -76,11 +77,20 @@ ${hashText}
     const { data } = await this.client.send('user.info', {
       token: this.authToken,
     })
+    this.circuitNames = Object.keys(data.latestContributions)
     this.inQueue = data.inQueue
     if (data.inQueue) {
       this.timeoutAt = data.timeoutAt
       this.queueEntry = data.queueEntry
       this.startKeepalive()
+    } else if (new URL(window.location).searchParams.get('joinQueue')) {
+      const url = new URL(window.location)
+      const name = url.searchParams.get('name')
+      const queue = [...data.validQueues].pop()
+      url.searchParams.delete('joinQueue')
+      url.searchParams.delete('name')
+      window.history.pushState({}, null, url.toString())
+      await this.join(name, queue)
     }
     this.userId = data.userId
     if (data.active) {
@@ -104,11 +114,13 @@ ${hashText}
     this.ingestState(data)
   }
 
-  async oauth() {
+  async oauth(name) {
     const url = new URL('/oauth/github', SERVER)
     url.searchParams.set('token', this.authToken)
     const currentUrl = new URL(window.location.href)
     const dest = new URL('/', currentUrl.origin)
+    dest.searchParams.set('joinQueue', 'true')
+    dest.searchParams.set('name', name)
     url.searchParams.set('redirectDestination', dest.toString())
     window.location.replace(url.toString())
   }

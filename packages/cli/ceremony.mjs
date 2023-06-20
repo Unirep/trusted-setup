@@ -4,6 +4,7 @@ import randomf from 'randomf'
 import ws from 'ws'
 import fetch from 'node-fetch'
 import { FormData, Blob } from 'formdata-node'
+import * as snarkjs from 'snarkjs'
 
 function formatHash(b) {
   if (!b) return null
@@ -79,11 +80,11 @@ export default class Ceremony {
     }
   }
 
-  async contribute() {
-    const snarkjs = await import('snarkjs')
+  async contribute(update = () => {}) {
     const { data } = await this.client.send('user.info', {
       token: this.authToken,
     })
+    update('Downloading latest keys')
     const downloadPromises = Object.entries(data.latestContributions).reduce(
       (acc, [circuitName, id]) => {
         return {
@@ -97,6 +98,7 @@ export default class Ceremony {
     const contributionHashes = {}
     for (const [circuitName, id] of Object.entries(data.latestContributions)) {
       const latest = await downloadPromises[circuitName]
+      update(`Calculating ${circuitName} contribution`)
       const out = { type: 'mem' }
       const hash = await snarkjs.zKey.contribute(
         latest,
@@ -118,11 +120,13 @@ export default class Ceremony {
       )
       contributionHashes[circuitName] = formatHash(hash)
     }
+    update('Waiting for verification')
     await Promise.all(uploadPromises)
     this.contributionHashes = contributionHashes
     this.stopKeepalive()
     this.timeoutAt = null
     this.inQueue = false
+    update('Done!')
     return contributionHashes
   }
 

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import EspecialClient from 'especial/client.js'
 import chalk from 'chalk'
 import Ceremony from './ceremony.mjs'
@@ -81,8 +83,8 @@ for (;;) {
   await new Promise((r) => setTimeout(r, 5000))
 }
 
-spinner.text = 'Calculating contribution'
-const hashes = await ceremony.contribute()
+spinner.text = 'Starting contribution'
+const hashes = await ceremony.contribute((v) => (spinner.text = v))
 
 spinner.stop()
 

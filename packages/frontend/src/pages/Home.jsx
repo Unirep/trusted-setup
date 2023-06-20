@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import './home.css'
 import Tooltip from '../components/Tooltip'
 import Button from '../components/Button'
+import ContributionTable from '../components/ContributionTable'
 import { SERVER } from '../config'
 
 import state from '../contexts/state'
@@ -24,6 +25,7 @@ export default observer(() => {
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {/*
           <div
             style={{
               maxWidth: '200px',
@@ -35,44 +37,33 @@ export default observer(() => {
             There is no airdrop or NFT associated with this trusted setup. This
             is <strong>pre-release</strong> software being publicly tested.
           </div>
-          <div
-            style={{
-              maxWidth: '200px',
-              border: '1px solid black',
-              padding: '4px',
-              marginBottom: '4px',
-            }}
-          >
-            <div>To join a github queue you'll need to oauth with github</div>
-            <Button onClick={() => ceremony.oauth()}>OAuth</Button>
-          </div>
+          */}
           {ceremony.loadingInitial ? <div>Loading...</div> : null}
-          {!ceremony.inQueue && !ceremony.loadingInitial
-            ? ceremony.queueNames.map((queueName) => (
-                <div key={queueName}>
-                  <div>
-                    Join queue <strong>{queueName.replace('-', ' ')}</strong>
-                  </div>
-                  <div>
-                    Queue Length: {ceremony.queueLengthByName(queueName)}
-                  </div>
-                  <div style={{ display: 'flex' }}>
-                    <input
-                      type="text"
-                      placeholder="contributor name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                    <div style={{ width: '4px' }} />
-                    <Tooltip text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique." />
-                  </div>
-                  <div style={{ height: '4px' }} />
-                  <Button onClick={() => ceremony.join(name, queueName)}>
-                    Join!
-                  </Button>
-                </div>
-              ))
-            : null}
+          {!ceremony.inQueue &&
+          !ceremony.loadingInitial &&
+          !ceremony.contributionHashes ? (
+            <div>
+              <div>Join the ceremony by choosing a way to authenticate.</div>
+              <div style={{ display: 'flex' }}>
+                <input
+                  type="text"
+                  placeholder="contributor name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                <div style={{ width: '4px' }} />
+                <Tooltip text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique." />
+              </div>
+              <div style={{ height: '4px' }} />
+              <div style={{ display: 'flex' }}>
+                <Button onClick={() => ceremony.oauth(name)}>Github</Button>
+                <div style={{ width: '4px' }} />
+                <Button onClick={() => ceremony.join(name, 'open')}>
+                  No auth
+                </Button>
+              </div>
+            </div>
+          ) : null}
           {!ceremony.isActive && ceremony.inQueue ? (
             <div>
               <div>Ceremony</div>
@@ -179,6 +170,7 @@ export default observer(() => {
           </div>
         </div>
       </div>
+      <ContributionTable />
       <div style={{ flex: 1 }} />
       <div
         style={{
