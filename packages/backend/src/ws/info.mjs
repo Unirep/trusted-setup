@@ -1,4 +1,4 @@
-import { circuits } from '../config.mjs'
+import { circuits, queues } from '../config.mjs'
 
 export default ({ wsApp, db, ceremony }) => {
   wsApp.handle('user.info', async (data, send, next) => {
@@ -29,6 +29,20 @@ export default ({ wsApp, db, ceremony }) => {
       latestContributions[name] = latestContribution?._id ?? 'genesis'
     }
     const activeContributor = await ceremony.activeContributor()
+    const validQueues = (
+      await Promise.all(
+        queues.map(async (q) => {
+          if (!q.oauthRequire) return q.name
+          const d = await db.findOne('OAuth', {
+            where: {
+              userId: auth.userId,
+              ...q.oauthRequire,
+            },
+          })
+          return d ? q.name : null
+        })
+      )
+    ).filter((v) => !!v)
     send({
       activeContributor,
       active: activeContributor?._id === queueEntry?._id && activeContributor,
@@ -38,6 +52,7 @@ export default ({ wsApp, db, ceremony }) => {
       queueLength: await ceremony.queueLength(),
       userId: auth.userId,
       queueEntry,
+      validQueues,
     })
   })
 }

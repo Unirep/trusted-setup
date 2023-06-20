@@ -37,14 +37,15 @@ console.log('Authenticating...')
 await ceremony.auth()
 
 if (authType === 'github') {
-  // start
   {
     const url = new URL('/oauth/github/device', HTTP_SERVER)
     url.searchParams.append('token', ceremony.authToken)
     const data = await fetch(url.toString()).then((r) => r.json())
 
-    console.log(`To auth with github enter this code: ${data.userCode}`)
-    console.log(`At the following url: ${data.verificationUri}`)
+    console.log(
+      `To auth with github enter this code: ${chalk.bold(data.userCode)}`
+    )
+    console.log(`At the following url: ${chalk.bold(data.verificationUri)}`)
   }
   const spinner = ora().start()
   spinner.text = 'Waiting for Github auth...'
@@ -58,8 +59,13 @@ if (authType === 'github') {
   spinner.stop()
 }
 
-console.log('Joining queue...')
-await ceremony.join(name, 'open')
+const { data } = await ceremony.client.send('user.info', {
+  token: ceremony.authToken,
+})
+const queue = data.validQueues.pop()
+
+console.log(`Joining queue ${chalk.bold(queue)}...`)
+await ceremony.join(name, queue)
 
 const spinner = ora().start()
 
