@@ -6,6 +6,9 @@ import Ceremony from './ceremony.mjs'
 import inquirer from 'inquirer'
 import ora from 'ora'
 import fetch from 'node-fetch'
+import readline from 'readline'
+import clipboard from 'clipboardy'
+import open from 'open'
 
 const [HTTP_SERVER] = process.argv.slice(2)
 
@@ -41,17 +44,36 @@ await ceremony.connect()
 console.log('Authenticating...')
 await ceremony.auth()
 
+let waitingForAuth = false
 if (authType === 'github') {
+  waitingForAuth = true
   {
     const url = new URL('/oauth/github/device', HTTP_SERVER)
     url.searchParams.append('token', ceremony.authToken)
     const data = await fetch(url.toString()).then((r) => r.json())
 
+    clipboard.writeSync(data.userCode)
     console.log(
-      `To auth with github enter this code: ${chalk.bold(data.userCode)}`
+      `To auth with github enter this code: ${chalk.bold(
+        data.userCode
+      )} (copied to clipboard)`
     )
     console.log(`At the following url: ${chalk.bold(data.verificationUri)}`)
+
+    console.log(`Press the ${chalk.bold('d')} key to open this url`)
+
+    readline.emitKeypressEvents(process.stdin)
+    if (process.stdin.isTTY) process.stdin.setRawMode(true)
+    process.stdin.on('keypress', (chunk, key) => {
+      if (key && key.name == 'd' && waitingForAuth) {
+        open(data.verificationUri)
+      }
+      if (key.ctrl && key.name == 'c') {
+        process.exit(1)
+      }
+    })
   }
+
   const spinner = ora().start()
   spinner.text = 'Waiting for Github auth...'
   for (;;) {
@@ -62,6 +84,9 @@ if (authType === 'github') {
     if (data.length) break
   }
   spinner.stop()
+
+  waitingForAuth = false
+  if (process.stdin.isTTY) process.stdin.setRawMode(false)
 }
 
 const { data } = await ceremony.client.send('user.info', {
