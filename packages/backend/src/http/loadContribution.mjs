@@ -11,7 +11,7 @@ export default ({ app, db, ceremony }) => {
       const auth = await db.findOne('Auth', {
         where: { token },
       })
-      if (!auth) return send(1, 'unauthorized')
+      if (!auth) return res.status(401).json({ error: 'unauthorized' })
       const circuit = circuits.find(({ name }) => name === circuitName)
       if (!circuit) {
         return res.status(422).json({ error: 'invalid circuit name' })
