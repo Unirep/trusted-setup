@@ -56,9 +56,9 @@ async function ssr() {
     .replace('<head>', `<head><style>${css}</style>`)
     .replace(
       '<head>',
-      `<head><script>window.CEREMONY_STATE='${JSON.stringify(
+      `<head><script>window.CEREMONY_STATE=${JSON.stringify(
         ceremonyState
-      )}'</script>`
+      )}</script>`
     )
     .replace('<link href="/main.css" rel="stylesheet">', '')
   const response = new Response(finalIndex)

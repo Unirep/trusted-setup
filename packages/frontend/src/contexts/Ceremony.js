@@ -68,7 +68,7 @@ ${hashText}
 
   async load() {
     if (window.CEREMONY_STATE) {
-      this.ingestState(JSON.parse(window.CEREMONY_STATE))
+      this.ingestState(window.CEREMONY_STATE)
     }
     await this.connect()
     this.authToken = localStorage.getItem('authToken')
