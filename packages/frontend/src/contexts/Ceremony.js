@@ -10,7 +10,6 @@ export default class Queue {
   authToken = null
   userId = null
   ceremonyState = {}
-  queueLength = 0
   timeoutAt = null
   contributing = false
   contributionName = null
@@ -18,18 +17,20 @@ export default class Queue {
   loadingInitial = true
   inQueue = false
   queueEntry = null
-  activeQueueEntry = null
-  circuitNames = []
 
   contributionUpdates = []
   transcript = []
 
-  bootstrapData = {}
+  bootstrapData = null
 
-  constructor(state) {
+  constructor(state, requestUrl) {
     makeAutoObservable(this)
     this.state = state
-    this.load()
+    if (typeof window !== 'undefined') {
+      this.loadPromise = this.load()
+    } else {
+      this.loadPromise = this.loadSSR(requestUrl)
+    }
   }
 
   get authenticated() {
@@ -37,11 +38,14 @@ export default class Queue {
   }
 
   get isActive() {
-    return this.activeQueueEntry?.userId === this.userId && !!this.userId
+    return (
+      this.ceremonyState?.activeContributor?.userId === this.userId &&
+      !!this.userId
+    )
   }
 
   get activeContributor() {
-    return this.activeQueueEntry?.userId ?? 'none'
+    return this.ceremonyState?.activeContributor?.userId ?? 'none'
   }
 
   get contributionText() {
@@ -59,6 +63,18 @@ ${hashText}
     return this.ceremonyState?.queueLengths.map(({ name }) => name) ?? []
   }
 
+  get activeQueueEntry() {
+    return this.ceremonyState?.activeContributor
+  }
+
+  get queueLength() {
+    return this.ceremonyState?.queueLength
+  }
+
+  get circuitNames() {
+    return this.ceremonyState?.circuitStats.map(({ name }) => name)
+  }
+
   queueLengthByName(_name) {
     if (!this.ceremonyState) return 0
     const entry = this.ceremonyState.queueLengths.find(
@@ -67,9 +83,32 @@ ${hashText}
     return entry?.count ?? 0
   }
 
+  async loadSSR(requestUrl) {
+    const url = new URL(requestUrl)
+    const HTTP_SERVER = url.searchParams.get('s')
+    if (!HTTP_SERVER.startsWith('http')) {
+      this.HTTP_SERVER = `https://${HTTP_SERVER}`
+    } else {
+      this.HTTP_SERVER = HTTP_SERVER
+    }
+    await Promise.all([
+      this.bootstrap(),
+      this.loadTranscript(),
+      this.loadStateHttp(),
+    ])
+    this.SSR_DATA = {
+      bootstrapData: this.bootstrapData,
+      ceremonyState: this.ceremonyState,
+      // activeQueueEntry: this.activeQueueEntry,
+      // circuitNames: this.circuitNames,
+      // queueLength: this.queueLength,
+      transcript: this.transcript,
+    }
+  }
+
   async load() {
-    if (window.CEREMONY_STATE) {
-      this.ingestState(window.CEREMONY_STATE)
+    for (const key of Object.keys(window.CEREMONY_DATA ?? {})) {
+      this[key] = (window.CEREMONY_DATA ?? {})[key]
     }
     const url = new URL(window.location)
     const HTTP_SERVER = url.searchParams.get('s')
@@ -78,7 +117,9 @@ ${hashText}
     } else {
       this.HTTP_SERVER = HTTP_SERVER
     }
-    await this.bootstrap()
+    if (!this.bootstrapData) {
+      await this.bootstrap()
+    }
     await this.connect()
     this.authToken = localStorage.getItem('authToken')
     const hashText = localStorage.getItem('contributionHashes')
@@ -86,13 +127,14 @@ ${hashText}
       this.contributionHashes = JSON.parse(hashText)
     }
     // don't block here
-    this.loadTranscript()
+    if (!this.transcript.length) {
+      this.loadTranscript()
+    }
     this.loadState().catch(console.log)
     if (!this.authenticated) await this.auth()
     const { data } = await this.client.send('user.info', {
       token: this.authToken,
     })
-    this.circuitNames = Object.keys(data.latestContributions)
     this.inQueue = data.inQueue
     if (data.inQueue) {
       this.timeoutAt = data.timeoutAt
@@ -133,7 +175,6 @@ ${hashText}
     }
     const data = await r.json()
     this.bootstrapData = data
-    this.WS_SERVER = data.WS_SERVER
     const authOptions = data.authOptions.filter(
       ({ type }) => type === 'oauth' || type === 'none'
     )
@@ -157,6 +198,13 @@ ${hashText}
       data.filter(({ _id }) => !transcriptIds[_id]),
       this.transcript,
     ].flat()
+  }
+
+  async loadStateHttp() {
+    const data = await fetch(
+      new URL('/ceremony', this.HTTP_SERVER).toString()
+    ).then((r) => r.json())
+    this.ingestState(data)
   }
 
   async loadState() {
@@ -188,10 +236,8 @@ ${hashText}
     // start the keepalive
     this.startKeepalive()
     this.contributionUpdates = []
-    const { data: info } = await this.client.send('user.info', {
-      token: this.authToken,
-    })
-    if (info.active) {
+    await this.loadState()
+    if (this.isActive) {
       this.contribute()
     }
   }
@@ -359,15 +405,17 @@ ${hashText}
 
   ingestState(data) {
     this.ceremonyState = data
-    this.activeQueueEntry = data.activeContributor
-    this.queueLength = data.queueLength
+    // this.activeQueueEntry = data.activeContributor
+    // this.queueLength = data.queueLength
+    // this.circuitNames = data.circuitStats.map(({ name }) => name)
     if (this.isActive) this.contribute()
   }
 
   async connect() {
     if (this.connected) return console.log('Already connected')
+    if (!this.bootstrapData?.WS_SERVER) throw new Error('No ws url loaded')
     try {
-      const _client = new EspecialClient(this.WS_SERVER)
+      const _client = new EspecialClient(this.bootstrapData?.WS_SERVER)
       makeObservable(_client, {
         connected: observable,
       })
@@ -390,8 +438,8 @@ ${hashText}
       }
     })
     this.client.listen('activeContributor', ({ data }) => {
-      this.activeQueueEntry = data.activeContributor
-      this.queueLength = data.queueLength
+      // this.activeQueueEntry = data.activeContributor
+      // this.queueLength = data.queueLength
       if (this.isActive) this.contribute()
     })
   }

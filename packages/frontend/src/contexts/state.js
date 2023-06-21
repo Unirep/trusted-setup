@@ -6,16 +6,17 @@ configure({
   enforceActions: 'never',
 })
 
-export const buildState = () => {
+export const buildState = (requestUrl) => {
   const state = {}
 
-  const ui = new Interface(state)
-  const ceremony = new Ceremony(state)
+  const ui = new Interface(state, requestUrl)
+  const ceremony = new Ceremony(state, requestUrl)
 
   Object.assign(state, {
     ui,
     ceremony,
   })
+  state.loadPromise = Promise.all([ui.loadPromise, ceremony.loadPromise])
   return state
 }
 

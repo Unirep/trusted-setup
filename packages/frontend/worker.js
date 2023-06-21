@@ -14,7 +14,8 @@ addEventListener('fetch', (event) => {
 
 async function handleEvent(event) {
   try {
-    const isSSR = !/.+\.[a-zA-Z]+$/.test(event.request.url)
+    const url = new URL(event.request.url)
+    const isSSR = !/.+\.[a-zA-Z]+$/.test(url.pathname)
 
     if (!isSSR) {
       // return a static asset
@@ -38,17 +39,13 @@ async function ssr(event) {
     HTTP_SERVER = `https://${HTTP_SERVER}`
   }
   const manifest = JSON.parse(__STATIC_CONTENT_MANIFEST)
-  const [indexHtml, css, ceremonyState] = await Promise.all([
+  const _state = buildState(event.request.url)
+  const [indexHtml, css] = await Promise.all([
     __STATIC_CONTENT.get(manifest['index.html']),
     __STATIC_CONTENT.get(manifest['main.css']),
-    fetch(new URL('/ceremony', HTTP_SERVER).toString())
-      .then((r) => r.json())
-      .catch(console.log),
+    _state.loadPromise,
   ])
-  const _state = buildState()
-  if (ceremonyState) {
-    _state.ceremony.ingestState(ceremonyState)
-  }
+  const CEREMONY_DATA = _state.ceremony.SSR_DATA
   const app = ReactDOMServer.renderToString(
     <state.Provider value={_state}>
       <Header />
@@ -60,8 +57,8 @@ async function ssr(event) {
     .replace('<head>', `<head><style>${css}</style>`)
     .replace(
       '<head>',
-      `<head><script>window.CEREMONY_STATE=${JSON.stringify(
-        ceremonyState
+      `<head><script>window.CEREMONY_DATA=${JSON.stringify(
+        CEREMONY_DATA
       )}</script>`
     )
     .replace('<link href="/main.css" rel="stylesheet">', '')

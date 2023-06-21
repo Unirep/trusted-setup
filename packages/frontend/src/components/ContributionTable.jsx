@@ -5,7 +5,9 @@ import state from '../contexts/state'
 
 export default observer(() => {
   const { ui, ceremony } = React.useContext(state)
-  const [activeCircuit, setActiveCircuit] = React.useState()
+  const [activeCircuit, setActiveCircuit] = React.useState(
+    ceremony.circuitNames[0]
+  )
   React.useEffect(() => {
     if (!activeCircuit) {
       setActiveCircuit(ceremony.circuitNames[0])
