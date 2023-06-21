@@ -99,9 +99,6 @@ ${hashText}
     this.SSR_DATA = {
       bootstrapData: this.bootstrapData,
       ceremonyState: this.ceremonyState,
-      // activeQueueEntry: this.activeQueueEntry,
-      // circuitNames: this.circuitNames,
-      // queueLength: this.queueLength,
       transcript: this.transcript,
     }
   }
@@ -217,6 +214,7 @@ ${hashText}
     url.searchParams.set('token', this.authToken)
     const currentUrl = new URL(window.location.href)
     const dest = new URL('/', currentUrl.origin)
+    dest.searchParams.set('s', currentUrl.searchParams.get('s'))
     dest.searchParams.set('joinQueue', 'true')
     dest.searchParams.set('name', name)
     url.searchParams.set('redirectDestination', dest.toString())
@@ -251,6 +249,7 @@ ${hashText}
     this.contributing = true
     console.log('starting contribution')
     try {
+      this.updateContributionStatus('Initializing...')
       const snarkjs = await import('snarkjs')
       const { data } = await this.client.send('user.info', {
         token: this.authToken,
@@ -258,7 +257,7 @@ ${hashText}
       const downloadPromises = Object.entries(data.latestContributions).reduce(
         (acc, [circuitName, id]) => {
           this.updateContributionStatus(
-            `Downloading ${circuitName} last contribution`
+            `Downloading latest ${circuitName} contribution`
           )
           return {
             ...acc,
