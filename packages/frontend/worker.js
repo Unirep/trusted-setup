@@ -7,7 +7,6 @@ import ReactDOMServer from 'react-dom/server'
 import Home from './src/pages/Home'
 import Header from './src/pages/Header'
 import state, { buildState } from './src/contexts/state'
-import { SERVER } from './src/config'
 
 addEventListener('fetch', (event) => {
   event.respondWith(handleEvent(event))
@@ -22,7 +21,7 @@ async function handleEvent(event) {
       return getAssetFromKV(event, { mapRequestToAsset: serveSinglePageApp })
     }
     // ssr the webapp page
-    return ssr()
+    return ssr(event)
   } catch (e) {
     const pathname = new URL(event.request.url).pathname
     return new Response(`"${pathname}" not found`, {
@@ -32,12 +31,17 @@ async function handleEvent(event) {
   }
 }
 
-async function ssr() {
+async function ssr(event) {
+  const url = new URL(event.request.url)
+  let HTTP_SERVER = url.searchParams.get('s')
+  if (!HTTP_SERVER.startsWith('http')) {
+    HTTP_SERVER = `https://${HTTP_SERVER}`
+  }
   const manifest = JSON.parse(__STATIC_CONTENT_MANIFEST)
   const [indexHtml, css, ceremonyState] = await Promise.all([
     __STATIC_CONTENT.get(manifest['index.html']),
     __STATIC_CONTENT.get(manifest['main.css']),
-    fetch(new URL('/ceremony', SERVER).toString())
+    fetch(new URL('/ceremony', HTTP_SERVER).toString())
       .then((r) => r.json())
       .catch(console.log),
   ])

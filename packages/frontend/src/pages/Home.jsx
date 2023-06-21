@@ -5,7 +5,6 @@ import './home.css'
 import Tooltip from '../components/Tooltip'
 import Button from '../components/Button'
 import ContributionTable from '../components/ContributionTable'
-import { SERVER } from '../config'
 
 import state from '../contexts/state'
 
@@ -153,7 +152,7 @@ export default observer(() => {
               <a
                 href={new URL(
                   `/contribution/${c.name}/latest`,
-                  SERVER
+                  ceremony.HTTP_SERVER
                 ).toString()}
               >
                 <img
@@ -166,7 +165,10 @@ export default observer(() => {
           ))}
           <div style={{ height: '4px' }} />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <a href={new URL('/transcript', SERVER).toString()} target="_blank">
+            <a
+              href={new URL('/transcript', ceremony.HTTP_SERVER).toString()}
+              target="_blank"
+            >
               Full transcript
             </a>
             <div style={{ height: '4px' }} />

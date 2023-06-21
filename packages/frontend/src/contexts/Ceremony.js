@@ -1,6 +1,5 @@
 import EspecialClient from 'especial/client'
 import { makeAutoObservable, makeObservable, observable } from 'mobx'
-import { WS_SERVER, SERVER } from '../config'
 import randomf from 'randomf'
 
 export default class Queue {
@@ -72,6 +71,14 @@ ${hashText}
     if (window.CEREMONY_STATE) {
       this.ingestState(window.CEREMONY_STATE)
     }
+    const url = new URL(window.location)
+    const HTTP_SERVER = url.searchParams.get('s')
+    if (!HTTP_SERVER.startsWith('http')) {
+      this.HTTP_SERVER = `https://${HTTP_SERVER}`
+    } else {
+      this.HTTP_SERVER = HTTP_SERVER
+    }
+    await this.bootstrap()
     await this.connect()
     this.authToken = localStorage.getItem('authToken')
     const hashText = localStorage.getItem('contributionHashes')
@@ -79,7 +86,6 @@ ${hashText}
       this.contributionHashes = JSON.parse(hashText)
     }
     // don't block here
-    this.bootstrap()
     this.loadTranscript()
     this.loadState().catch(console.log)
     if (!this.authenticated) await this.auth()
@@ -92,8 +98,7 @@ ${hashText}
       this.timeoutAt = data.timeoutAt
       this.queueEntry = data.queueEntry
       this.startKeepalive()
-    } else if (new URL(window.location).searchParams.get('joinQueue')) {
-      const url = new URL(window.location)
+    } else if (url.searchParams.get('joinQueue')) {
       const name = url.searchParams.get('name')
       const queue = [...data.validQueues].pop()
       url.searchParams.delete('joinQueue')
@@ -119,7 +124,7 @@ ${hashText}
   }
 
   async bootstrap() {
-    const url = new URL('/bootstrap', SERVER)
+    const url = new URL('/bootstrap', this.HTTP_SERVER)
     const r = await fetch(url.toString())
     if (!r.ok) {
       console.log('error bootstrapping')
@@ -128,6 +133,7 @@ ${hashText}
     }
     const data = await r.json()
     this.bootstrapData = data
+    this.WS_SERVER = data.WS_SERVER
     const authOptions = data.authOptions.filter(
       ({ type }) => type === 'oauth' || type === 'none'
     )
@@ -135,7 +141,7 @@ ${hashText}
   }
 
   async loadTranscript() {
-    const url = new URL('/transcript', SERVER)
+    const url = new URL('/transcript', this.HTTP_SERVER)
     if (this.transcript.length) {
       url.searchParams.set('afterTimestamp', this.transcript[0].createdAt)
     }
@@ -159,7 +165,7 @@ ${hashText}
   }
 
   async oauth(name, path) {
-    const url = new URL(path, SERVER)
+    const url = new URL(path, this.HTTP_SERVER)
     url.searchParams.set('token', this.authToken)
     const currentUrl = new URL(window.location.href)
     const dest = new URL('/', currentUrl.origin)
@@ -266,7 +272,7 @@ ${hashText}
   }
 
   async downloadContribution(circuitName, id) {
-    const url = new URL(`/contribution/${id}`, SERVER)
+    const url = new URL(`/contribution/${id}`, this.HTTP_SERVER)
     url.searchParams.set('circuitName', circuitName)
     url.searchParams.set('token', this.authToken)
     const res = await fetch(url.toString())
@@ -275,7 +281,7 @@ ${hashText}
   }
 
   async uploadContribution(data, circuitName) {
-    const url = new URL(`/contribution`, SERVER)
+    const url = new URL(`/contribution`, this.HTTP_SERVER)
     const formData = new FormData()
     formData.append('contribution', new Blob([data]))
     formData.append('token', this.authToken)
@@ -361,7 +367,7 @@ ${hashText}
   async connect() {
     if (this.connected) return console.log('Already connected')
     try {
-      const _client = new EspecialClient(WS_SERVER)
+      const _client = new EspecialClient(this.WS_SERVER)
       makeObservable(_client, {
         connected: observable,
       })

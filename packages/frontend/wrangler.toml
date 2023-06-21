@@ -1,4 +1,4 @@
-name = "trusted-setup-dev2"
+name = "trusted-setup0"
 compatibility_date = "2022-10-18"
 main = "dist/index.js"
 

@@ -1,6 +1,5 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
-import { SERVER } from '../config'
 import dayjs from 'dayjs'
 import state from '../contexts/state'
 
