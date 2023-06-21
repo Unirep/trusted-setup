@@ -1,4 +1,4 @@
-import { WS_SERVER, queues } from '../config.mjs'
+import { WS_SERVER, queues, authOptions } from '../config.mjs'
 
 export default ({ app }) => {
   app.get('/bootstrap', (req, res) => {
@@ -6,7 +6,7 @@ export default ({ app }) => {
       WS_SERVER,
       queues,
       welcomeMessage: 'Welcome to the unirep trusted setup CLI',
-      authOptions: ['github', 'none'],
+      authOptions,
     })
   })
 }

@@ -48,6 +48,27 @@ const ptauPath = path.join(
   '../circuits/powersOfTau28_hez_final_17.ptau'
 )
 
+export const authOptions = [
+  {
+    name: 'github',
+    displayName: 'Github',
+    type: 'oauth',
+    path: '/oauth/github',
+  },
+  {
+    name: 'github-device',
+    displayName: 'Github',
+    type: 'device-flow',
+    path: '/oauth/github/device',
+    listPath: '/oauth/github/list', // specific to device-flow auth
+  },
+  {
+    name: 'none',
+    displayName: 'No auth',
+    type: 'none',
+  },
+]
+
 export const queues = [
   {
     name: 'open',

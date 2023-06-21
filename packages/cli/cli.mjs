@@ -17,7 +17,7 @@ const { authOptions, welcomeMessage } = await ceremony.bootstrap(HTTP_SERVER)
 
 console.log(welcomeMessage)
 
-const { name, entropy, authType } = await inquirer.prompt([
+const { name, entropy, authName } = await inquirer.prompt([
   {
     type: 'input',
     name: 'name',
@@ -32,9 +32,14 @@ const { name, entropy, authType } = await inquirer.prompt([
   },
   {
     type: 'list',
-    name: 'authType',
+    name: 'authName',
     message: 'How would you like to auth',
-    choices: authOptions,
+    choices: authOptions
+      .filter(({ type }) => type === 'none' || type === 'device-flow')
+      .map((option) => ({
+        name: option.displayName,
+        value: option.name,
+      })),
   },
 ])
 
@@ -44,17 +49,19 @@ await ceremony.connect()
 console.log('Authenticating...')
 await ceremony.auth()
 
+const auth = authOptions.find((option) => option.name === authName)
+
 let waitingForAuth = false
-if (authType === 'github') {
+if (auth.type === 'device-flow') {
   waitingForAuth = true
   {
-    const url = new URL('/oauth/github/device', HTTP_SERVER)
+    const url = new URL(auth.path, HTTP_SERVER)
     url.searchParams.append('token', ceremony.authToken)
     const data = await fetch(url.toString()).then((r) => r.json())
 
     clipboard.writeSync(data.userCode)
     console.log(
-      `To auth with github enter this code: ${chalk.bold(
+      `To auth with ${auth.displayName} enter this code: ${chalk.bold(
         data.userCode
       )} (copied to clipboard)`
     )
@@ -75,10 +82,10 @@ if (authType === 'github') {
   }
 
   const spinner = ora().start()
-  spinner.text = 'Waiting for Github auth...'
+  spinner.text = `Waiting for ${auth.displayName} auth...`
   for (;;) {
     await new Promise((r) => setTimeout(r, 2000))
-    const url = new URL('/oauth/github/list', HTTP_SERVER)
+    const url = new URL(auth.listPath, HTTP_SERVER)
     url.searchParams.append('token', ceremony.authToken)
     const data = await fetch(url.toString()).then((r) => r.json())
     if (data.length) break

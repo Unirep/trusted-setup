@@ -25,6 +25,8 @@ export default class Queue {
   contributionUpdates = []
   transcript = []
 
+  bootstrapData = {}
+
   constructor(state) {
     makeAutoObservable(this)
     this.state = state
@@ -77,6 +79,7 @@ ${hashText}
       this.contributionHashes = JSON.parse(hashText)
     }
     // don't block here
+    this.bootstrap()
     this.loadTranscript()
     this.loadState().catch(console.log)
     if (!this.authenticated) await this.auth()
@@ -115,6 +118,22 @@ ${hashText}
     })
   }
 
+  async bootstrap() {
+    const url = new URL('/bootstrap', SERVER)
+    const r = await fetch(url.toString())
+    if (!r.ok) {
+      console.log('error bootstrapping')
+      console.log(await r.json())
+      return
+    }
+    const data = await r.json()
+    this.bootstrapData = data
+    const authOptions = data.authOptions.filter(
+      ({ type }) => type === 'oauth' || type === 'none'
+    )
+    this.bootstrapData.authOptions = authOptions
+  }
+
   async loadTranscript() {
     const url = new URL('/transcript', SERVER)
     if (this.transcript.length) {
@@ -139,8 +158,8 @@ ${hashText}
     this.ingestState(data)
   }
 
-  async oauth(name) {
-    const url = new URL('/oauth/github', SERVER)
+  async oauth(name, path) {
+    const url = new URL(path, SERVER)
     url.searchParams.set('token', this.authToken)
     const currentUrl = new URL(window.location.href)
     const dest = new URL('/', currentUrl.origin)

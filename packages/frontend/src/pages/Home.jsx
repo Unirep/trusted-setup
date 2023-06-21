@@ -56,11 +56,20 @@ export default observer(() => {
               </div>
               <div style={{ height: '4px' }} />
               <div style={{ display: 'flex' }}>
-                <Button onClick={() => ceremony.oauth(name)}>Github</Button>
-                <div style={{ width: '4px' }} />
-                <Button onClick={() => ceremony.join(name, 'open')}>
-                  No auth
-                </Button>
+                {ceremony.bootstrapData?.authOptions?.map((option) => (
+                  <Button
+                    key={option.name}
+                    onClick={async () => {
+                      if (option.type === 'none') {
+                        await ceremony.join(name, 'open')
+                      } else {
+                        await ceremony.oauth(name, option.path)
+                      }
+                    }}
+                  >
+                    {option.displayName}
+                  </Button>
+                ))}
               </div>
             </div>
           ) : null}
