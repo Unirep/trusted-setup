@@ -58,13 +58,6 @@ export const authOptions = [
     path: '/oauth/github',
   },
   {
-    name: 'github-device',
-    displayName: 'Github',
-    type: 'device-flow',
-    path: '/oauth/github/device',
-    listPath: '/oauth/github/list', // specific to device-flow auth
-  },
-  {
     name: 'none',
     displayName: 'No auth',
     type: 'none',

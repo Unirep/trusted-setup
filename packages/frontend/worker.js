@@ -4,7 +4,8 @@ import {
 } from '@cloudflare/kv-asset-handler'
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
-import Home from './src/pages/Home'
+import { StaticRouter } from 'react-router-dom/server'
+import Routes from './src/Routes'
 import state, { buildState } from './src/contexts/state'
 
 addEventListener('fetch', (event) => {
@@ -43,7 +44,9 @@ async function ssr(event) {
   const CEREMONY_DATA = _state.ceremony.SSR_DATA
   const app = ReactDOMServer.renderToString(
     <state.Provider value={_state}>
-      <Home />
+      <StaticRouter location={url.pathname}>
+        <Routes />
+      </StaticRouter>
     </state.Provider>
   )
   const finalIndex = indexHtml

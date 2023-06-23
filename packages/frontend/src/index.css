@@ -21,3 +21,11 @@ code {
   border: 1px solid gray;
   padding: 2px;
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  bottom: 0px;
+  margin: 10px 10px 0 10px;
+}

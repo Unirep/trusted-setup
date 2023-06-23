@@ -35,7 +35,7 @@ const { name, entropy, authName } = await inquirer.prompt([
     name: 'authName',
     message: 'How would you like to auth',
     choices: authOptions
-      .filter(({ type }) => type === 'none' || type === 'device-flow')
+      .filter(({ type }) => type !== 'device-flow')
       .map((option) => ({
         name: option.displayName,
         value: option.name,
@@ -52,28 +52,27 @@ await ceremony.auth()
 const auth = authOptions.find((option) => option.name === authName)
 
 let waitingForAuth = false
-if (auth.type === 'device-flow') {
+if (auth.type === 'oauth') {
   waitingForAuth = true
   {
     const url = new URL(auth.path, HTTP_SERVER)
     url.searchParams.append('token', ceremony.authToken)
-    const data = await fetch(url.toString()).then((r) => r.json())
-
-    clipboard.writeSync(data.userCode)
+    url.searchParams.append(
+      'redirectDestination',
+      'https://trusted-setup.com/oauth_complete'
+    )
     console.log(
-      `To auth with ${auth.displayName} enter this code: ${chalk.bold(
-        data.userCode
+      `To auth with ${auth.displayName} go to this url: ${chalk.bold(
+        url.toString()
       )} (copied to clipboard)`
     )
-    console.log(`At the following url: ${chalk.bold(data.verificationUri)}`)
-
     console.log(`Press the ${chalk.bold('d')} key to open this url`)
 
     readline.emitKeypressEvents(process.stdin)
     if (process.stdin.isTTY) process.stdin.setRawMode(true)
     process.stdin.on('keypress', (chunk, key) => {
       if (key && key.name == 'd' && waitingForAuth) {
-        open(data.verificationUri)
+        open(url.toString())
       }
       if (key.ctrl && key.name == 'c') {
         process.exit(1)
@@ -85,10 +84,10 @@ if (auth.type === 'device-flow') {
   spinner.text = `Waiting for ${auth.displayName} auth...`
   for (;;) {
     await new Promise((r) => setTimeout(r, 2000))
-    const url = new URL(auth.listPath, HTTP_SERVER)
-    url.searchParams.append('token', ceremony.authToken)
-    const data = await fetch(url.toString()).then((r) => r.json())
-    if (data.length) break
+    const { data } = await ceremony.client.send('user.oauth.info', {
+      token: ceremony.authToken,
+    })
+    if (data.find(({ type }) => type === auth.name)) break
   }
   spinner.stop()
 

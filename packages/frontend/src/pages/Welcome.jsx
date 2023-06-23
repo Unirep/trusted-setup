@@ -17,7 +17,6 @@ const FeatureCell = ({ text, children }) => (
 )
 
 export default observer(() => {
-  const { ceremony } = React.useContext(state)
   return (
     <div className="container">
       <div style={{ display: 'flex', justifyContent: 'center' }}>
