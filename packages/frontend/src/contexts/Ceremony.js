@@ -72,7 +72,7 @@ ${hashText}
   }
 
   get circuitNames() {
-    return this.ceremonyState?.circuitStats.map(({ name }) => name)
+    return this.ceremonyState?.circuitStats?.map(({ name }) => name) ?? []
   }
 
   queueLengthByName(_name) {
@@ -86,6 +86,10 @@ ${hashText}
   async loadSSR(requestUrl) {
     const url = new URL(requestUrl)
     const HTTP_SERVER = url.searchParams.get('s')
+    if (!HTTP_SERVER) {
+      this.SSR_DATA = {}
+      return
+    }
     if (!HTTP_SERVER.startsWith('http')) {
       this.HTTP_SERVER = `https://${HTTP_SERVER}`
     } else {
@@ -109,7 +113,9 @@ ${hashText}
     }
     const url = new URL(window.location)
     const HTTP_SERVER = url.searchParams.get('s')
-    if (!HTTP_SERVER.startsWith('http')) {
+    if (!HTTP_SERVER) {
+      return
+    } else if (!HTTP_SERVER.startsWith('http')) {
       this.HTTP_SERVER = `https://${HTTP_SERVER}`
     } else {
       this.HTTP_SERVER = HTTP_SERVER

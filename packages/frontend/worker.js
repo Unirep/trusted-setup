@@ -5,7 +5,6 @@ import {
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 import Home from './src/pages/Home'
-import Header from './src/pages/Header'
 import state, { buildState } from './src/contexts/state'
 
 addEventListener('fetch', (event) => {
@@ -34,10 +33,6 @@ async function handleEvent(event) {
 
 async function ssr(event) {
   const url = new URL(event.request.url)
-  let HTTP_SERVER = url.searchParams.get('s')
-  if (!HTTP_SERVER.startsWith('http')) {
-    HTTP_SERVER = `https://${HTTP_SERVER}`
-  }
   const manifest = JSON.parse(__STATIC_CONTENT_MANIFEST)
   const _state = buildState(event.request.url)
   const [indexHtml, css] = await Promise.all([
@@ -48,7 +43,6 @@ async function ssr(event) {
   const CEREMONY_DATA = _state.ceremony.SSR_DATA
   const app = ReactDOMServer.renderToString(
     <state.Provider value={_state}>
-      <Header />
       <Home />
     </state.Provider>
   )
