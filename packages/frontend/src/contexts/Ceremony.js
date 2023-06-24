@@ -277,6 +277,7 @@ ${hashText}
 
   async contribute() {
     if (this.contributing) return
+    if (this.contributionHashes) return
     this.contributing = true
     console.log('starting contribution')
     try {
@@ -337,13 +338,13 @@ ${hashText}
       }
       this.stopKeepalive()
       this.timeoutAt = null
-      this.contributing = false
       this.inQueue = false
+      this.contributing = false
     } catch (err) {
       console.log('Error making contribution')
       console.log(err)
-      this.contributing = false
       this.inQueue = false
+      this.contributing = false
     }
   }
 
