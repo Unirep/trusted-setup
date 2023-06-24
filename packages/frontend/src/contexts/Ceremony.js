@@ -79,6 +79,10 @@ ${hashText}
     return this.bootstrapData?.attestationUrl
   }
 
+  localStorageKey(name) {
+    return `${name}-${this.HTTP_SERVER}`
+  }
+
   queueLengthByName(_name) {
     if (!this.ceremonyState) return 0
     const entry = this.ceremonyState.queueLengths.find(
@@ -135,8 +139,10 @@ ${hashText}
       await this.bootstrap()
     }
     await this.connect()
-    this.authToken = localStorage.getItem('authToken')
-    const hashText = localStorage.getItem('contributionHashes')
+    this.authToken = localStorage.getItem(this.localStorageKey('authToken'))
+    const hashText = localStorage.getItem(
+      this.localStorageKey('contributionHashes')
+    )
     if (hashText) {
       this.contributionHashes = JSON.parse(hashText)
     }
@@ -311,7 +317,7 @@ ${hashText}
         await Promise.all(uploadPromises)
         this.contributionHashes = contributionHashes
         window.localStorage.setItem(
-          'contributionHashes',
+          this.localStorageKey('contributionHashes'),
           JSON.stringify(contributionHashes)
         )
       } catch (_err) {
@@ -402,7 +408,7 @@ ${hashText}
 
   async auth() {
     const { data } = await this.client.send('user.register')
-    localStorage.setItem('authToken', data.token)
+    localStorage.setItem(this.localStorageKey('authToken'), data.token)
     this.authToken = data.token
     this.userId = data.userId
   }
