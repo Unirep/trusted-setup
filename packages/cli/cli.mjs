@@ -35,7 +35,7 @@ const { name, entropy, authName } = await inquirer.prompt([
     name: 'authName',
     message: 'How would you like to auth',
     choices: authOptions
-      .filter(({ type }) => type !== 'device-flow')
+      .filter(({ type }) => type === 'none' || type === 'oauth')
       .map((option) => ({
         name: option.displayName,
         value: option.name,
