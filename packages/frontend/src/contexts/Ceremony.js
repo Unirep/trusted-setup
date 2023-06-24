@@ -110,6 +110,14 @@ ${hashText}
     } else {
       this.HTTP_SERVER = HTTP_SERVER
     }
+    const backendUrl = new URL(this.HTTP_SERVER)
+    if (
+      backendUrl.hostname === 'localhost' ||
+      backendUrl.hostname === '127.0.0.1'
+    ) {
+      this.SSR_DATA = {}
+      return
+    }
     await Promise.all([
       this.bootstrap(),
       this.loadTranscript(),
