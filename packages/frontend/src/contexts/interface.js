@@ -12,15 +12,24 @@ export default class Interface {
   screenHeight = -1
   isMobile = false
 
-  constructor() {
+  constructor(state, requestUrl) {
     makeAutoObservable(this)
     if (typeof window !== 'undefined') {
       this.load()
+    } else {
+      this.loadSSR(requestUrl)
     }
+  }
+
+  async loadSSR(requestUrl) {
+    const url = new URL(requestUrl)
+    this.url = url
   }
 
   // must be called in browser, not in SSR
   load() {
+    const url = new URL(window.location)
+    this.url = url
     this.updateWindowSize()
     window.addEventListener('resize', this.updateWindowSize.bind(this))
     this.setDarkmode(!!localStorage.getItem('darkmode'))

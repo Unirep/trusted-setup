@@ -47,10 +47,7 @@ export default ({ app, wsApp, db, ceremony }) => {
     if (error) {
       // access was denied
       const url = new URL(_state.redirectDestination)
-      url.searchParams.append(
-        'signupError',
-        'There was a problem authenticating you'
-      )
+      url.searchParams.append('error', 'There was a problem authenticating you')
       res.redirect(url.toString())
       return
     }
@@ -73,7 +70,7 @@ export default ({ app, wsApp, db, ceremony }) => {
     }).then((r) => r.json())
     if (!user.id) {
       const _url = new URL(_state.redirectDestination)
-      _url.searchParams.append('signupError', 'Unknown problem')
+      _url.searchParams.append('error', 'Unknown problem')
       res.redirect(_url.toString())
       return
     }
