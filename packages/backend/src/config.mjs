@@ -45,6 +45,9 @@ export const WS_SERVER = process.env.WS_SERVER ?? `ws://127.0.0.1:8001`
 
 export const WELCOME_MESSAGE =
   process.env.WELCOME_MESSAGE ?? 'Welcome to the unirep trusted setup CLI'
+export const CEREMONY_DESCRIPTION =
+  process.env.CEREMONY_DESCRIPTION ??
+  'Welcome to the unirep v2.0 trusted setup ceremony!'
 export const CEREMONY_IMAGE_PATH =
   process.env.CEREMONY_IMAGE_PATH ?? '/static/logo.svg'
 export const ATTESTATION_URL =

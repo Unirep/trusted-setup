@@ -31,25 +31,26 @@ export default observer(() => {
           }}
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {/*
-          <div
-            style={{
-              maxWidth: '200px',
-              border: '1px solid red',
-              padding: '4px',
-              marginBottom: '4px',
-            }}
-          >
-            There is no airdrop or NFT associated with this trusted setup. This
-            is <strong>pre-release</strong> software being publicly tested.
-          </div>
-          */}
+            {ceremony.bootstrapData?.ceremonyDescription ? (
+              <div
+                style={{
+                  maxWidth: '300px',
+                  border: '1px solid black',
+                  padding: '4px',
+                  marginBottom: '8px',
+                }}
+              >
+                {ceremony.bootstrapData?.ceremonyDescription}
+              </div>
+            ) : null}
             {ceremony.loadingInitial ? <div>Loading...</div> : null}
             {!ceremony.inQueue &&
             !ceremony.loadingInitial &&
             !ceremony.contributionHashes ? (
               <div>
-                <div>Join the ceremony by choosing a way to authenticate.</div>
+                <div style={{ marginBottom: '8px' }}>
+                  Join the ceremony by choosing a way to authenticate.
+                </div>
                 <div style={{ display: 'flex' }}>
                   <input
                     type="text"
@@ -64,6 +65,7 @@ export default observer(() => {
                 <div style={{ display: 'flex' }}>
                   {ceremony.bootstrapData?.authOptions?.map((option) => (
                     <Button
+                      style={{ marginRight: '2px' }}
                       key={option.name}
                       onClick={async () => {
                         if (option.type === 'none') {
@@ -122,7 +124,7 @@ export default observer(() => {
                     <div>
                       {ceremony.attestationUrl ? (
                         <>
-                          Share this test publicly, perhaps{' '}
+                          Share this text publicly, perhaps{' '}
                           <a href={ceremony.attestationUrl} target="_blank">
                             here
                           </a>
