@@ -11,6 +11,7 @@ export default class Interface {
   screenWidth = -1
   screenHeight = -1
   isMobile = false
+  loaded = false
 
   constructor(state, requestUrl) {
     makeAutoObservable(this)
@@ -34,6 +35,9 @@ export default class Interface {
     window.addEventListener('resize', this.updateWindowSize.bind(this))
     this.setDarkmode(!!localStorage.getItem('darkmode'))
     document.cookie = `darkmode=${this.darkmode.toString()}`
+    window.addEventListener('load', () => {
+      this.loaded = true
+    })
   }
 
   updateWindowSize() {

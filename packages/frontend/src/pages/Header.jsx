@@ -5,11 +5,28 @@ import './header.css'
 import state from '../contexts/state'
 
 export default observer(() => {
-  const { ceremony } = React.useContext(state)
+  const { ceremony, ui } = React.useContext(state)
   return (
     <>
       <div className="header">
         <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            style={{
+              display: ceremony.imageUrl && ui.loaded ? 'block' : 'none',
+              animation:
+                ceremony.imageUrl && ui.loaded
+                  ? '2.0s ease-in-out 0s fadeinfromleft'
+                  : '',
+              marginRight: '4px',
+              borderRadius: '8px',
+            }}
+            role="img"
+            src={ceremony.imageUrl}
+            height="30px"
+            alt="Server defined ceremony display logo"
+            decoding="async"
+            fetchpriority="low"
+          />
           <div
             style={{
               width: '10px',

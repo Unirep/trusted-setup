@@ -43,6 +43,14 @@ export const GITHUB_REDIRECT_URI =
 
 export const WS_SERVER = process.env.WS_SERVER ?? `ws://127.0.0.1:8001`
 
+export const WELCOME_MESSAGE =
+  process.env.WELCOME_MESSAGE ?? 'Welcome to the unirep trusted setup CLI'
+export const CEREMONY_IMAGE_PATH =
+  process.env.CEREMONY_IMAGE_PATH ?? '/static/logo.svg'
+export const ATTESTATION_URL =
+  process.env.ATTESTATION_URL ??
+  'https://github.com/Unirep/trusted-setup/issues/1'
+
 // CIRCUIT CONFIG
 
 const ptauPath = path.join(

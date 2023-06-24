@@ -120,14 +120,16 @@ export default observer(() => {
                       <strong>Thank you for contributing!</strong>
                     </div>
                     <div>
-                      Share this text publicly, perhaps{' '}
-                      <a
-                        href="https://github.com/Unirep/trusted-setup/issues/1"
-                        target="_blank"
-                      >
-                        here
-                      </a>
-                      ?
+                      {ceremony.attestationUrl ? (
+                        <>
+                          Share this test publicly, perhaps{' '}
+                          <a href={ceremony.attestationUrl} target="_blank">
+                            here
+                          </a>
+                        </>
+                      ) : (
+                        'Share this text publicly'
+                      )}
                     </div>
                   </div>
                   <div style={{ flex: 1, minWidth: '4px' }} />
@@ -182,12 +184,11 @@ export default observer(() => {
                 Full transcript
               </a>
               <div style={{ height: '4px' }} />
-              <a
-                href="https://github.com/unirep/trusted-setup/issues/1"
-                target="_blank"
-              >
-                Public attestations
-              </a>
+              {ceremony.attestationUrl ? (
+                <a href={ceremony.attestationUrl} target="_blank">
+                  Public attestations
+                </a>
+              ) : null}
             </div>
           </div>
         </div>

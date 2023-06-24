@@ -14,3 +14,18 @@
   font-weight: bold;
   font-size: 24px;
 }
+
+@keyframes fadeinfromleft {
+  from {
+    opacity: 0%;
+    max-width: 0px;
+  }
+  50% {
+    opacity: 0%;
+    max-width: 40px;
+  }
+  to {
+    opacity: 100%;
+    max-width: 40px;
+  }
+}

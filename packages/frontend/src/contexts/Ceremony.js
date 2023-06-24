@@ -75,12 +75,23 @@ ${hashText}
     return this.ceremonyState?.circuitStats?.map(({ name }) => name) ?? []
   }
 
+  get attestationUrl() {
+    return this.bootstrapData?.attestationUrl
+  }
+
   queueLengthByName(_name) {
     if (!this.ceremonyState) return 0
     const entry = this.ceremonyState.queueLengths.find(
       ({ name }) => name === _name
     )
     return entry?.count ?? 0
+  }
+
+  get imageUrl() {
+    if (!this.HTTP_SERVER) return null
+    const imagePath = this.bootstrapData?.ceremonyImagePath
+    if (!imagePath) return null
+    return new URL(imagePath, this.HTTP_SERVER).toString()
   }
 
   async loadSSR(requestUrl) {

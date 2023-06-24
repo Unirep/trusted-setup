@@ -36,6 +36,7 @@ let wsApp, httpApp
     next()
   })
   app.use(express.json())
+  app.use('/static', express.static(path.join(__dirname, 'static')))
   httpApp = app
 }
 
