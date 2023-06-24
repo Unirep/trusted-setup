@@ -20,6 +20,7 @@ code {
   word-break: break-all;
   border: 1px solid gray;
   padding: 2px;
+  color: black;
 }
 
 .container {

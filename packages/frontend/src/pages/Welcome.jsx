@@ -6,6 +6,9 @@ import './welcome.css'
 const FeatureCell = ({ text, children }) => (
   <div
     style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
       width: '10rem',
       textAlign: 'center',
       border: '1px solid black',
@@ -37,8 +40,7 @@ export default observer(() => {
           </a>
         </FeatureCell>
         <FeatureCell>
-          Websocket/HTTP transports for coordinating participation and moving
-          data.
+          Websocket/HTTP transports for coordinating and moving data.
         </FeatureCell>
       </div>
       <div className="hdivider" />
