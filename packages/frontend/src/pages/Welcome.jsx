@@ -49,10 +49,10 @@ export default observer(() => {
       <div style={{ display: 'flex' }}>
         <div style={{ lineHeight: '1.2' }}>
           This webpage takes a query parameter{' '}
-          <code style={{ display: 'inline' }}>?s=backend.url.com</code> that
-          sends all the necessary information to the client. This includes:
-          circuit names, number of contributions, ceremony name, authentication
-          options, etc. To run your own ceremony follow the instructions{' '}
+          <code style={{ display: 'inline' }}>?s=backend.url.com</code> that is
+          used to load the ceremony information. This includes: circuit names,
+          number of contributions, ceremony name, authentication options, etc.
+          To run your own ceremony follow the instructions{' '}
           <a href="https://github.com/unirep/trusted-setup#readme">here</a> then
           link to this page with the{' '}
           <code style={{ display: 'inline' }}>s</code> query parameter set.
