@@ -33,13 +33,17 @@ export const CONTRIBUTION_TIMEOUT = +(
 )
 export const PRUNE_INTERVAL = +(process.env.PRUNE_INTERVAL ?? 12 * 1000)
 
-export const GITHUB_CLIENT_ID =
-  process.env.GITHUB_CLIENT_ID ?? 'dc1631cd0011caf33a46'
-export const GITHUB_CLIENT_SECRET =
-  process.env.GITHUB_CLIENT_SECRET ?? '8d24cd5eba41ec910cbd3ffd41d17062b4c5b309'
+export const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID
+export const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET
 export const GITHUB_REDIRECT_URI =
   process.env.GITHUB_REDIRECT_URI ??
   'http://localhost:8000/oauth/github/callback'
+
+export const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID
+export const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET
+export const DISCORD_REDIRECT_URI =
+  process.env.DISCORD_REDIRECT_URI ??
+  'http://localhost:8000/oauth/discord/callback'
 
 export const WS_SERVER = process.env.WS_SERVER ?? `ws://127.0.0.1:8001`
 
@@ -69,6 +73,12 @@ export const authOptions = [
     path: '/oauth/github',
   },
   {
+    name: 'discord',
+    displayName: 'Discord',
+    type: 'oauth',
+    path: '/oauth/discord',
+  },
+  {
     name: 'none',
     displayName: 'No auth',
     type: 'none',
@@ -78,6 +88,12 @@ export const authOptions = [
 export const queues = [
   {
     name: 'open',
+  },
+  {
+    name: 'discord',
+    oauthRequire: {
+      type: 'discord',
+    },
   },
   {
     name: 'github-1-year',
