@@ -8,7 +8,10 @@ test.serial('should use multiple queues', async (t) => {
   const _ceremony = new Ceremony()
   await _ceremony.connect()
   const { data: _data } = await _ceremony.client.send('ceremony.state')
-  const queues = _data.queueLengths.slice(0, -1)
+  const queues = _data.queueLengths.filter(
+    ({ name }) =>
+      name !== 'discord' && name !== 'open' && name !== 'github-30-year'
+  )
 
   const perQueue = 2
   const contributors = []
