@@ -65,7 +65,7 @@ export default observer(() => {
       <ul>
         <li>
           <code style={{ display: 'inline' }}>
-            npx trusted-setup https://dev2.http.ceremony.unirep.io
+            npx trusted-setup@0.0.2 https://dev2.http.ceremony.unirep.io
           </code>
         </li>
         <li>
