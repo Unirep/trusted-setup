@@ -1,10 +1,10 @@
+import { catchError } from '../catchError.mjs'
+
 export default ({ app, db, ceremony }) => {
-  app.get('/ceremony', async (req, res) => {
-    try {
+  app.get(
+    '/ceremony',
+    catchError(async (req, res) => {
       res.json(await ceremony.buildState())
-    } catch (err) {
-      console.log(err)
-      res.status(500).end(err)
-    }
-  })
+    })
+  )
 }

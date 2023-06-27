@@ -8,6 +8,7 @@ import multer from 'multer'
 import path from 'path'
 import fs from 'fs/promises'
 import zkeyManager from '../daemons/verifyParallel.mjs'
+import { catchError } from '../catchError.mjs'
 
 const uploadsPath = dbpath('uploads')
 const upload = multer({
@@ -18,8 +19,10 @@ const upload = multer({
 })
 
 export default ({ app, wsApp, db, ceremony }) => {
-  app.post('/contribution', upload.single('contribution'), async (req, res) => {
-    try {
+  app.post(
+    '/contribution',
+    upload.single('contribution'),
+    catchError(async (req, res) => {
       const { token, circuitName } = req.body
       if (!token) return res.status(401).json({ error: 'No token' })
       const auth = await db.findOne('Auth', {
@@ -174,9 +177,6 @@ export default ({ app, wsApp, db, ceremony }) => {
       // })
       // do it async
       ceremony.sendState().catch(console.log)
-    } catch (err) {
-      console.log(err)
-      res.status(500).end(err)
-    }
-  })
+    })
+  )
 }

@@ -1,10 +1,12 @@
 import fs from 'fs/promises'
 import path from 'path'
 import { dbpath, contribpath, circuits } from '../config.mjs'
+import { catchError } from '../catchError.mjs'
 
 export default ({ app, db, ceremony }) => {
-  app.get('/contribution/:id', async (req, res) => {
-    try {
+  app.get(
+    '/contribution/:id',
+    catchError(async (req, res) => {
       const { id } = req.params
       const { token, circuitName } = req.query
       if (!token) return res.status(401).json({ error: 'No token' })
@@ -31,9 +33,6 @@ export default ({ app, db, ceremony }) => {
       const file = await fs.open(path.join(circuitDir, filename))
       const stream = file.createReadStream()
       stream.pipe(res)
-    } catch (err) {
-      console.log(err)
-      res.status(500).end(err)
-    }
-  })
+    })
+  )
 }

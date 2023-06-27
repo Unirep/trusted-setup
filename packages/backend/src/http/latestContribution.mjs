@@ -1,10 +1,12 @@
 import fs from 'fs/promises'
 import path from 'path'
 import { dbpath, contribpath, circuits, normalize } from '../config.mjs'
+import { catchError } from '../catchError.mjs'
 
 export default ({ app, db, ceremony }) => {
-  app.get('/contribution/:circuitName/latest', async (req, res) => {
-    try {
+  app.get(
+    '/contribution/:circuitName/latest',
+    catchError(async (req, res) => {
       const { circuitName } = req.params
       const circuit = circuits.find(({ name }) => name === circuitName)
       if (!circuit) {
@@ -28,9 +30,6 @@ export default ({ app, db, ceremony }) => {
       const file = await fs.open(path.join(circuitDir, filename))
       const stream = file.createReadStream()
       stream.pipe(res)
-    } catch (err) {
-      console.log(err)
-      res.status(500).end(err)
-    }
-  })
+    })
+  )
 }
