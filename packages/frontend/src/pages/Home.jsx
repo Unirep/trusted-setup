@@ -2,10 +2,12 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import './home.css'
+import Header from '../components/Header'
+import Footer from '../components/Footer'
 import Tooltip from '../components/Tooltip'
 import Button from '../components/Button'
 import ContributionTable from '../components/ContributionTable'
-import Header from '../components/Header'
+
 import Welcome from './Welcome'
 
 import state from '../contexts/state'
@@ -195,23 +197,8 @@ export default observer(() => {
           </div>
         </div>
         <ContributionTable />
-        <div style={{ flex: 1 }} />
-        <div
-          style={{
-            alignSelf: 'center',
-            display: 'flex',
-            padding: '8px',
-            alignItems: 'center',
-          }}
-        >
-          <a href="https://appliedzkp.org" target="_blank">
-            <img
-              src={require('../../public/pse_logo.svg')}
-              width="25px"
-              style={{ cursor: 'pointer' }}
-            />
-          </a>
-        </div>
+
+        <Footer />
       </div>
     </>
   )

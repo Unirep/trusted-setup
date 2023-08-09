@@ -1,0 +1,17 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem 4rem;
+}
+
+.footer-link:link {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #f6f6f6;
+  text-decoration: none;
+  margin-right: 4rem;
+}
+
+.footer-link:visited {
+  color: #f6f6f6;
+}
