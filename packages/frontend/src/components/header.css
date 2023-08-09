@@ -1,0 +1,33 @@
+.header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 2rem 4rem 0;
+}
+
+.header-flex {
+  display: flex;
+  align-items: center;
+}
+
+.header-text {
+  font-size: 0.9rem;
+  padding-left: 0.5rem;
+}
+
+.header-button {
+  border: 1px solid #a3ece1;
+  border-radius: 1.5rem;
+  padding: 0.5rem 1rem;
+  margin-left: 3rem;
+}
+
+a:link {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #a3ece1;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #a3ece1;
+}

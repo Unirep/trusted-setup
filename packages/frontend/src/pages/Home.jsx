@@ -5,7 +5,7 @@ import './home.css'
 import Tooltip from '../components/Tooltip'
 import Button from '../components/Button'
 import ContributionTable from '../components/ContributionTable'
-import Header from './Header'
+import Header from '../components/Header'
 import Welcome from './Welcome'
 
 import state from '../contexts/state'
@@ -91,7 +91,7 @@ export default observer(() => {
                 </div>
                 <div style={{ height: '4px' }} />
                 <div>
-                  > This tab <strong>must</strong> remain active for you to stay
+                  This tab <strong>must</strong> remain active for you to stay
                   in the queue!
                 </div>
                 <div style={{ height: '4px' }} />

@@ -1,32 +1,35 @@
 body {
-  font-family: helvetica, sans-serif;
-  /*font-family: 'Azeret Mono';*/
+  font-family: 'Azeret Mono';
   font-weight: 200;
-  max-width: 1000px;
-  margin: auto;
-  margin-top: 0px;
-  margin-bottom: 0px;
+  margin: 0;
+  padding: 0;
+  background-color: #262626;
+  color: #f6f6f6;
 }
 
-#root {
+.bold {
+  font-weight: 600;
+}
+
+/* #root {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-}
+} */
 
-code {
+/* code {
   display: block;
   white-space: pre-wrap;
   word-break: break-all;
   border: 1px solid gray;
   padding: 2px;
   color: black;
-}
+} */
 
-.container {
+/* .container {
   display: flex;
   flex-direction: column;
   flex: 1;
   bottom: 0px;
   margin: 10px 10px 0 10px;
-}
+} */
