@@ -3,203 +3,107 @@ import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import './home.css'
 import Header from '../components/Header'
+import FaqDropdown from '../components/FaqDropdown'
 import Footer from '../components/Footer'
-import Tooltip from '../components/Tooltip'
-import Button from '../components/Button'
-import ContributionTable from '../components/ContributionTable'
-
-import Welcome from './Welcome'
-
-import state from '../contexts/state'
 
 export default observer(() => {
-  const [name, setName] = React.useState('')
-  const { ui, ceremony } = React.useContext(state)
-  if (!ceremony.HTTP_SERVER) {
-    return <Welcome />
-  }
-
   return (
     <>
       <Header />
-      <div className="container">
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            borderTop: '1px solid black',
-            paddingTop: '4px',
-            flexWrap: 'wrap',
-          }}
-        >
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {ceremony.bootstrapData?.ceremonyDescription ? (
-              <div
-                style={{
-                  maxWidth: '300px',
-                  border: '1px solid black',
-                  padding: '4px',
-                  marginBottom: '8px',
-                }}
-              >
-                {ceremony.bootstrapData?.ceremonyDescription}
-              </div>
-            ) : null}
-            {ceremony.loadingInitial ? <div>Loading...</div> : null}
-            {!ceremony.inQueue &&
-            !ceremony.loadingInitial &&
-            !ceremony.contributionHashes ? (
-              <div>
-                <div style={{ marginBottom: '8px' }}>
-                  Join the ceremony by choosing a way to authenticate.
-                </div>
-                <div style={{ display: 'flex' }}>
-                  <input
-                    type="text"
-                    placeholder="contributor name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                  <div style={{ width: '4px' }} />
-                  <Tooltip text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique." />
-                </div>
-                <div style={{ height: '4px' }} />
-                <div style={{ display: 'flex' }}>
-                  {ceremony.bootstrapData?.authOptions?.map((option) => (
-                    <Button
-                      style={{ marginRight: '2px' }}
-                      key={option.name}
-                      onClick={async () => {
-                        if (option.type === 'none') {
-                          await ceremony.join(name, 'open')
-                        } else {
-                          await ceremony.oauth(name, option.path)
-                        }
-                      }}
-                    >
-                      {option.displayName}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-            {!ceremony.isActive && ceremony.inQueue ? (
-              <div>
-                <div>Ceremony</div>
-                <div style={{ height: '4px' }} />
-                <div>
-                  You are currently number {ceremony.queuePosition} in the
-                  queue, please wait until your turn.
-                </div>
-                <div style={{ height: '4px' }} />
-                <div>
-                  This tab <strong>must</strong> remain active for you to stay
-                  in the queue!
-                </div>
-                <div style={{ height: '4px' }} />
-                <div>
-                  Try pulling this tab into it's own window. Don't minimize the
-                  window.
-                </div>
-              </div>
-            ) : null}
-            {ceremony.isActive && ceremony.inQueue ? (
-              <div>
-                <div>It's your turn!</div>
-                <div>Please wait while your machine makes contributions.</div>
-                <div>
-                  {ceremony.contributionUpdates.map((text, i) => (
-                    <div key={i} style={{ fontSize: '10px' }}>
-                      {text}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-            {ceremony.contributionHashes ? (
-              <div style={{ marginTop: '8px' }}>
-                <div style={{ display: 'flex' }}>
-                  <div>
-                    <div>
-                      <strong>Thank you for contributing!</strong>
-                    </div>
-                    <div>
-                      {ceremony.attestationUrl ? (
-                        <>
-                          Share this text publicly, perhaps{' '}
-                          <a href={ceremony.attestationUrl} target="_blank">
-                            here
-                          </a>
-                        </>
-                      ) : (
-                        'Share this text publicly'
-                      )}
-                    </div>
-                  </div>
-                  <div style={{ flex: 1, minWidth: '4px' }} />
-                  <Button
-                    onClick={async () => {
-                      navigator.clipboard.writeText(ceremony.contributionText)
-                      await new Promise((r) => setTimeout(r, 1000))
-                    }}
-                    loadingText="Copied!"
-                  >
-                    Copy
-                  </Button>
-                </div>
-                <div style={{ maxWidth: '400px', overflow: 'scroll' }}>
-                  <code>{ceremony.contributionText}</code>
-                </div>
-              </div>
-            ) : null}
+
+      <div className="hero-bg">
+        <img
+          className="cosmos-1"
+          src={require('../../public/cosmos1.svg')}
+          alt="cosmic image"
+        />
+        <img
+          className="cosmos-2"
+          src={require('../../public/cosmos2.svg')}
+          alt="cosmic image"
+        />
+        <img
+          className="cosmos-3"
+          src={require('../../public/cosmos3.svg')}
+          alt="cosmic image"
+        />
+        <div className="hero-container">
+          <div className="hero-title">THE CELESTIAL CALL</div>
+          <div className="hero-text">
+            The Ceremony is our shared stargazing hour, a symphony of
+            cryptography and purpose. Each contribution a star ignited, knitting
+            together the constellation that unveils our journey.
           </div>
-          <div style={{ marginTop: ui.isMobile ? '8px' : null }}>
-            <div>Ceremony stats</div>
-            <div style={{ height: '4px' }} />
-            {ceremony.ceremonyState.circuitStats?.map((c) => (
-              <div
-                key={c.name}
-                style={{ display: 'flex', marginBottom: '2px' }}
-              >
-                <div>
-                  <strong>{c.name}</strong>: {c.contributionCount} contributions
-                </div>
-                <div style={{ flex: 1 }} />
-                <a
-                  href={new URL(
-                    `/contribution/${c.name}/latest`,
-                    ceremony.HTTP_SERVER
-                  ).toString()}
-                >
-                  <img
-                    style={{ width: '16px', height: '16px' }}
-                    src={require('../../public/download-arrow.png')}
-                    width={16}
-                  />
-                </a>
-              </div>
-            ))}
-            <div style={{ height: '4px' }} />
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <a
-                href={new URL('/transcript', ceremony.HTTP_SERVER).toString()}
-                target="_blank"
-              >
-                Full transcript
-              </a>
-              <div style={{ height: '4px' }} />
-              {ceremony.attestationUrl ? (
-                <a href={ceremony.attestationUrl} target="_blank">
-                  Public attestations
-                </a>
-              ) : null}
-            </div>
+          <div className="hero-text">Do you hear the cosmic call?</div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Link to="/contribute">
+              <div className="hero-button">Open Chapter</div>
+            </Link>
           </div>
         </div>
-        <ContributionTable />
-
-        <Footer />
       </div>
+
+      <div className="info-container">
+        <div className="info-left">
+          <div className="info-stripe"></div>
+          <div className="info-title">What is UniRep ceremony?</div>
+        </div>
+        <div className="info-center">
+          <div className="info-stripe"></div>
+          <div className="info-stripe"></div>
+          <div className="info-stripe"></div>
+          <div className="info-stripe"></div>
+          <div className="info-stripe"></div>
+          <div className="info-stripe"></div>
+          <div className="info-stripe"></div>
+          <div className="info-stripe"></div>
+          <div className="info-stripe"></div>
+          <div className="info-stripe"></div>
+        </div>
+        <div className="info-right">
+          <div className="info-text">
+            UniRep is a Zero-Knowledge Protocol for user data & reputation
+            management. We use pioneering technology to offer a space for
+            developers and users alike to explore the potential of
+            privacy-centered online interactions.
+          </div>
+          <div className="info-text">
+            We are releasing the official version and it’s to generate a
+            structured reference string (SRS) which is needed for the
+            commitments to work. An SRS is secure as long as at least one
+            participant in the ceremony successfully conceals their secret.
+          </div>
+          <div className="info-text">
+            This is a multi-party ceremony: each contributor creates a secret
+            and runs a computation to mix in with previous contributions. Then,
+            the output is made public and passed to the next contributor. To
+            guard against attempts to corrupt the ceremony, participants need an
+            Ethereum address or GitHub account with an established history to
+            participate. The final output of the Ceremony will be included in a
+            future upgrade to help scale the Ethereum network.
+          </div>
+        </div>
+      </div>
+
+      <div className="faq-container">
+        <div className="contribution-heading">Latest contributions</div>
+        <div className="contributions">
+          {/* placeholder for map of ContributionComponents */}
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Link to="/stats">
+            <div className="view-cont-button">View all</div>
+          </Link>
+        </div>
+
+        <div className="faq-heading">FAQ</div>
+        <div className="faq-dropdown">
+          {/* placeholder for FAQ component */}
+          <FaqDropdown />
+        </div>
+      </div>
+
+      <Footer />
     </>
   )
 })

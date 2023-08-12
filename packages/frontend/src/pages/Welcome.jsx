@@ -69,7 +69,7 @@ export default observer(() => {
           </code>
         </li>
         <li>
-          <a href="/?s=dev2.http.ceremony.unirep.io">web link</a>
+          <a href="/contribute/?s=dev2.http.ceremony.unirep.io">web link</a>
         </li>
         <li>Coming soon: immutable web links</li>
       </ul>
@@ -81,15 +81,7 @@ export default observer(() => {
           padding: '8px',
           alignItems: 'center',
         }}
-      >
-        <a href="https://appliedzkp.org" target="_blank">
-          <img
-            src={require('../../public/pse_logo.svg')}
-            width="25px"
-            style={{ cursor: 'pointer' }}
-          />
-        </a>
-      </div>
+      ></div>
     </div>
   )
 })
