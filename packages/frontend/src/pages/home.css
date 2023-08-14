@@ -95,7 +95,7 @@
   margin-bottom: 0.8rem;
 }
 
-.faq-container {
+.bottom-container {
   background: linear-gradient(180deg, #000000 0%, rgba(38, 38, 38, 0.21) 100%);
   text-align: center;
   padding: 6rem;
@@ -122,16 +122,13 @@
   padding: 0.8rem 1.2rem;
 }
 
+.faq-container {
+  margin: 7rem 12rem 3rem;
+  text-align: left;
+}
+
 .faq-heading {
   font-size: 2rem;
   font-weight: 700;
-  margin: 7rem 0 2rem;
-}
-
-.faq-dropdown {
-  width: 80%;
-  height: 20rem;
-  border: 1px solid white;
-  border-radius: 1rem;
-  margin: 2rem 0 3rem 7rem;
+  margin-bottom: 3rem;
 }

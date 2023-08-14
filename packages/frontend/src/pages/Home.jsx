@@ -85,7 +85,7 @@ export default observer(() => {
         </div>
       </div>
 
-      <div className="faq-container">
+      <div className="bottom-container">
         <div className="contribution-heading">Latest contributions</div>
         <div className="contributions">
           {/* placeholder for map of ContributionComponents */}
@@ -96,9 +96,8 @@ export default observer(() => {
           </Link>
         </div>
 
-        <div className="faq-heading">FAQ</div>
-        <div className="faq-dropdown">
-          {/* placeholder for FAQ component */}
+        <div className="faq-container">
+          <div className="faq-heading">FAQ</div>
           <FaqDropdown />
         </div>
       </div>
