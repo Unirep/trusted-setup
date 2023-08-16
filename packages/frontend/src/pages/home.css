@@ -41,7 +41,7 @@
 }
 
 .hero-text {
-  margin: 2rem;
+  margin: 3rem;
 }
 
 .hero-button {
@@ -132,4 +132,20 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 3rem;
+}
+
+@media only screen and (max-width: 800px) {
+  .cosmos-1 {
+    top: 2%;
+    left: 5%;
+  }
+
+  .hero-container {
+    padding: 3rem 0;
+  }
+
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+  }
 }
