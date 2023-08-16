@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import './home.css'
 import Header from '../components/Header'
 import Welcome from './Welcome'
+import ContributionCard from '../components/ContributionCard'
 import FaqDropdown from '../components/FaqDropdown'
 import Footer from '../components/Footer'
 import state from '../contexts/state'
@@ -94,7 +95,16 @@ export default observer(() => {
       <div className="bottom-container">
         <div className="contribution-heading">Latest contributions</div>
         <div className="contributions">
-          {/* placeholder for map of ContributionComponents */}
+          {ceremony.transcript.map((d) => (
+            <ContributionCard
+              key={d._id}
+              index={d.index}
+              name={d.name}
+              hash={d.hash}
+              createdAt={d.createdAt}
+              circuit={d.circuitName}
+            ></ContributionCard>
+          ))}
         </div>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Link to="/stats/?s=dev2.http.ceremony.unirep.io">

@@ -97,21 +97,22 @@
 
 .bottom-container {
   background: linear-gradient(180deg, #000000 0%, rgba(38, 38, 38, 0.21) 100%);
-  text-align: center;
-  padding: 6rem;
+  padding: 8rem 0 5rem;
 }
 
 .contribution-heading {
   font-size: 3rem;
   font-weight: 700;
+  text-align: center;
 }
 
 .contributions {
-  width: 80%;
-  height: 20rem;
-  border: 1px solid white;
-  border-radius: 1rem;
-  margin: 2rem 0 3rem 7rem;
+  width: 100%;
+  display: flex;
+  overflow-x: scroll;
+  scrollbar-color: #a3ece1;
+  scrollbar-width: 0.5em;
+  padding: 3rem 0 3rem;
 }
 
 .view-cont-button {
