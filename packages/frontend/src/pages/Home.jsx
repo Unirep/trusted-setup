@@ -42,7 +42,7 @@ export default observer(() => {
             together the constellation that unveils our journey.
           </div>
           <div className="hero-text">Do you hear the cosmic call?</div>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className="flex-center">
             <Link to="/contribute/?s=dev2.http.ceremony.unirep.io">
               <div className="hero-button">Open Chapter</div>
             </Link>
@@ -106,7 +106,7 @@ export default observer(() => {
             ></ContributionCard>
           ))}
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="flex-center">
           <Link to="/stats/?s=dev2.http.ceremony.unirep.io">
             <div className="view-cont-button">View all</div>
           </Link>
@@ -115,6 +115,9 @@ export default observer(() => {
         <div className="faq-container">
           <div className="faq-heading">FAQ</div>
           <FaqDropdown />
+          <div className="flex-center" style={{ paddingTop: '6rem' }}>
+            <div className="hero-button">back to top</div>
+          </div>
         </div>
       </div>
 

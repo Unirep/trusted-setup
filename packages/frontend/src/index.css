@@ -6,3 +6,8 @@ body {
   background-color: #262626;
   color: #f6f6f6;
 }
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+}
