@@ -2,16 +2,11 @@ import React from 'react'
 import { observer } from 'mobx-react-lite'
 import Tooltip from '../components/Tooltip'
 import Button from '../components/Button'
-import ContributionTable from '../components/ContributionTable'
-import Welcome from './Welcome'
 import state from '../contexts/state'
 
 export default observer(() => {
   const [name, setName] = React.useState('')
   const { ui, ceremony } = React.useContext(state)
-  if (!ceremony.HTTP_SERVER) {
-    return <Welcome />
-  }
 
   return (
     <>
@@ -146,7 +141,7 @@ export default observer(() => {
               </div>
             ) : null}
           </div>
-          <div style={{ marginTop: ui.isMobile ? '8px' : null }}>
+          {/* <div style={{ marginTop: ui.isMobile ? '8px' : null }}>
             <div>Ceremony stats</div>
             <div style={{ height: '4px' }} />
             {ceremony.ceremonyState.circuitStats?.map((c) => (
@@ -181,9 +176,8 @@ export default observer(() => {
                 </a>
               ) : null}
             </div>
-          </div>
+          </div> */}
         </div>
-        <ContributionTable />
       </div>
     </>
   )

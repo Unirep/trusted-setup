@@ -3,10 +3,16 @@ import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import './home.css'
 import Header from '../components/Header'
+import Welcome from './Welcome'
 import FaqDropdown from '../components/FaqDropdown'
 import Footer from '../components/Footer'
+import state from '../contexts/state'
 
 export default observer(() => {
+  const { ui, ceremony } = React.useContext(state)
+  if (!ceremony.HTTP_SERVER) {
+    return <Welcome />
+  }
   return (
     <>
       <Header />
@@ -36,7 +42,7 @@ export default observer(() => {
           </div>
           <div className="hero-text">Do you hear the cosmic call?</div>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Link to="/contribute">
+            <Link to="/contribute/?s=dev2.http.ceremony.unirep.io">
               <div className="hero-button">Open Chapter</div>
             </Link>
           </div>
@@ -91,7 +97,7 @@ export default observer(() => {
           {/* placeholder for map of ContributionComponents */}
         </div>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Link to="/stats">
+          <Link to="/stats/?s=dev2.http.ceremony.unirep.io">
             <div className="view-cont-button">View all</div>
           </Link>
         </div>

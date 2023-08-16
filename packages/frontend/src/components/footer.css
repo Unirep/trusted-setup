@@ -1,7 +1,8 @@
 .footer {
   display: flex;
   justify-content: space-between;
-  padding: 2rem 4rem;
+  align-items: baseline;
+  padding: 2rem 4rem 4rem;
 }
 
 .footer-link:link {

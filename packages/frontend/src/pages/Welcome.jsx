@@ -69,7 +69,7 @@ export default observer(() => {
           </code>
         </li>
         <li>
-          <a href="/contribute/?s=dev2.http.ceremony.unirep.io">web link</a>
+          <a href="/?s=dev2.http.ceremony.unirep.io">web link</a>
         </li>
         <li>Coming soon: immutable web links</li>
       </ul>

@@ -14,15 +14,17 @@ export default observer(() => {
         <div>
           <div className="header-text">
             Server:{' '}
-            <span className="bold">
+            <span style={{ fontWeight: 600 }}>
               {ceremony.connected ? 'Online' : 'Offline'}
             </span>
           </div>
           <div className="header-text">
             Queue:{' '}
-            <span className="bold">
-              {ceremony.queueLength} people are waiting
-            </span>
+            {ceremony.connected ? (
+              <span style={{ fontWeight: 600 }}>
+                {ceremony.queueLength} people waiting
+              </span>
+            ) : null}
           </div>
         </div>
       </div>
@@ -37,9 +39,11 @@ export default observer(() => {
       </div>
 
       <div className="header-flex" style={{ justifyContent: 'flex-end' }}>
-        <Link to="/stats">Stats</Link>
+        <Link to="/stats/?s=dev2.http.ceremony.unirep.io">Stats</Link>
         <div className="header-button">
-          <Link to="/contribute">Contribute</Link>
+          <Link to="/contribute/?s=dev2.http.ceremony.unirep.io">
+            Contribute
+          </Link>
         </div>
       </div>
     </div>
