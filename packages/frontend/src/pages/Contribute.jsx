@@ -1,17 +1,106 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
+import { Link } from 'react-router-dom'
 import Tooltip from '../components/Tooltip'
 import Button from '../components/Button'
 import state from '../contexts/state'
+import './contribute.css'
+
+const ContributeState = {
+  loading: 0,
+  normal: 1,
+  queueing: 2,
+  contributing: 3,
+  finished: 4,
+  error: 5,
+}
 
 export default observer(() => {
   const [name, setName] = React.useState('')
   const { ui, ceremony } = React.useContext(state)
+  const [contributeState, setContributeState] = React.useState(
+    ContributeState.normal
+  )
 
   return (
     <>
-      <div className="container">
-        <div
+      <div className="contribute-container">
+        <div className="contribute-left">
+          <Link to="/">
+            <img
+              src={require('../../public/logo_footer.svg')}
+              alt="unirep ceremony logo"
+            />
+          </Link>
+          {contributeState === ContributeState.loading && (
+            <div className="contribute-main">Loading...</div>
+          )}
+          {contributeState === ContributeState.normal && (
+            <div className="contribute-main">
+              <p>***TODO: server and queue***</p>
+              <p>
+                Beyond digital horizons, a nebulous archway glimmers - UniRep,
+                the path to a realm where privacy's song fills the air.
+              </p>
+              <div className="contribute-field">
+                <input
+                  type="text"
+                  placeholder="Contribute as Anon"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                <Tooltip
+                  style={{ filter: 'invert(100%)' }}
+                  text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique."
+                />
+                <Button
+                  style={{
+                    borderRadius: '24px',
+                    color: 'black',
+                    padding: '12px 24px',
+                    fontWeight: '600',
+                  }}
+                  onClick={async () => await ceremony.join(name, 'open')}
+                >
+                  start contributing
+                </Button>
+              </div>
+              <p>----------------------------------------------------</p>
+              <p>Or contribute with your social profiles</p>
+              <div className="contribute-field">
+                {ceremony.bootstrapData?.authOptions?.map((option) => {
+                  if (option.type !== 'none') {
+                    return (
+                      <Button
+                        style={{
+                          borderRadius: '24px',
+                          color: 'black',
+                          padding: '12px 24px',
+                          fontWeight: '600',
+                        }}
+                        key={option.name}
+                        onClick={async () => {
+                          if (option.type === 'none') {
+                            await ceremony.join(name, 'open')
+                          } else {
+                            await ceremony.oauth(name, option.path)
+                          }
+                        }}
+                      >
+                        {option.displayName}
+                      </Button>
+                    )
+                  }
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="contribute-right">
+          <img src={require('../../public/cosmos1.svg')} />
+        </div>
+
+        {/* <div
           style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -141,43 +230,7 @@ export default observer(() => {
               </div>
             ) : null}
           </div>
-          {/* <div style={{ marginTop: ui.isMobile ? '8px' : null }}>
-            <div>Ceremony stats</div>
-            <div style={{ height: '4px' }} />
-            {ceremony.ceremonyState.circuitStats?.map((c) => (
-              <div
-                key={c.name}
-                style={{ display: 'flex', marginBottom: '2px' }}
-              >
-                <div>
-                  <strong>{c.name}</strong>: {c.contributionCount} contributions
-                </div>
-                <div style={{ flex: 1 }} />
-                <a
-                  href={new URL(
-                    `/contribution/${c.name}/latest`,
-                    ceremony.HTTP_SERVER
-                  ).toString()}
-                ></a>
-              </div>
-            ))}
-            <div style={{ height: '4px' }} />
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <a
-                href={new URL('/transcript', ceremony.HTTP_SERVER).toString()}
-                target="_blank"
-              >
-                Full transcript
-              </a>
-              <div style={{ height: '4px' }} />
-              {ceremony.attestationUrl ? (
-                <a href={ceremony.attestationUrl} target="_blank">
-                  Public attestations
-                </a>
-              ) : null}
-            </div>
-          </div> */}
-        </div>
+        </div> */}
       </div>
     </>
   )
