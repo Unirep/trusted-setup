@@ -48,7 +48,7 @@ export default observer(() => {
           </div>
           <div className="hero-text">Do you hear the cosmic call?</div>
           <div className="flex-center">
-            <Link to="/contribute/?s=dev2.http.ceremony.unirep.io">
+            <Link to="/contribute">
               <div className="hero-button">Open Chapter</div>
             </Link>
           </div>
@@ -112,7 +112,7 @@ export default observer(() => {
           ))}
         </div>
         <div className="flex-center">
-          <Link to="/stats/?s=dev2.http.ceremony.unirep.io">
+          <Link to="/stats">
             <div className="view-cont-button">View all</div>
           </Link>
         </div>
