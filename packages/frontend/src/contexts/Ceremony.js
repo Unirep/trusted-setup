@@ -1,6 +1,7 @@
 import EspecialClient from 'especial/client'
 import { makeAutoObservable, makeObservable, observable } from 'mobx'
 import randomf from 'randomf'
+import { HTTP_SERVER } from '../config'
 
 export default class Queue {
   connection = null
@@ -92,25 +93,18 @@ ${hashText}
   }
 
   get imageUrl() {
-    if (!this.HTTP_SERVER) return null
+    if (!HTTP_SERVER) return null
     const imagePath = this.bootstrapData?.ceremonyImagePath
     if (!imagePath) return null
-    return new URL(imagePath, this.HTTP_SERVER).toString()
+    return new URL(imagePath, HTTP_SERVER).toString()
   }
 
   async loadSSR(requestUrl) {
-    const url = new URL(requestUrl)
-    const HTTP_SERVER = url.searchParams.get('s')
     if (!HTTP_SERVER) {
       this.SSR_DATA = {}
       return
     }
-    if (!HTTP_SERVER.startsWith('http')) {
-      this.HTTP_SERVER = `https://${HTTP_SERVER}`
-    } else {
-      this.HTTP_SERVER = HTTP_SERVER
-    }
-    const backendUrl = new URL(this.HTTP_SERVER)
+    const backendUrl = new URL(HTTP_SERVER)
     if (
       backendUrl.hostname === 'localhost' ||
       backendUrl.hostname === '127.0.0.1'
@@ -135,13 +129,8 @@ ${hashText}
       this[key] = (window.CEREMONY_DATA ?? {})[key]
     }
     const url = new URL(window.location)
-    const HTTP_SERVER = url.searchParams.get('s')
     if (!HTTP_SERVER) {
       return
-    } else if (!HTTP_SERVER.startsWith('http')) {
-      this.HTTP_SERVER = `https://${HTTP_SERVER}`
-    } else {
-      this.HTTP_SERVER = HTTP_SERVER
     }
     if (!this.bootstrapData) {
       await this.bootstrap()
@@ -194,7 +183,7 @@ ${hashText}
   }
 
   async bootstrap() {
-    const url = new URL('/bootstrap', this.HTTP_SERVER)
+    const url = new URL('/bootstrap', HTTP_SERVER)
     const r = await fetch(url.toString())
     if (!r.ok) {
       console.log('error bootstrapping')
@@ -210,7 +199,7 @@ ${hashText}
   }
 
   async loadTranscript() {
-    const url = new URL('/transcript', this.HTTP_SERVER)
+    const url = new URL('/transcript', HTTP_SERVER)
     if (this.transcript.length) {
       url.searchParams.set('afterTimestamp', this.transcript[0].createdAt)
     }
@@ -229,9 +218,9 @@ ${hashText}
   }
 
   async loadStateHttp() {
-    const data = await fetch(
-      new URL('/ceremony', this.HTTP_SERVER).toString()
-    ).then((r) => r.json())
+    const data = await fetch(new URL('/ceremony', HTTP_SERVER).toString()).then(
+      (r) => r.json()
+    )
     this.ingestState(data)
   }
 
@@ -241,11 +230,11 @@ ${hashText}
   }
 
   async oauth(name, path) {
-    const url = new URL(path, this.HTTP_SERVER)
+    const url = new URL(path, HTTP_SERVER)
     url.searchParams.set('token', this.authToken)
     const currentUrl = new URL(window.location.href)
     const dest = new URL('/', currentUrl.origin)
-    dest.searchParams.set('s', currentUrl.searchParams.get('s'))
+    // dest.searchParams.set('s', currentUrl.searchParams.get('s'))
     dest.searchParams.set('joinQueue', 'true')
     dest.searchParams.set('name', name)
     url.searchParams.set('redirectDestination', dest.toString())
@@ -349,7 +338,7 @@ ${hashText}
   }
 
   async downloadContribution(circuitName, id) {
-    const url = new URL(`/contribution/${id}`, this.HTTP_SERVER)
+    const url = new URL(`/contribution/${id}`, HTTP_SERVER)
     url.searchParams.set('circuitName', circuitName)
     url.searchParams.set('token', this.authToken)
     const res = await fetch(url.toString())
@@ -358,7 +347,7 @@ ${hashText}
   }
 
   async uploadContribution(data, circuitName) {
-    const url = new URL(`/contribution`, this.HTTP_SERVER)
+    const url = new URL(`/contribution`, HTTP_SERVER)
     const formData = new FormData()
     formData.append('contribution', new Blob([data]))
     formData.append('token', this.authToken)

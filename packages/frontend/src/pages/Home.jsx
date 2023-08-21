@@ -8,10 +8,11 @@ import ContributionCard from '../components/ContributionCard'
 import FaqDropdown from '../components/FaqDropdown'
 import Footer from '../components/Footer'
 import state from '../contexts/state'
+import { HTTP_SERVER } from '../config'
 
 export default observer(() => {
   const { ui, ceremony } = React.useContext(state)
-  if (!ceremony.HTTP_SERVER) {
+  if (!HTTP_SERVER) {
     return <Welcome />
   }
   return (
@@ -47,7 +48,7 @@ export default observer(() => {
           </div>
           <div className="hero-text">Do you hear the cosmic call?</div>
           <div className="flex-center">
-            <Link to="/contribute/?s=dev2.http.ceremony.unirep.io">
+            <Link to="/contribute">
               <div className="hero-button">Open Chapter</div>
             </Link>
           </div>
@@ -111,7 +112,7 @@ export default observer(() => {
           ))}
         </div>
         <div className="flex-center">
-          <Link to="/stats/?s=dev2.http.ceremony.unirep.io">
+          <Link to="/stats">
             <div className="view-cont-button">View all</div>
           </Link>
         </div>

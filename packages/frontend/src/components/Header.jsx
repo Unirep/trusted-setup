@@ -44,11 +44,9 @@ export default observer(() => {
           </div>
 
           <div className="header-flex" style={{ justifyContent: 'flex-end' }}>
-            <Link to="/stats/?s=dev2.http.ceremony.unirep.io">Stats</Link>
+            <Link to="/stats">Stats</Link>
             <div className="header-button">
-              <Link to="/contribute/?s=dev2.http.ceremony.unirep.io">
-                Contribute
-              </Link>
+              <Link to="/contribute">Contribute</Link>
             </div>
           </div>
         </div>
@@ -81,12 +79,10 @@ export default observer(() => {
               </div>
             </div>
             <div className="link right-align">
-              <Link to="/contribute/?s=dev2.http.ceremony.unirep.io">
-                Contribute
-              </Link>
+              <Link to="/contribute">Contribute</Link>
             </div>
             <div className="link right-align">
-              <Link to="/stats/?s=dev2.http.ceremony.unirep.io">Stats</Link>
+              <Link to="/stats">Stats</Link>
             </div>
           </div>
         </div>
