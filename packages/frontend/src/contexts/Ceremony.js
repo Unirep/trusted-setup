@@ -129,7 +129,7 @@ ${hashText}
       this[key] = (window.CEREMONY_DATA ?? {})[key]
     }
     const url = new URL(window.location)
-    if (!this.HTTP_SERVER) {
+    if (!HTTP_SERVER) {
       return
     }
     if (!this.bootstrapData) {
