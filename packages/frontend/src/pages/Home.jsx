@@ -57,7 +57,7 @@ export default observer(() => {
 
       <div className="info-container">
         <div className="info-left">
-          <div className="info-stripe"></div>
+          {!ui.isMobile ? <div className="info-stripe"></div> : null}
           <div className="info-title">What is UniRep ceremony?</div>
         </div>
         <div className="info-center">
@@ -66,11 +66,15 @@ export default observer(() => {
           <div className="info-stripe"></div>
           <div className="info-stripe"></div>
           <div className="info-stripe"></div>
-          <div className="info-stripe"></div>
-          <div className="info-stripe"></div>
-          <div className="info-stripe"></div>
-          <div className="info-stripe"></div>
-          <div className="info-stripe"></div>
+          {!ui.isMobile ? (
+            <>
+              <div className="info-stripe"></div>
+              <div className="info-stripe"></div>
+              <div className="info-stripe"></div>
+              <div className="info-stripe"></div>
+              <div className="info-stripe"></div>
+            </>
+          ) : null}
         </div>
         <div className="info-right">
           <div className="info-text">
@@ -95,6 +99,13 @@ export default observer(() => {
             future upgrade to help scale the Ethereum network.
           </div>
         </div>
+        {ui.isMobile ? (
+          <div className="info-center">
+            <div className="info-stripe"></div>
+            <div className="info-stripe"></div>
+            <div className="info-stripe"></div>
+          </div>
+        ) : null}
       </div>
 
       <div className="bottom-container">
