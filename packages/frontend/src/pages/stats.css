@@ -49,3 +49,23 @@
     rgba(38, 38, 38, 0.35)
   );
 }
+
+@media only screen and (max-width: 800px) {
+  .stats-container {
+    flex-flow: row wrap;
+    padding: 2rem;
+  }
+
+  .stats-heading {
+    font-size: 3.5rem;
+    font-weight: 600;
+    padding-bottom: 1rem;
+  }
+
+  .stat-item {
+    width: 14rem;
+    height: 5rem;
+    margin: 1rem 3rem;
+    padding-top: 1rem;
+  }
+}
