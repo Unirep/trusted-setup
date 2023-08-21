@@ -8,10 +8,11 @@ import ContributionCard from '../components/ContributionCard'
 import FaqDropdown from '../components/FaqDropdown'
 import Footer from '../components/Footer'
 import state from '../contexts/state'
+import { HTTP_SERVER } from '../config'
 
 export default observer(() => {
   const { ui, ceremony } = React.useContext(state)
-  if (!ceremony.HTTP_SERVER) {
+  if (!HTTP_SERVER) {
     return <Welcome />
   }
   return (

@@ -14,6 +14,7 @@
     "@cloudflare/kv-asset-handler": "^0.2.0",
     "css-minimizer-webpack-plugin": "^5.0.0",
     "dayjs": "^1.11.8",
+    "dotenv-webpack": "^8.0.1",
     "especial": "^0.1.0-beta-3",
     "ethers": "^5.7.2",
     "file-loader": "^6.2.0",
