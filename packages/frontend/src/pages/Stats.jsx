@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite'
 import Header from '../components/Header'
 import ContributionCard from '../components/ContributionCard'
 import Footer from '../components/Footer'
+import { HTTP_SERVER } from '../config'
 import './stats.css'
 
 import state from '../contexts/state'
@@ -18,7 +19,7 @@ export default observer(() => {
           <div className="stats-heading">CEREMONY STATS</div>
           <div className="stats-link">
             <a
-              href={new URL('/transcript', ceremony.HTTP_SERVER).toString()}
+              href={new URL('/transcript', HTTP_SERVER).toString()}
               target="_blank"
             >
               Full transcript
@@ -42,7 +43,7 @@ export default observer(() => {
                 <a
                   href={new URL(
                     `/contribution/${c.name}/latest`,
-                    ceremony.HTTP_SERVER
+                    HTTP_SERVER
                   ).toString()}
                 >
                   <img
