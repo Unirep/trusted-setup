@@ -132,13 +132,15 @@ export default observer(() => {
           <div className="faq-heading">FAQ</div>
           <FaqDropdown />
           <div className="flex-center" style={{ paddingTop: '6rem' }}>
-            <div 
+            <div
               className="hero-button"
-              style={{cursor: 'pointer'}}
-              onClick={() => window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-              })}
+              style={{ cursor: 'pointer' }}
+              onClick={() =>
+                window.scrollTo({
+                  top: 0,
+                  behavior: 'smooth',
+                })
+              }
             >
               back to top
             </div>
