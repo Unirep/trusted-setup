@@ -10,6 +10,10 @@
 .contribute-left {
   flex: 1;
   flex-wrap: wrap;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .contribute-main {

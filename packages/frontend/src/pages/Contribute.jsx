@@ -37,7 +37,28 @@ export default observer(() => {
           )}
           {contributeState === ContributeState.normal && (
             <div className="contribute-main">
-              <p>***TODO: server and queue***</p>
+              <div className="header-flex">
+                <img
+                  src={require('../../public/sparkles.svg')}
+                  alt="blue sparkles"
+                />
+                <div>
+                  <div className="header-text">
+                    Server:{' '}
+                    <span style={{ fontWeight: 600 }}>
+                      {ceremony.connected ? 'Online' : 'Offline'}
+                    </span>
+                  </div>
+                  <div className="header-text">
+                    Queue:{' '}
+                    {ceremony.connected ? (
+                      <span style={{ fontWeight: 600 }}>
+                        {ceremony.queueLength} people waiting
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
               <p>
                 Beyond digital horizons, a nebulous archway glimmers - UniRep,
                 the path to a realm where privacy's song fills the air.
