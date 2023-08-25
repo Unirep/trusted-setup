@@ -7,11 +7,18 @@ export default () => {
 
   return (
     <div className="footer">
-      <img
-        src={require('../../public/logo_footer.svg')}
-        alt="unirep ceremony logo"
-      />
-      <div style={{ display: 'flex' }}>
+      {!ui.isMobile ? (
+        <img
+          src={require('../../public/logo_footer.svg')}
+          alt="unirep ceremony logo"
+        />
+      ) : (
+        <img
+          src={require('../../public/logo_notext.svg')}
+          alt="unirep ceremony logo"
+        />
+      )}
+      <div className="footer-flex">
         {/* need link to report here */}
         <a
           href="https://github.com/Unirep"

@@ -1,0 +1,21 @@
+.card {
+  border: 1px solid #454545;
+  border-radius: 0.5rem;
+  margin: 0.75rem;
+  background-color: #262626;
+}
+
+.card-text {
+  padding: 1rem;
+}
+
+.card-hash {
+  font-size: 0.9rem;
+  padding: 1rem 0;
+}
+
+.card-flex {
+  display: flex;
+  justify-content: space-between;
+  color: #b0b0b0;
+}

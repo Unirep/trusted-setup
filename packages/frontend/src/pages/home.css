@@ -41,7 +41,7 @@
 }
 
 .hero-text {
-  margin: 2rem;
+  margin: 3rem;
 }
 
 .hero-button {
@@ -88,7 +88,7 @@
 }
 
 .info-right {
-  padding: 4rem 5.5rem 4rem 4rem;
+  padding: 4rem 2.5rem;
 }
 
 .info-text {
@@ -97,21 +97,22 @@
 
 .bottom-container {
   background: linear-gradient(180deg, #000000 0%, rgba(38, 38, 38, 0.21) 100%);
-  text-align: center;
-  padding: 6rem;
+  padding: 8rem 0 5rem;
 }
 
 .contribution-heading {
   font-size: 3rem;
   font-weight: 700;
+  text-align: center;
 }
 
 .contributions {
-  width: 80%;
-  height: 20rem;
-  border: 1px solid white;
-  border-radius: 1rem;
-  margin: 2rem 0 3rem 7rem;
+  width: 100%;
+  display: flex;
+  overflow-x: scroll;
+  scrollbar-color: #a3ece1;
+  scrollbar-width: 0.5em;
+  padding: 3rem 0 3rem;
 }
 
 .view-cont-button {
@@ -123,12 +124,84 @@
 }
 
 .faq-container {
-  margin: 7rem 12rem 3rem;
+  margin: 7rem 12rem 7rem;
   text-align: left;
 }
 
 .faq-heading {
-  font-size: 2rem;
+  color: #a3ece1;
+  font-size: 3rem;
   font-weight: 700;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
+}
+
+@media only screen and (max-width: 800px) {
+  .cosmos-1 {
+    top: 2%;
+    left: 5%;
+  }
+
+  .hero-container {
+    padding: 3rem 0 7rem;
+  }
+
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+  }
+
+  .info-container {
+    background-color: #a3ece1;
+    color: #090909;
+    display: block;
+  }
+
+  .info-left {
+    display: block;
+    height: auto;
+    padding-left: 0rem;
+  }
+
+  .info-title {
+    position: relative;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    padding: 5rem 2rem 0.5rem;
+  }
+
+  .info-center {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    padding-left: 0;
+  }
+
+  .info-stripe {
+    width: 100%;
+    height: 0.5rem;
+    border-top: 1.5px solid #454545;
+  }
+
+  .info-right {
+    padding: 2rem 2.5rem 3rem;
+  }
+
+  .contribution-heading {
+    font-size: 2rem;
+    font-weight: 600;
+  }
+
+  .contributions {
+    padding: 5rem 0 3rem;
+  }
+
+  .faq-container {
+    margin: 7rem 2.5rem 0;
+  }
+
+  .faq-heading {
+    font-size: 2rem;
+    font-weight: 600;
+  }
 }

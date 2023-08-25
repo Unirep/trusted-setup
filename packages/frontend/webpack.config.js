@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const Dotenv = require('dotenv-webpack')
 // const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin')
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
@@ -66,6 +67,9 @@ module.exports = (env, argv) => ({
     ],
   },
   plugins: [
+    new Dotenv({
+      systemvars: true,
+    }),
     new HtmlWebpackPlugin({
       template: 'public/index.html',
       filename: 'index.html',
@@ -75,7 +79,6 @@ module.exports = (env, argv) => ({
     // new HtmlWebpackInlineSourcePlugin(),
     new webpack.DefinePlugin({
       NODE_ENV: `'${argv.mode}'` ?? `'development'`,
-      'process.env': {},
       'process.argv': [],
       'process.versions': {},
       'process.versions.node': '"12"',

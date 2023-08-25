@@ -31,3 +31,25 @@ a:link {
 a:visited {
   color: #a3ece1;
 }
+
+@media only screen and (max-width: 800px) {
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem 1rem;
+  }
+
+  .header-text {
+    font-size: 0.7rem;
+    padding-left: 0;
+  }
+
+  .right-align {
+    text-align: right;
+    padding-bottom: 1rem;
+  }
+
+  a:link {
+    font-size: 1.2rem;
+  }
+}

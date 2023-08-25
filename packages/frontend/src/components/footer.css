@@ -1,7 +1,13 @@
 .footer {
   display: flex;
   justify-content: space-between;
-  padding: 2rem 4rem;
+  align-items: baseline;
+  padding: 2rem 4rem 4rem;
+}
+
+.footer-flex {
+  display: flex;
+  flex-direction: row;
 }
 
 .footer-link:link {
@@ -14,4 +20,20 @@
 
 .footer-link:visited {
   color: #f6f6f6;
+}
+
+@media only screen and (max-width: 800px) {
+  .footer {
+    padding: 2rem;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  .footer-flex {
+    flex-direction: column;
+  }
+
+  .footer-link:link {
+    margin: 0.5rem 0;
+  }
 }

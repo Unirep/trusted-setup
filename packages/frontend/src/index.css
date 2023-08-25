@@ -7,29 +7,7 @@ body {
   color: #f6f6f6;
 }
 
-.bold {
-  font-weight: 600;
+.flex-center {
+  display: flex;
+  justify-content: center;
 }
-
-/* #root {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-} */
-
-/* code {
-  display: block;
-  white-space: pre-wrap;
-  word-break: break-all;
-  border: 1px solid gray;
-  padding: 2px;
-  color: black;
-} */
-
-/* .container {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  bottom: 0px;
-  margin: 10px 10px 0 10px;
-} */
