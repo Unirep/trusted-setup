@@ -12,15 +12,34 @@ const ContributeState = {
   queueing: 2,
   contributing: 3,
   finished: 4,
-  error: 5,
 }
 
 export default observer(() => {
   const [name, setName] = React.useState('')
   const { ui, ceremony } = React.useContext(state)
   const [contributeState, setContributeState] = React.useState(
-    ContributeState.normal
+    !ceremony.connected || ceremony.loadingInitial
+      ? ContributeState.loading
+      : ContributeState.normal
   )
+
+  React.useEffect(() => {
+    if (!ceremony.connected) setContributeState(ContributeState.loading)
+    else if (ceremony.loadingInitial)
+      setContributeState(ContributeState.loading)
+    else if (ceremony.inQueue) {
+      if (ceremony.isActive) setContributeState(ContributeState.contributing)
+      else setContributeState(ContributeState.queueing)
+    } else if (ceremony.contributionHashes)
+      setContributeState(ContributeState.finished)
+    else setContributeState(ContributeState.normal)
+  }, [
+    ceremony.connected,
+    ceremony.loadingInitial,
+    ceremony.inQueue,
+    ceremony.contributionHashes,
+    ceremony.isActive,
+  ])
 
   return (
     <>
