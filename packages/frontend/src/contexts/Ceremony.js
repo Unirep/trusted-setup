@@ -233,7 +233,7 @@ ${hashText}
     const url = new URL(path, HTTP_SERVER)
     url.searchParams.set('token', this.authToken)
     const currentUrl = new URL(window.location.href)
-    const dest = new URL('/', currentUrl.origin)
+    const dest = new URL('/contribute', currentUrl.origin)
     // dest.searchParams.set('s', currentUrl.searchParams.get('s'))
     dest.searchParams.set('joinQueue', 'true')
     dest.searchParams.set('name', name)
