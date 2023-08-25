@@ -135,6 +135,39 @@ export default observer(() => {
               </div>
             </div>
           )}
+          {contributeState === ContributeState.queueing && (
+            <div>You are in queue, please wait......</div>
+          )}
+          {contributeState === ContributeState.contributing && (
+            <div>Here should be some dynamic cosmo packages...</div>
+          )}
+          {contributeState === ContributeState.finished && (
+            <div>
+              Thank you for contributing!{' '}
+              {ceremony.attestationUrl ? (
+                <>
+                  Share this text publicly, perhaps{' '}
+                  <a href={ceremony.attestationUrl} target="_blank">
+                    here
+                  </a>
+                </>
+              ) : (
+                'Share this text publicly'
+              )}
+              <Button
+                onClick={async () => {
+                  navigator.clipboard.writeText(ceremony.contributionText)
+                  await new Promise((r) => setTimeout(r, 1000))
+                }}
+                loadingText="Copied!"
+              >
+                Copy
+              </Button>{' '}
+              <div style={{ maxWidth: '400px', overflow: 'scroll' }}>
+                <code>{ceremony.contributionText}</code>
+              </div>
+            </div>
+          )}
         </div>
         <div className="contribute-right">
           <img src={require('../../public/cosmos1.svg')} />
