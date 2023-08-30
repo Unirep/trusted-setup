@@ -1,6 +1,17 @@
-.hero-bg {
+video {
+  object-fit: cover;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* position: relative; */
+  /* background: linear-gradient(rgba(38, 38, 38, 0.35) 43.23%, #000000 99.96%); */
+}
+
+.content {
   position: relative;
-  background: linear-gradient(rgba(38, 38, 38, 0.35) 43.23%, #000000 99.96%);
+  height: 100vh;
 }
 
 .cosmos-1 {
