@@ -127,7 +127,11 @@ export default observer(() => {
                           }
                         }}
                       >
-                        {option.displayName}
+                        <img
+                          src={require(`../../public/${option.displayName.toLowerCase()}.svg`)}
+                          alt=""
+                        />
+                        <span>{option.displayName}</span>
                       </Button>
                     )
                   }
