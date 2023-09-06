@@ -56,7 +56,12 @@ export default observer(() => {
           <div className="hero-text">Do you hear the cosmic call?</div>
           <div className="flex-center">
             <Link to="/contribute">
-              <div className="hero-button">Open Chapter</div>
+              <div className="hero-button">Open Chapter (Interface)</div>
+            </Link>
+          </div>
+          <div className="flex-center">
+            <Link to="/contribute#cli">
+              <div className="hero-button-inverse">Use CLI</div>
             </Link>
           </div>
         </div>

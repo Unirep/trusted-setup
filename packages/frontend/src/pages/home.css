@@ -65,6 +65,13 @@ video {
   padding: 0.8rem 1.2rem;
 }
 
+.hero-button-inverse {
+  border: #a3ece1 1px solid;
+  border-radius: 1.5rem;
+  padding: 0.8rem 1.2rem;
+  margin: 1rem;
+}
+
 .info-container {
   background-color: #a3ece1;
   color: #090909;

@@ -21,6 +21,11 @@
   line-height: 28px;
 }
 
+.interline {
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .contribute-field {
   display: flex;
   width: 100%;
@@ -46,4 +51,11 @@
 
 .contribute-right {
   flex: 1;
+}
+
+.contribute-cli-field {
+  max-width: 590px;
+  border-radius: 0.5rem;
+  border: white 1px solid;
+  padding: 0 1rem;
 }

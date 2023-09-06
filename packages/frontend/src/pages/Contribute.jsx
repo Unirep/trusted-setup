@@ -1,6 +1,6 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import Tooltip from '../components/Tooltip'
 import Button from '../components/Button'
 import state from '../contexts/state'
@@ -17,6 +17,7 @@ const ContributeState = {
 
 export default observer(() => {
   const [name, setName] = React.useState('')
+  const { hash } = useLocation()
   const { ui, ceremony } = React.useContext(state)
   const [contributeState, setContributeState] = React.useState(
     !ceremony.connected || ceremony.loadingInitial
@@ -52,6 +53,7 @@ export default observer(() => {
               alt="unirep ceremony logo"
             />
           </Link>
+
           {contributeState === ContributeState.offline && (
             <div className="contribute-main">
               <b>
@@ -63,12 +65,15 @@ export default observer(() => {
           {contributeState === ContributeState.loading && (
             <div className="contribute-main">Loading...</div>
           )}
-          {contributeState === ContributeState.normal && (
+          {(contributeState === ContributeState.normal ||
+            contributeState === ContributeState.offline) && (
             <div className="contribute-main">
               <div className="header-flex">
                 <img
-                  src={require('../../public/sparkles.svg')}
-                  alt="blue sparkles"
+                  src={require(`../../public/sparkles${
+                    ceremony.connected ? '' : '_red'
+                  }.svg`)}
+                  alt="sparkles"
                 />
                 <div>
                   <div className="header-text">
@@ -91,6 +96,32 @@ export default observer(() => {
                 Beyond digital horizons, a nebulous archway glimmers - UniRep,
                 the path to a realm where privacy's song fills the air.
               </p>
+            </div>
+          )}
+          {contributeState === ContributeState.normal &&
+            hash &&
+            hash === '#cli' && (
+              <div className="contribute-main">
+                <div className="contribute-cli-field">
+                  <h4>Contribute by CLI</h4>
+                  <ul>
+                    <li>
+                      Install{' '}
+                      <a
+                        href="https://github.com/Unirep/trusted-setup"
+                        blank="_"
+                      >
+                        trusted-setup package
+                      </a>
+                    </li>
+                    <li>npx trusted-setup</li>
+                    <li>Use: https://setup.unirep.io (need to update)</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+          {contributeState === ContributeState.normal && hash !== '#cli' && (
+            <div className="contribute-main">
               <div className="contribute-field">
                 <input
                   type="text"
@@ -114,7 +145,9 @@ export default observer(() => {
                   start contributing
                 </Button>
               </div>
-              <p>----------------------------------------------------</p>
+              <p className="interline">
+                ----------------------------------------------------------------------------------
+              </p>
               <p>Or contribute with your social profiles</p>
               <div className="contribute-field">
                 {ceremony.bootstrapData?.authOptions?.map((option) => {
