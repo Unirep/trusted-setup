@@ -12,6 +12,7 @@ const ContributeState = {
   queueing: 2,
   contributing: 3,
   finished: 4,
+  offline: 5,
 }
 
 export default observer(() => {
@@ -24,7 +25,7 @@ export default observer(() => {
   )
 
   React.useEffect(() => {
-    if (!ceremony.connected) setContributeState(ContributeState.loading)
+    if (!ceremony.connected) setContributeState(ContributeState.offline)
     else if (ceremony.loadingInitial)
       setContributeState(ContributeState.loading)
     else if (ceremony.inQueue) {
@@ -51,6 +52,14 @@ export default observer(() => {
               alt="unirep ceremony logo"
             />
           </Link>
+          {contributeState === ContributeState.offline && (
+            <div className="contribute-main">
+              <b>
+                Server is offline at this moment. It's better to come back
+                later.
+              </b>
+            </div>
+          )}
           {contributeState === ContributeState.loading && (
             <div className="contribute-main">Loading...</div>
           )}
