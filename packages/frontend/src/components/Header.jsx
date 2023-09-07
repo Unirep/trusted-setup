@@ -13,8 +13,10 @@ export default observer(() => {
         <div className="header">
           <div className="header-flex">
             <img
-              src={require('../../public/sparkles.svg')}
-              alt="blue sparkles"
+              src={require(`../../public/sparkles${
+                ceremony.connected ? '' : '_red'
+              }.svg`)}
+              alt="sparkles"
             />
             <div>
               <div className="header-text">

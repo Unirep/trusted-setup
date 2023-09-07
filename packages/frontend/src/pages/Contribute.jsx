@@ -47,7 +47,16 @@ export default observer(() => {
     <>
       <div className="contribute-container">
         <div className="contribute-left">
-          <Link to="/">
+          <Link
+            to="/"
+            style={{
+              pointerEvents:
+                contributeState === contributeState.queueing ||
+                contributeState === contributeState.contributing
+                  ? 'none'
+                  : '',
+            }}
+          >
             <img
               src={require('../../public/logo_footer.svg')}
               alt="unirep ceremony logo"
@@ -66,9 +75,11 @@ export default observer(() => {
             <div className="contribute-main">Loading...</div>
           )}
           {(contributeState === ContributeState.normal ||
-            contributeState === ContributeState.offline) && (
+            contributeState === ContributeState.offline ||
+            contributeState === ContributeState.queueing ||
+            contributeState === ContributeState.contributing) && (
             <div className="contribute-main">
-              <div className="header-flex">
+              <div className="header-flex" style={{ margin: '2rem 0 3rem' }}>
                 <img
                   src={require(`../../public/sparkles${
                     ceremony.connected ? '' : '_red'
@@ -182,10 +193,28 @@ export default observer(() => {
             </div>
           )}
           {contributeState === ContributeState.queueing && (
-            <div>You are in queue, please wait......</div>
+            <div className="message-box">
+              <p>
+                <strong>Authenticated.</strong>
+              </p>
+              <p>
+                Please hold until the portal opens, there
+                {ceremony.queueLength > 1
+                  ? `are ${ceremony.queueLength} people `
+                  : `is ${ceremony.queueLength} person `}{' '}
+                waiting ahead of you.
+              </p>
+              <p>You can also leave this window open and come back later.</p>
+            </div>
           )}
           {contributeState === ContributeState.contributing && (
-            <div>Here should be some dynamic cosmo packages...</div>
+            <div className="message-box">
+              <p>
+                <strong>Authenticated.</strong>
+              </p>
+              <p>It's your turn now.</p>
+              <p>Opening portal & cosmos generator...</p>
+            </div>
           )}
           {contributeState === ContributeState.finished && (
             <div>
