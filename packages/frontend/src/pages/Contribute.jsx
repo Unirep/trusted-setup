@@ -51,8 +51,8 @@ export default observer(() => {
             to="/"
             style={{
               pointerEvents:
-                contributeState === contributeState.queueing ||
-                contributeState === contributeState.contributing
+                contributeState === ContributeState.queueing ||
+                contributeState === ContributeState.contributing
                   ? 'none'
                   : '',
             }}
