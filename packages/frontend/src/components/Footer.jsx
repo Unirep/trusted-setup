@@ -21,7 +21,7 @@ export default () => {
       <div className="footer-flex">
         {/* need link to report here */}
         <a
-          href="https://github.com/Unirep"
+          href="https://developer.unirep.io/assets/files/VAR_Unirep-fd2248829d28ad53c4c2a01ef87d9015.pdf"
           target="blank"
           className="footer-link"
         >
