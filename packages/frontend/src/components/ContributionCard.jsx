@@ -3,13 +3,15 @@ import { observer } from 'mobx-react-lite'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import './contributionCard.css'
+import Galaxy from './Galaxy'
 
 dayjs.extend(relativeTime)
 
 export default observer(({ index, name, hash, createdAt, circuit }) => {
   return (
     <div className="card">
-      <img src={require('../../public/galaxy.svg')} alt="galaxy" />
+      {/* <img src={require('../../public/galaxy.svg')} alt="galaxy" /> */}
+      <Galaxy />
       <div className="card-text">
         <div>
           <strong>{name === 'anonymous contributor' ? 'anon' : name}</strong>
