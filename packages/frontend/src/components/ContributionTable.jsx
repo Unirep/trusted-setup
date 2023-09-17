@@ -62,7 +62,7 @@ export default observer(() => {
               <div>{d.index}</div>
               <div style={{ minWidth: '150px' }}>{d.name}</div>
               <div style={{ minWidth: '150px', wordBreak: 'break-all' }}>
-                {d.hash.slice(0, 16)}...
+                {d.hash.slice(0, 1)}...
               </div>
               <div>{dayjs(d.createdAt).format('YYYY-MM-DD HH:mm')}</div>
             </div>

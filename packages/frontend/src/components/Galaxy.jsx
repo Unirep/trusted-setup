@@ -9,16 +9,18 @@ export default observer(() => {
   const [fmm, setFmm] = useState(null)
   const canvasRef = useRef(null)
 
-  const N = 10000
-  const fov = 75
-  const aspect = 1
-  const near = 0.1
-  const far = 5
-  const astronomical_unit = 1e11
+  const N_plummer = 100
+  const N_disk = 200
+  const N_halo = 300
+  const N_bulge = 400
+  const N_spheres = 1
+  const AU = 1e11
 
   useEffect(() => {
     init().then(() => {
-      setFmm(new CosmoSim(N, astronomical_unit, 1e24, 700, 700))
+      setFmm(
+        new CosmoSim(N_plummer, N_disk, N_bulge, N_halo, AU, N_plummer * 1e24)
+      )
     })
   })
 
@@ -28,25 +30,15 @@ export default observer(() => {
     const renderer = new THREE.WebGLRenderer({ antialias: true, canvas })
 
     // const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    let camera = new THREE.PerspectiveCamera(
-      35,
-      aspect,
-      0.01 * astronomical_unit,
-      10000 * astronomical_unit
-    )
-    camera.position.set(0, 0.2 * astronomical_unit, astronomical_unit)
-    camera.position.z = 2
+    let camera = new THREE.PerspectiveCamera(35, 1, 0.01, 10000 * AU)
+    camera.position.set(0, 0, 1.7 * AU)
 
     const scene = new THREE.Scene()
-
-    const boxWidth = 1
-    const boxHeight = 1
-    const boxDepth = 1
-    const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth)
+    let clock = new THREE.Clock()
 
     const particleGeometry = new THREE.BufferGeometry()
-    let positions = fmm.get_position()
-    let mass = new Float32Array(1 * N)
+    let positions = new Float32Array(3 * N_plummer)
+    let mass = new Float32Array(N_plummer).fill(1, 0, N_spheres * N_plummer)
     particleGeometry.setAttribute(
       'position',
       new THREE.BufferAttribute(positions, 3)
@@ -59,27 +51,29 @@ export default observer(() => {
       uniforms: {},
     })
 
-    scene.add(camera)
     const cameraControls = new OrbitControls(camera, renderer.domElement)
     cameraControls.noPan = false
-    var light = new THREE.AmbientLight(0xffffff)
-    scene.add(light)
+
     const particleSystem = new THREE.Points(particleGeometry, particleShader)
+
+    scene.add(camera)
     scene.add(particleSystem)
 
-    const material = new THREE.MeshBasicMaterial({ color: 0x44aa88 }) // greenish blue
-
-    const cube = new THREE.Mesh(geometry, material)
-    scene.add(cube)
-
-    function render(time) {
-      renderer.render(scene, camera)
-      fmm.simulate(50 * time)
+    function render() {
+      var seconds = clock.getDelta()
+      if (seconds > 1) {
+        seconds = 1
+      }
+      const timestep = seconds * 60 * 60 * 24 * 15
+      console.log(`${timestep / 1000} ms`)
+      fmm.simulate(timestep)
       positions = fmm.get_position()
-      // TODO do gpu based update
-      particleGeometry.attributes.position.array = positions
+
+      const buf = new THREE.BufferAttribute(new Float32Array(positions), 3)
+      particleGeometry.setAttribute('position', buf)
       particleGeometry.attributes.position.needsUpdate = true
 
+      renderer.render(scene, camera)
       requestAnimationFrame(render)
     }
     requestAnimationFrame(render)
