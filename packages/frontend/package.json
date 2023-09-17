@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@cloudflare/kv-asset-handler": "^0.2.0",
+    "as-bind": "^0.8.2",
     "css-minimizer-webpack-plugin": "^5.0.0",
     "dayjs": "^1.11.8",
     "dotenv-webpack": "^8.0.1",
@@ -43,6 +44,7 @@
     "react-router-dom": "^6.4.2",
     "snarkjs": "^0.5.0",
     "stream-browserify": "^3.0.0",
+    "wasm": "file:pkg",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.11.1"
