@@ -9,10 +9,10 @@ export default observer(() => {
   const [fmm, setFmm] = useState(null)
   const canvasRef = useRef(null)
 
-  const N_plummer = 100
-  const N_disk = 200
-  const N_halo = 300
-  const N_bulge = 400
+  const N_plummer = 1000
+  const N_disk = 2000
+  const N_halo = 3000
+  const N_bulge = 4000
   const N_spheres = 1
   const AU = 1e11
 
@@ -22,7 +22,7 @@ export default observer(() => {
         new CosmoSim(N_plummer, N_disk, N_bulge, N_halo, AU, N_plummer * 1e24)
       )
     })
-  })
+  }, [])
 
   useEffect(() => {
     if (!fmm) return
