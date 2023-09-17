@@ -10,9 +10,9 @@ export default observer(() => {
   const canvasRef = useRef(null)
 
   const N_plummer = 1000
-  const N_disk = 2000
-  const N_halo = 3000
-  const N_bulge = 4000
+  const N_disk = 200
+  const N_halo = 300
+  const N_bulge = 400
   const N_spheres = 1
   const AU = 1e11
 
