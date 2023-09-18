@@ -1,6 +1,9 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { Link, useLocation } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 import Tooltip from '../components/Tooltip'
 import Button from '../components/Button'
 import state from '../contexts/state'
@@ -17,8 +20,9 @@ const ContributeState = {
 
 export default observer(() => {
   const [name, setName] = React.useState('')
+  const [error, setError] = React.useState('')
   const { hash } = useLocation()
-  const { ui, ceremony } = React.useContext(state)
+  const { ceremony } = React.useContext(state)
   const [contributeState, setContributeState] = React.useState(
     !ceremony.connected || ceremony.loadingInitial
       ? ContributeState.loading
@@ -43,8 +47,17 @@ export default observer(() => {
     ceremony.isActive,
   ])
 
+  React.useEffect(() => {
+    if (error.length > 0) {
+      toast.error('error: ' + error, {
+        onClose: () => setError(''),
+      })
+    }
+  }, [error])
+
   return (
     <>
+      <ToastContainer position="top-center" theme="colored" />
       <div className="contribute-container">
         <div className="contribute-left">
           <Link
@@ -151,7 +164,13 @@ export default observer(() => {
                     padding: '12px 24px',
                     fontWeight: '600',
                   }}
-                  onClick={async () => await ceremony.join(name, 'open')}
+                  onClick={async () => {
+                    try {
+                      await ceremony.join(name, 'open')
+                    } catch (e) {
+                      setError(e)
+                    }
+                  }}
                 >
                   start contributing
                 </Button>
