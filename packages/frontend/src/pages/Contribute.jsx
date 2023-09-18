@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css'
 
 import Tooltip from '../components/Tooltip'
 import Button from '../components/Button'
+import ServerState from '../components/ServerState'
 import state from '../contexts/state'
 import './contribute.css'
 
@@ -21,6 +22,7 @@ const ContributeState = {
 export default observer(() => {
   const [name, setName] = React.useState('')
   const [error, setError] = React.useState('')
+  const [cosmoCanvasReady, setCosmoCanvasReady] = React.useState(false)
   const { hash } = useLocation()
   const { ceremony } = React.useContext(state)
   const [contributeState, setContributeState] = React.useState(
@@ -34,11 +36,13 @@ export default observer(() => {
     else if (ceremony.loadingInitial)
       setContributeState(ContributeState.loading)
     else if (ceremony.inQueue) {
-      if (ceremony.isActive) setContributeState(ContributeState.contributing)
-      else setContributeState(ContributeState.queueing)
-    } else if (ceremony.contributionHashes)
+      if (ceremony.isActive) {
+        setContributeState(ContributeState.contributing)
+        setTimeout(() => setCosmoCanvasReady(true), 1000) // test to wait for 1 sec to setup the cosmo canvas
+      } else setContributeState(ContributeState.queueing)
+    } else if (ceremony.contributionHashes) {
       setContributeState(ContributeState.finished)
-    else setContributeState(ContributeState.normal)
+    } else setContributeState(ContributeState.normal)
   }, [
     ceremony.connected,
     ceremony.loadingInitial,
@@ -75,6 +79,7 @@ export default observer(() => {
               alt="unirep ceremony logo"
             />
           </Link>
+          <ServerState />
 
           {contributeState === ContributeState.offline && (
             <div className="contribute-main">
@@ -92,30 +97,6 @@ export default observer(() => {
             contributeState === ContributeState.queueing ||
             contributeState === ContributeState.contributing) && (
             <div className="contribute-main">
-              <div className="header-flex" style={{ margin: '2rem 0 3rem' }}>
-                <img
-                  src={require(`../../public/sparkles${
-                    ceremony.connected ? '' : '_red'
-                  }.svg`)}
-                  alt="sparkles"
-                />
-                <div>
-                  <div className="header-text">
-                    Server:{' '}
-                    <span style={{ fontWeight: 600 }}>
-                      {ceremony.connected ? 'Online' : 'Offline'}
-                    </span>
-                  </div>
-                  <div className="header-text">
-                    Queue:{' '}
-                    {ceremony.connected ? (
-                      <span style={{ fontWeight: 600 }}>
-                        {ceremony.queueLength} people waiting
-                      </span>
-                    ) : null}
-                  </div>
-                </div>
-              </div>
               <p>
                 Beyond digital horizons, a nebulous archway glimmers - UniRep,
                 the path to a realm where privacy's song fills the air.
@@ -226,15 +207,16 @@ export default observer(() => {
               <p>You can also leave this window open and come back later.</p>
             </div>
           )}
-          {contributeState === ContributeState.contributing && (
-            <div className="message-box">
-              <p>
-                <strong>Authenticated.</strong>
-              </p>
-              <p>It's your turn now.</p>
-              <p>Opening portal & cosmos generator...</p>
-            </div>
-          )}
+          {contributeState === ContributeState.contributing &&
+            !cosmoCanvasReady && (
+              <div className="message-box">
+                <p>
+                  <strong>Authenticated.</strong>
+                </p>
+                <p>It's your turn now.</p>
+                <p>Opening portal & cosmos generator...</p>
+              </div>
+            )}
           {contributeState === ContributeState.finished && (
             <div>
               Thank you for contributing!{' '}
