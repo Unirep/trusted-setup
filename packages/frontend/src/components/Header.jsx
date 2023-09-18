@@ -6,11 +6,26 @@ import './header.css'
 
 import state from '../contexts/state'
 
-export default observer(() => {
-  const { ui, ceremony } = React.useContext(state)
+export default observer(({ logoOnly }) => {
+  const { ui } = React.useContext(state)
   return (
     <>
-      {!ui.isMobile ? (
+      {logoOnly && (
+        <div
+          className="header"
+          style={{ display: 'flex', justifyContent: 'center' }}
+        >
+          <div style={{ textAlign: 'center' }}>
+            <Link to="#">
+              <img
+                src={require('../../public/logo_header.svg')}
+                alt="unirep ceremony logo"
+              />
+            </Link>
+          </div>
+        </div>
+      )}
+      {!logoOnly && !ui.isMobile && (
         <div className="header">
           <ServerState />
 
@@ -30,7 +45,8 @@ export default observer(() => {
             </div>
           </div>
         </div>
-      ) : (
+      )}{' '}
+      {!logoOnly && ui.isMobile && (
         <div className="header">
           <div style={{ paddingTop: '1rem' }}>
             <Link to="/">

@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+import Header from '../components/Header'
 import Tooltip from '../components/Tooltip'
 import Button from '../components/Button'
 import ServerState from '../components/ServerState'
@@ -22,7 +23,7 @@ const ContributeState = {
 export default observer(() => {
   const [name, setName] = React.useState('')
   const [error, setError] = React.useState('')
-  const [cosmoCanvasReady, setCosmoCanvasReady] = React.useState(false)
+  const [cosmoCanvasReady, setCosmoCanvasReady] = React.useState(true)
   const { hash } = useLocation()
   const { ceremony } = React.useContext(state)
   const [contributeState, setContributeState] = React.useState(
@@ -59,197 +60,240 @@ export default observer(() => {
     }
   }, [error])
 
+  React.useEffect(() => {
+    if (cosmoCanvasReady) {
+      const width = window.innerWidth * 0.9
+      const height = window.innerHeight * 0.5
+      console.log('width:', width, 'height:', height)
+
+      const canvas = document.getElementById('cosmo')
+      canvas.width = width
+      canvas.height = height
+
+      const ctx = canvas.getContext('2d')
+      ctx.font = '2rem Azeret Mono'
+      ctx.fillStyle = 'white'
+      ctx.textAlign = 'center'
+      ctx.fillText(
+        "Bhargov's cosmo should be here.",
+        canvas.width / 2,
+        canvas.height / 2
+      )
+    }
+  }, [cosmoCanvasReady])
+
   return (
     <>
       <ToastContainer position="top-center" theme="colored" />
-      <div className="contribute-container">
-        <div className="contribute-left">
-          <Link
-            to="/"
-            style={{
-              pointerEvents:
-                contributeState === ContributeState.queueing ||
-                contributeState === ContributeState.contributing
-                  ? 'none'
-                  : '',
-            }}
-          >
-            <img
-              src={require('../../public/logo_footer.svg')}
-              alt="unirep ceremony logo"
-            />
-          </Link>
-          <ServerState />
 
-          {contributeState === ContributeState.offline && (
-            <div className="contribute-main">
-              <b>
-                Server is offline at this moment. It's better to come back
-                later.
-              </b>
-            </div>
-          )}
-          {contributeState === ContributeState.loading && (
-            <div className="contribute-main">Loading...</div>
-          )}
-          {(contributeState === ContributeState.normal ||
-            contributeState === ContributeState.offline ||
-            contributeState === ContributeState.queueing ||
-            contributeState === ContributeState.contributing) && (
-            <div className="contribute-main">
-              <p>
-                Beyond digital horizons, a nebulous archway glimmers - UniRep,
-                the path to a realm where privacy's song fills the air.
-              </p>
-            </div>
-          )}
-          {contributeState === ContributeState.normal &&
-            hash &&
-            hash === '#cli' && (
+      {!cosmoCanvasReady && (
+        <div className="contribute-container contribute-bg contribute-whole-page">
+          <div className="contribute-left">
+            <Link
+              to="/"
+              style={{
+                pointerEvents:
+                  contributeState === ContributeState.queueing ||
+                  contributeState === ContributeState.contributing
+                    ? 'none'
+                    : '',
+              }}
+            >
+              <img
+                src={require('../../public/logo_footer.svg')}
+                alt="unirep ceremony logo"
+              />
+            </Link>
+            <ServerState />
+
+            {contributeState === ContributeState.offline && (
               <div className="contribute-main">
-                <div className="contribute-cli-field">
-                  <h4>Contribute by CLI</h4>
-                  <ul>
-                    <li>
-                      Install{' '}
-                      <a
-                        href="https://github.com/Unirep/trusted-setup"
-                        blank="_"
-                      >
-                        trusted-setup package
-                      </a>
-                    </li>
-                    <li>npx trusted-setup</li>
-                    <li>Use: https://setup.unirep.io (need to update)</li>
-                  </ul>
+                <b>
+                  Server is offline at this moment. It's better to come back
+                  later.
+                </b>
+              </div>
+            )}
+            {contributeState === ContributeState.loading && (
+              <div className="contribute-main">Loading...</div>
+            )}
+            {(contributeState === ContributeState.normal ||
+              contributeState === ContributeState.offline ||
+              contributeState === ContributeState.queueing ||
+              contributeState === ContributeState.contributing) && (
+              <div className="contribute-main">
+                <p>
+                  Beyond digital horizons, a nebulous archway glimmers - UniRep,
+                  the path to a realm where privacy's song fills the air.
+                </p>
+              </div>
+            )}
+            {contributeState === ContributeState.normal &&
+              hash &&
+              hash === '#cli' && (
+                <div className="contribute-main">
+                  <div className="contribute-cli-field">
+                    <h4>Contribute by CLI</h4>
+                    <ul>
+                      <li>
+                        Install{' '}
+                        <a
+                          href="https://github.com/Unirep/trusted-setup"
+                          blank="_"
+                        >
+                          trusted-setup package
+                        </a>
+                      </li>
+                      <li>npx trusted-setup</li>
+                      <li>Use: https://setup.unirep.io (need to update)</li>
+                    </ul>
+                  </div>
+                </div>
+              )}
+            {contributeState === ContributeState.normal && hash !== '#cli' && (
+              <div className="contribute-main">
+                <div className="contribute-field">
+                  <input
+                    type="text"
+                    placeholder="Contribute as Anon"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                  <Tooltip
+                    style={{ filter: 'invert(100%)' }}
+                    text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique."
+                  />
+                  <Button
+                    style={{
+                      borderRadius: '24px',
+                      color: 'black',
+                      padding: '12px 24px',
+                      fontWeight: '600',
+                    }}
+                    onClick={async () => {
+                      try {
+                        await ceremony.join(name, 'open')
+                      } catch (e) {
+                        setError(e)
+                      }
+                    }}
+                  >
+                    start contributing
+                  </Button>
+                </div>
+                <p className="interline">
+                  ----------------------------------------------------------------------------------
+                </p>
+                <p>Or contribute with your social profiles</p>
+                <div className="contribute-field">
+                  {ceremony.bootstrapData?.authOptions?.map((option) => {
+                    if (option.type !== 'none') {
+                      return (
+                        <Button
+                          style={{
+                            borderRadius: '24px',
+                            color: 'black',
+                            padding: '12px 24px',
+                            fontWeight: '600',
+                          }}
+                          key={option.name}
+                          onClick={async () => {
+                            if (option.type === 'none') {
+                              await ceremony.join(name, 'open')
+                            } else {
+                              await ceremony.oauth(name, option.path)
+                            }
+                          }}
+                        >
+                          <img
+                            src={require(`../../public/${option.displayName.toLowerCase()}.svg`)}
+                            alt=""
+                          />
+                          <span>{option.displayName}</span>
+                        </Button>
+                      )
+                    }
+                  })}
                 </div>
               </div>
             )}
-          {contributeState === ContributeState.normal && hash !== '#cli' && (
-            <div className="contribute-main">
-              <div className="contribute-field">
-                <input
-                  type="text"
-                  placeholder="Contribute as Anon"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <Tooltip
-                  style={{ filter: 'invert(100%)' }}
-                  text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique."
-                />
-                <Button
-                  style={{
-                    borderRadius: '24px',
-                    color: 'black',
-                    padding: '12px 24px',
-                    fontWeight: '600',
-                  }}
-                  onClick={async () => {
-                    try {
-                      await ceremony.join(name, 'open')
-                    } catch (e) {
-                      setError(e)
-                    }
-                  }}
-                >
-                  start contributing
-                </Button>
-              </div>
-              <p className="interline">
-                ----------------------------------------------------------------------------------
-              </p>
-              <p>Or contribute with your social profiles</p>
-              <div className="contribute-field">
-                {ceremony.bootstrapData?.authOptions?.map((option) => {
-                  if (option.type !== 'none') {
-                    return (
-                      <Button
-                        style={{
-                          borderRadius: '24px',
-                          color: 'black',
-                          padding: '12px 24px',
-                          fontWeight: '600',
-                        }}
-                        key={option.name}
-                        onClick={async () => {
-                          if (option.type === 'none') {
-                            await ceremony.join(name, 'open')
-                          } else {
-                            await ceremony.oauth(name, option.path)
-                          }
-                        }}
-                      >
-                        <img
-                          src={require(`../../public/${option.displayName.toLowerCase()}.svg`)}
-                          alt=""
-                        />
-                        <span>{option.displayName}</span>
-                      </Button>
-                    )
-                  }
-                })}
-              </div>
-            </div>
-          )}
-          {contributeState === ContributeState.queueing && (
-            <div className="message-box">
-              <p>
-                <strong>Authenticated.</strong>
-              </p>
-              <p>
-                Please hold until the portal opens, there
-                {ceremony.queueLength > 1
-                  ? `are ${ceremony.queueLength} people `
-                  : `is ${ceremony.queueLength} person `}{' '}
-                waiting ahead of you.
-              </p>
-              <p>You can also leave this window open and come back later.</p>
-            </div>
-          )}
-          {contributeState === ContributeState.contributing &&
-            !cosmoCanvasReady && (
+            {contributeState === ContributeState.queueing && (
               <div className="message-box">
                 <p>
                   <strong>Authenticated.</strong>
                 </p>
-                <p>It's your turn now.</p>
-                <p>Opening portal & cosmos generator...</p>
+                <p>
+                  Please hold until the portal opens, there
+                  {ceremony.queueLength > 1
+                    ? `are ${ceremony.queueLength} people `
+                    : `is ${ceremony.queueLength} person `}{' '}
+                  waiting ahead of you.
+                </p>
+                <p>You can also leave this window open and come back later.</p>
               </div>
             )}
-          {contributeState === ContributeState.finished && (
-            <div>
-              Thank you for contributing!{' '}
-              {ceremony.attestationUrl ? (
-                <>
-                  Share this text publicly, perhaps{' '}
-                  <a href={ceremony.attestationUrl} target="_blank">
-                    here
-                  </a>
-                </>
-              ) : (
-                'Share this text publicly'
+            {contributeState === ContributeState.contributing &&
+              !cosmoCanvasReady && (
+                <div className="message-box">
+                  <p>
+                    <strong>Authenticated.</strong>
+                  </p>
+                  <p>It's your turn now.</p>
+                  <p>Opening portal & cosmos generator...</p>
+                </div>
               )}
-              <Button
-                onClick={async () => {
-                  navigator.clipboard.writeText(ceremony.contributionText)
-                  await new Promise((r) => setTimeout(r, 1000))
-                }}
-                loadingText="Copied!"
-              >
-                Copy
-              </Button>{' '}
-              <div style={{ maxWidth: '400px', overflow: 'scroll' }}>
-                <code>{ceremony.contributionText}</code>
+            {contributeState === ContributeState.finished && (
+              <div>
+                Thank you for contributing!{' '}
+                {ceremony.attestationUrl ? (
+                  <>
+                    Share this text publicly, perhaps{' '}
+                    <a href={ceremony.attestationUrl} target="_blank">
+                      here
+                    </a>
+                  </>
+                ) : (
+                  'Share this text publicly'
+                )}
+                <Button
+                  onClick={async () => {
+                    navigator.clipboard.writeText(ceremony.contributionText)
+                    await new Promise((r) => setTimeout(r, 1000))
+                  }}
+                  loadingText="Copied!"
+                >
+                  Copy
+                </Button>{' '}
+                <div style={{ maxWidth: '400px', overflow: 'scroll' }}>
+                  <code>{ceremony.contributionText}</code>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
+          <div className="contribute-right">
+            <img src={require('../../public/cosmos1.svg')} />
+          </div>
         </div>
-        <div className="contribute-right">
-          <img src={require('../../public/cosmos1.svg')} />
-        </div>
+      )}
+      {cosmoCanvasReady && (
+        <div className="content">
+          <Header logoOnly={true} />
+          <div className="canvas-container">
+            <canvas id="cosmo">Bhargav canvas should be here.</canvas>
+            <p>
+              Unirep Multiverse generator. Drop the force & create your own
+              verse.
+            </p>
+          </div>
 
-        {/* <div
+          <div className="contribute-container" style={{ height: 'auto' }}>
+            <div className="contribute-left">left</div>
+            <div className="contribute-right">right</div>
+          </div>
+        </div>
+      )}
+
+      {/* <div
           style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -380,7 +424,6 @@ export default observer(() => {
             ) : null}
           </div>
         </div> */}
-      </div>
     </>
   )
 })
