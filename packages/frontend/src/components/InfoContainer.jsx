@@ -9,7 +9,10 @@ export default ({ title, texts, button }) => {
     <div className="info-container">
       <div className="info-left">
         {!ui.isMobile ? <div className="info-stripe"></div> : null}
-        <div className="info-title">{title}</div>
+        <div className="info-bottom">
+          <div className="info-title">{title}</div>
+          {button}
+        </div>
       </div>
       <div className="info-center">
         <div className="info-stripe"></div>

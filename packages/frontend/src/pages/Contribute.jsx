@@ -309,6 +309,19 @@ export default observer(() => {
               <InfoContainer
                 title="Post your contribution as Gist"
                 texts={[ceremony.contributionText]}
+                button={
+                  <Button
+                    style={{
+                      borderRadius: '24px',
+                      color: '#a3ece1',
+                      padding: '12px 24px',
+                      fontWeight: '600',
+                      backgroundColor: 'black',
+                    }}
+                  >
+                    Post on Github
+                  </Button>
+                }
               />
             </>
           )}
