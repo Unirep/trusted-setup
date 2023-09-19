@@ -22,7 +22,6 @@
 .contribute-whole-page {
   width: 100vw;
   height: 100vh;
-  justify-content: center;
 }
 
 .contribute-child {
@@ -42,8 +41,8 @@
   gap: 1rem;
 }
 
-.padding-row {
-  padding: 0 5vw;
+.padding {
+  padding: 0 5vw 5vh 5vw;
 }
 
 .contribute-main p {
@@ -108,8 +107,4 @@
 
 .canvas-container p {
   text-align: center;
-}
-
-.contributing-container {
-  display: flex;
 }

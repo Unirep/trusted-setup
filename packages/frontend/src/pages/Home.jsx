@@ -7,6 +7,7 @@ import Welcome from './Welcome'
 import ContributionCard from '../components/ContributionCard'
 import FaqDropdown from '../components/FaqDropdown'
 import Footer from '../components/Footer'
+import InfoContainer from '../components/InfoContainer'
 import state from '../contexts/state'
 import { HTTP_SERVER } from '../config'
 
@@ -67,59 +68,14 @@ export default observer(() => {
         </div>
         {/* </div> */}
 
-        <div className="info-container">
-          <div className="info-left">
-            {!ui.isMobile ? <div className="info-stripe"></div> : null}
-            <div className="info-title">What is UniRep ceremony?</div>
-          </div>
-          <div className="info-center">
-            <div className="info-stripe"></div>
-            <div className="info-stripe"></div>
-            <div className="info-stripe"></div>
-            <div className="info-stripe"></div>
-            <div className="info-stripe"></div>
-            {!ui.isMobile ? (
-              <>
-                <div className="info-stripe"></div>
-                <div className="info-stripe"></div>
-                <div className="info-stripe"></div>
-                <div className="info-stripe"></div>
-                <div className="info-stripe"></div>
-              </>
-            ) : null}
-          </div>
-          <div className="info-right">
-            <div className="info-text">
-              UniRep is a Zero-Knowledge Protocol for user data & reputation
-              management. We use pioneering technology to offer a space for
-              developers and users alike to explore the potential of
-              privacy-centered online interactions.
-            </div>
-            <div className="info-text">
-              We are releasing the official version and it’s to generate a
-              structured reference string (SRS) which is needed for the
-              commitments to work. An SRS is secure as long as at least one
-              participant in the ceremony successfully conceals their secret.
-            </div>
-            <div className="info-text">
-              This is a multi-party ceremony: each contributor creates a secret
-              and runs a computation to mix in with previous contributions.
-              Then, the output is made public and passed to the next
-              contributor. To guard against attempts to corrupt the ceremony,
-              participants need an Ethereum address or GitHub account with an
-              established history to participate. The final output of the
-              Ceremony will be included in a future upgrade to help scale the
-              Ethereum network.
-            </div>
-          </div>
-          {ui.isMobile ? (
-            <div className="info-center">
-              <div className="info-stripe"></div>
-              <div className="info-stripe"></div>
-              <div className="info-stripe"></div>
-            </div>
-          ) : null}
-        </div>
+        <InfoContainer
+          title="What is UniRep ceremony?"
+          texts={[
+            'UniRep is a Zero-Knowledge Protocol for user data & reputation management. We use pioneering technology to offer a space for developers and users alike to explore the potential of privacy-centered online interactions.',
+            'We are releasing the official version and it’s to generate a structured reference string (SRS) which is needed for the commitments to work. An SRS is secure as long as at least one participant in the ceremony successfully conceals their secret.',
+            'This is a multi-party ceremony: each contributor creates a secret and runs a computation to mix in with previous contributions. Then, the output is made public and passed to the next contributor. To guard against attempts to corrupt the ceremony, participants need an Ethereum address or GitHub account with an established history to participate. The final output of the Ceremony will be included in a future upgrade to help scale the Ethereum network.',
+          ]}
+        />
 
         <div className="bottom-container">
           <div className="contribution-heading">Latest contributions</div>

@@ -1,0 +1,41 @@
+.info-container {
+  background-color: #a3ece1;
+  color: #090909;
+  display: grid;
+  grid-template-columns: 35% 25% 40%;
+}
+
+.info-left {
+  display: flex;
+  height: 100%;
+  padding-left: 4rem;
+  position: relative;
+}
+
+.info-title {
+  position: absolute;
+  bottom: 0;
+  font-size: 4rem;
+  font-weight: 700;
+  padding: 4rem 4rem 4rem 2rem;
+}
+
+.info-center {
+  display: flex;
+  height: 100%;
+  padding-left: 2rem;
+}
+
+.info-stripe {
+  width: 2rem;
+  border-left: 1.5px solid #454545;
+}
+
+.info-right {
+  padding: 4rem 2.5rem;
+}
+
+.info-text {
+  margin-bottom: 0.8rem;
+  word-break: break-all;
+}

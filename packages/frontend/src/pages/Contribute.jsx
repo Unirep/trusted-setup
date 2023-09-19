@@ -8,6 +8,7 @@ import Header from '../components/Header'
 import Tooltip from '../components/Tooltip'
 import Button from '../components/Button'
 import ServerState from '../components/ServerState'
+import InfoContainer from '../components/InfoContainer'
 import state from '../contexts/state'
 import './contribute.css'
 
@@ -25,7 +26,7 @@ export default observer(() => {
   const [error, setError] = React.useState('')
   const [cosmoCanvasReady, setCosmoCanvasReady] = React.useState(false)
   const { hash } = useLocation()
-  const { ceremony, ui } = React.useContext(state)
+  const { ceremony } = React.useContext(state)
   const [contributeState, setContributeState] = React.useState(
     !ceremony.connected || ceremony.loadingInitial
       ? ContributeState.loading
@@ -279,11 +280,11 @@ export default observer(() => {
           {contributeState === ContributeState.finished && (
             <>
               <div className="contribute-container" style={{ height: 'auto' }}>
-                <div className="contribute-child padding-row">
+                <div className="contribute-child padding">
                   <h2 className="mint-color">Contribution completed!</h2>
                   Thank you for contributing.
                 </div>
-                <div className="contribute-child padding-row">
+                <div className="contribute-child padding">
                   <p>
                     You can continue to create your verse here or Share & Invite
                     others to contribute.
@@ -305,46 +306,10 @@ export default observer(() => {
                   </Button>
                 </div>
               </div>
-              <div className="info-container">
-                <div className="info-left">
-                  {!ui.isMobile ? <div className="info-stripe"></div> : null}
-                  <div className="info-title">
-                    Post your contribution as Gist
-                  </div>
-                </div>
-                <div className="info-center">
-                  <div className="info-stripe"></div>
-                  <div className="info-stripe"></div>
-                  <div className="info-stripe"></div>
-                  <div className="info-stripe"></div>
-                  <div className="info-stripe"></div>
-                  {!ui.isMobile ? (
-                    <>
-                      <div className="info-stripe"></div>
-                      <div className="info-stripe"></div>
-                      <div className="info-stripe"></div>
-                      <div className="info-stripe"></div>
-                      <div className="info-stripe"></div>
-                    </>
-                  ) : null}
-                </div>
-                <div className="info-right">
-                  <div className="info-text">
-                    Hi, I'm USERID and I have contributed to the ceremony.
-                  </div>
-                  <div className="info-text">
-                    My circuit hashes are as follows:
-                  </div>
-                  <div className="info-text">{ceremony.contributionText}</div>
-                </div>
-                {ui.isMobile ? (
-                  <div className="info-center">
-                    <div className="info-stripe"></div>
-                    <div className="info-stripe"></div>
-                    <div className="info-stripe"></div>
-                  </div>
-                ) : null}
-              </div>
+              <InfoContainer
+                title="Post your contribution as Gist"
+                texts={[ceremony.contributionText]}
+              />
             </>
           )}
         </div>
