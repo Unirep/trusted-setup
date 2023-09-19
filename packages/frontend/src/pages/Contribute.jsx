@@ -23,9 +23,9 @@ const ContributeState = {
 export default observer(() => {
   const [name, setName] = React.useState('')
   const [error, setError] = React.useState('')
-  const [cosmoCanvasReady, setCosmoCanvasReady] = React.useState(true)
+  const [cosmoCanvasReady, setCosmoCanvasReady] = React.useState(false)
   const { hash } = useLocation()
-  const { ceremony } = React.useContext(state)
+  const { ceremony, ui } = React.useContext(state)
   const [contributeState, setContributeState] = React.useState(
     !ceremony.connected || ceremony.loadingInitial
       ? ContributeState.loading
@@ -43,6 +43,7 @@ export default observer(() => {
       } else setContributeState(ContributeState.queueing)
     } else if (ceremony.contributionHashes) {
       setContributeState(ContributeState.finished)
+      setTimeout(() => setCosmoCanvasReady(true), 1000) // test to wait for 1 sec to setup the cosmo canvas
     } else setContributeState(ContributeState.normal)
   }, [
     ceremony.connected,
@@ -64,7 +65,6 @@ export default observer(() => {
     if (cosmoCanvasReady) {
       const width = window.innerWidth * 0.9
       const height = window.innerHeight * 0.5
-      console.log('width:', width, 'height:', height)
 
       const canvas = document.getElementById('cosmo')
       canvas.width = width
@@ -238,33 +238,6 @@ export default observer(() => {
                     <p>Opening portal & cosmos generator...</p>
                   </div>
                 )}
-              {contributeState === ContributeState.finished && (
-                <div>
-                  Thank you for contributing!{' '}
-                  {ceremony.attestationUrl ? (
-                    <>
-                      Share this text publicly, perhaps{' '}
-                      <a href={ceremony.attestationUrl} target="_blank">
-                        here
-                      </a>
-                    </>
-                  ) : (
-                    'Share this text publicly'
-                  )}
-                  <Button
-                    onClick={async () => {
-                      navigator.clipboard.writeText(ceremony.contributionText)
-                      await new Promise((r) => setTimeout(r, 1000))
-                    }}
-                    loadingText="Copied!"
-                  >
-                    Copy
-                  </Button>{' '}
-                  <div style={{ maxWidth: '400px', overflow: 'scroll' }}>
-                    <code>{ceremony.contributionText}</code>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
           <div className="contribute-child">
@@ -283,23 +256,97 @@ export default observer(() => {
             </p>
           </div>
 
-          <div className="contribute-container" style={{ height: 'auto' }}>
-            <div className="contribute-child padding-row">
-              <h2>
-                {contributeState === ContributeState.contributing
-                  ? 'Contribution in progress'
-                  : 'Contribution completed!'}
-              </h2>
-              {contributeState === ContributeState.contributing
-                ? 'Please stay put while your machine makes contributions.'
-                : 'Thank you for contributing.'}
+          {contributeState === ContributeState.contributing && (
+            <div className="contribute-container" style={{ height: 'auto' }}>
+              <div className="contribute-child padding-row">
+                <h2>Contribution in progress</h2>
+                Please stay put while your machine makes contributions.
+              </div>
+              <div className="contribute-child padding-row">
+                {contributeState === ContributeState.contributing && (
+                  <p>
+                    {ceremony.contributionUpdates.map((text, i) => (
+                      <div key={i} style={{ fontSize: '10px' }}>
+                        {text}
+                      </div>
+                    ))}
+                  </p>
+                )}
+              </div>
             </div>
-            <div className="contribute-child padding-row">
-              {contributeState === ContributeState.contributing
-                ? ''
-                : 'You can continue to create your verse here or Share & Invite others to contribute.'}
-            </div>
-          </div>
+          )}
+
+          {contributeState === ContributeState.finished && (
+            <>
+              <div className="contribute-container" style={{ height: 'auto' }}>
+                <div className="contribute-child padding-row">
+                  <h2 className="mint-color">Contribution completed!</h2>
+                  Thank you for contributing.
+                </div>
+                <div className="contribute-child padding-row">
+                  <p>
+                    You can continue to create your verse here or Share & Invite
+                    others to contribute.
+                  </p>
+                  <Button
+                    style={{
+                      borderRadius: '24px',
+                      color: 'black',
+                      padding: '12px 24px',
+                      fontWeight: '600',
+                    }}
+                    onClick={async () => {
+                      navigator.clipboard.writeText(ceremony.contributionText)
+                      await new Promise((r) => setTimeout(r, 1000))
+                    }}
+                    loadingText="Copied!"
+                  >
+                    Share on Twitter
+                  </Button>
+                </div>
+              </div>
+              <div className="info-container">
+                <div className="info-left">
+                  {!ui.isMobile ? <div className="info-stripe"></div> : null}
+                  <div className="info-title">
+                    Post your contribution as Gist
+                  </div>
+                </div>
+                <div className="info-center">
+                  <div className="info-stripe"></div>
+                  <div className="info-stripe"></div>
+                  <div className="info-stripe"></div>
+                  <div className="info-stripe"></div>
+                  <div className="info-stripe"></div>
+                  {!ui.isMobile ? (
+                    <>
+                      <div className="info-stripe"></div>
+                      <div className="info-stripe"></div>
+                      <div className="info-stripe"></div>
+                      <div className="info-stripe"></div>
+                      <div className="info-stripe"></div>
+                    </>
+                  ) : null}
+                </div>
+                <div className="info-right">
+                  <div className="info-text">
+                    Hi, I'm USERID and I have contributed to the ceremony.
+                  </div>
+                  <div className="info-text">
+                    My circuit hashes are as follows:
+                  </div>
+                  <div className="info-text">{ceremony.contributionText}</div>
+                </div>
+                {ui.isMobile ? (
+                  <div className="info-center">
+                    <div className="info-stripe"></div>
+                    <div className="info-stripe"></div>
+                    <div className="info-stripe"></div>
+                  </div>
+                ) : null}
+              </div>
+            </>
+          )}
         </div>
       )}
 

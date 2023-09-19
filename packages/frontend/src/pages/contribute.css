@@ -1,12 +1,14 @@
 .contribute-container {
   display: flex;
   align-items: center;
-  justify-content: center;
-  /* padding: 0 5vw; */
 }
 
 .contribute-container h2 {
   margin: 0.5rem 0;
+}
+
+.mint-color {
+  color: #a3ece1;
 }
 
 .contribute-bg {
@@ -20,6 +22,7 @@
 .contribute-whole-page {
   width: 100vw;
   height: 100vh;
+  justify-content: center;
 }
 
 .contribute-child {
