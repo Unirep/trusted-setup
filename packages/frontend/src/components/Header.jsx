@@ -16,7 +16,7 @@ export default observer(({ logoOnly }) => {
           style={{ display: 'flex', justifyContent: 'center' }}
         >
           <div style={{ textAlign: 'center' }}>
-            <Link to="#">
+            <Link to="/">
               <img
                 src={require('../../public/logo_header.svg')}
                 alt="unirep ceremony logo"
