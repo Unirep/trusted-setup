@@ -83,6 +83,20 @@ export default observer(() => {
     }
   }, [cosmoCanvasReady])
 
+  const splitContributionText = () => {
+    const circuitKeys = ceremony.contributionHashes
+      ? Object.entries(ceremony.contributionHashes).map(
+          ([circuit, hash]) => `${circuit}:\n${hash}`
+        )
+      : []
+
+    return [
+      "Hey, I'm {userId} and I have contributed to the UniRep ceremony.",
+      'My circuit hashes are as follows:',
+      ...circuitKeys,
+    ]
+  }
+
   return (
     <>
       <ToastContainer position="top-center" theme="colored" />
@@ -308,7 +322,7 @@ export default observer(() => {
               </div>
               <InfoContainer
                 title="Post your contribution as Gist"
-                texts={[ceremony.contributionText]}
+                texts={splitContributionText()}
                 button={
                   <Button
                     style={{
