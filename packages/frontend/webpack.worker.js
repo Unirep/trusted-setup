@@ -1,6 +1,7 @@
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
 
 module.exports = (env, argv) => ({
@@ -67,6 +68,12 @@ module.exports = (env, argv) => ({
     }),
     new webpack.DefinePlugin({
       NODE_ENV: `'${argv.mode}'` ?? `'development'`,
+    }),
+    new HtmlWebpackPlugin({
+      template: 'public/index.html',
+      filename: 'index.html',
+      inlineSource: '.(js|css)',
+      favicon: 'public/favicon.ico',
     }),
   ],
   optimization: {
