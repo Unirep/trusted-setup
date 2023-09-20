@@ -1,6 +1,5 @@
 .contribute-container {
   display: flex;
-  align-items: center;
 }
 
 .contribute-container h2 {
@@ -22,6 +21,7 @@
 .contribute-whole-page {
   width: 100vw;
   height: 100vh;
+  align-items: center;
 }
 
 .contribute-child {

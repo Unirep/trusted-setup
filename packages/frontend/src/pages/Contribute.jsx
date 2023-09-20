@@ -273,17 +273,15 @@ export default observer(() => {
 
           {contributeState === ContributeState.contributing && (
             <div className="contribute-container" style={{ height: 'auto' }}>
-              <div className="contribute-child padding-row">
+              <div className="contribute-child padding">
                 <h2>Contribution in progress</h2>
                 Please stay put while your machine makes contributions.
               </div>
-              <div className="contribute-child padding-row">
+              <div className="contribute-child padding">
                 {contributeState === ContributeState.contributing && (
                   <p>
                     {ceremony.contributionUpdates.map((text, i) => (
-                      <div key={i} style={{ fontSize: '10px' }}>
-                        {text}
-                      </div>
+                      <div key={i}>{text}</div>
                     ))}
                   </p>
                 )}
