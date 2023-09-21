@@ -39,9 +39,15 @@ a:visited {
     padding: 2rem 1rem;
   }
 
-  .header-text {
-    font-size: 0.7rem;
-    padding-left: 0;
+  .menu {
+    padding-top: 2.5rem;
+  }
+
+  .drop {
+    padding: 1rem 1rem 0 0;
+    position: absolute;
+    left: 63%;
+    z-index: 1;
   }
 
   .right-align {

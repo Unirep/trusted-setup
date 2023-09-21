@@ -7,30 +7,30 @@ export default observer(() => {
 
   return (
     <div className="header-flex">
-      {!ui.isMobile && (
-        <img
-          src={require(`../../public/sparkles${
-            ceremony.connected ? '' : '_red'
-          }.svg`)}
-          alt="sparkles"
-        />
-      )}
-      <div>
-        <div className="header-text">
-          Server:{' '}
-          <span style={{ fontWeight: 600 }}>
-            {ceremony.connected ? 'Online' : 'Offline'}
-          </span>
-        </div>
-        <div className="header-text">
-          Queue:{' '}
-          {ceremony.connected ? (
+      <img
+        src={require(`../../public/sparkles${
+          ceremony.connected ? '' : '_red'
+        }.svg`)}
+        alt="sparkles"
+      />
+      {!ui.isMobile ? (
+        <div>
+          <div className="header-text">
+            Server:{' '}
             <span style={{ fontWeight: 600 }}>
-              {ceremony.queueLength} people waiting
+              {ceremony.connected ? 'Online' : 'Offline'}
             </span>
-          ) : null}
+          </div>
+          <div className="header-text">
+            Queue:{' '}
+            {ceremony.connected ? (
+              <span style={{ fontWeight: 600 }}>
+                {ceremony.queueLength} people waiting
+              </span>
+            ) : null}
+          </div>
         </div>
-      </div>
+      ) : null}
     </div>
   )
 })

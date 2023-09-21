@@ -25,25 +25,6 @@ export default observer(() => {
           type="video/mp4"
         />
       </video>
-      {/* <img
-          className="cosmos-1"
-          src={require('../../public/cosmos1.svg')}
-          alt="cosmic image"
-        />
-        {!ui.isMobile ? (
-          <>
-            <img
-              className="cosmos-2"
-              src={require('../../public/cosmos2.svg')}
-              alt="cosmic image"
-            />
-            <img
-              className="cosmos-3"
-              src={require('../../public/cosmos3.svg')}
-              alt="cosmic image"
-            />
-          </>
-        ) : null} */}
       <div className="content">
         <Header />
 
