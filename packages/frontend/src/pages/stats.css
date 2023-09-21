@@ -39,9 +39,10 @@
 .contribution-container {
   width: 100%;
   display: flex;
-  overflow-x: scroll;
-  scrollbar-color: #a3ece1;
-  scrollbar-width: 0.5em;
+  justify-content: space-around;
+  /* overflow-x: scroll; */
+  /* scrollbar-color: #a3ece1; */
+  /* scrollbar-width: 0.5em; */
   padding-bottom: 8rem;
   background: linear-gradient(
     rgba(38, 38, 38, 0.35),
@@ -51,8 +52,6 @@
 }
 
 .circuit {
-  width: 25%;
-  padding: 0 5rem 0 4rem;
 }
 
 .choose-circuit {
@@ -62,7 +61,6 @@
 }
 
 .contribution-table {
-  width: 60%;
 }
 
 @media only screen and (max-width: 800px) {
@@ -90,11 +88,10 @@
   }
 
   .circuit {
-    width: 70%;
-    padding: 0;
+    margin: 2rem;
   }
 
   .contribution-table {
-    width: 85%;
+    margin: 1rem;
   }
 }

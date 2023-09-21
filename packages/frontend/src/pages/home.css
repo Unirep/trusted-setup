@@ -75,6 +75,9 @@ video {
 .bottom-container {
   background: linear-gradient(180deg, #000000 0%, rgba(38, 38, 38, 0.21) 100%);
   padding: 8rem 0 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .contribution-heading {
@@ -84,13 +87,19 @@ video {
 }
 
 .contributions {
+  width: 60%;
+  padding: 3rem 0;
+}
+
+/* for old cards with image */
+/* .contributions {
   width: 100%;
   display: flex;
   overflow-x: scroll;
   scrollbar-color: #a3ece1;
   scrollbar-width: 0.5em;
   padding: 3rem 0 3rem;
-}
+} */
 
 .view-cont-button {
   color: #f6f6f6;
@@ -127,50 +136,13 @@ video {
     font-weight: 700;
   }
 
-  .info-container {
-    background-color: #a3ece1;
-    color: #090909;
-    display: block;
-  }
-
-  .info-left {
-    display: block;
-    height: auto;
-    padding-left: 0rem;
-  }
-
-  .info-title {
-    position: relative;
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 600;
-    padding: 5rem 2rem 0.5rem;
-  }
-
-  .info-center {
-    display: flex;
-    flex-direction: column;
-    height: auto;
-    padding-left: 0;
-  }
-
-  .info-stripe {
-    width: 100%;
-    height: 0.5rem;
-    border-top: 1.5px solid #454545;
-  }
-
-  .info-right {
-    padding: 2rem 2.5rem 3rem;
-  }
-
   .contribution-heading {
     font-size: 2rem;
     font-weight: 600;
   }
 
   .contributions {
-    padding: 5rem 0 3rem;
+    width: 80%;
   }
 
   .faq-container {

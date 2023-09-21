@@ -61,7 +61,7 @@ export default observer(() => {
         <div className="bottom-container">
           <div className="contribution-heading">Latest contributions</div>
           <div className="contributions">
-            {ceremony.transcript.map((d) => (
+            {ceremony.transcript.slice(0, 5).map((d) => (
               <ContributionCard
                 key={d._id}
                 index={d.index}
