@@ -8,20 +8,29 @@ export default ({ title, texts, button }) => {
   return (
     <div className="info-container">
       <div className="info-left">
-        {!ui.isMobile ? <div className="info-stripe"></div> : null}
-        <div className="info-bottom">
-          <div className="info-title">{title}</div>
-          {button}
-        </div>
+        {!ui.isMobile ? (
+          <>
+            <div className="info-stripe"></div>
+            <div className="info-bottom">
+              <div className="info-title">{title}</div>
+              {button}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="info-title">{title}</div>
+            <div className="info-post-button">{button}</div>
+          </>
+        )}
       </div>
       <div className="info-center">
         <div className="info-stripe"></div>
         <div className="info-stripe"></div>
         <div className="info-stripe"></div>
-        <div className="info-stripe"></div>
-        <div className="info-stripe"></div>
         {!ui.isMobile ? (
           <>
+            <div className="info-stripe"></div>
+            <div className="info-stripe"></div>
             <div className="info-stripe"></div>
             <div className="info-stripe"></div>
             <div className="info-stripe"></div>
