@@ -50,6 +50,21 @@
   );
 }
 
+.circuit {
+  width: 25%;
+  padding: 0 5rem 0 4rem;
+}
+
+.choose-circuit {
+  background-color: #ecf7f8;
+  border-radius: 0.5rem;
+  color: black;
+}
+
+.contribution-table {
+  width: 60%;
+}
+
 @media only screen and (max-width: 800px) {
   .stats-container {
     flex-flow: row wrap;
@@ -67,5 +82,19 @@
     height: 5rem;
     margin: 1rem 3rem;
     padding-top: 1rem;
+  }
+
+  .contribution-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .circuit {
+    width: 70%;
+    padding: 0;
+  }
+
+  .contribution-table {
+    width: 85%;
   }
 }

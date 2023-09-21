@@ -58,7 +58,8 @@ export default observer(() => {
       </div>
 
       <div className="contribution-container">
-        {ceremony.transcript.map((d) => (
+        {/* old style displaying cards with cosmos images */}
+        {/* {ceremony.transcript.map((d) => (
           <ContributionCard
             key={d._id}
             index={d.index}
@@ -67,7 +68,25 @@ export default observer(() => {
             createdAt={d.createdAt}
             circuit={d.circuitName}
           ></ContributionCard>
-        ))}
+        ))} */}
+
+        <div className="circuit">
+          <div>View contributions by</div>
+          <div className="choose-circuit">Sign Up Circuit</div>
+        </div>
+
+        <div className="contribution-table">
+          {ceremony.transcript.map((d) => (
+            <ContributionCard
+              key={d._id}
+              index={d.index}
+              name={d.name}
+              hash={d.hash}
+              createdAt={d.createdAt}
+              circuit={d.circuitName}
+            ></ContributionCard>
+          ))}
+        </div>
       </div>
 
       <Footer />
