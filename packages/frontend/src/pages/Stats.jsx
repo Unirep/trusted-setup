@@ -81,7 +81,7 @@ export default observer(() => {
 
         <div className="circuit">
           <div>Contributions</div>
-          <div className="view">view by:</div>
+          <div className="view">view by circuit:</div>
           <div className="circuit-select">
             <select
               onChange={(e) => setActiveCircuit(e.target.value)}
