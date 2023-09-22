@@ -52,15 +52,58 @@
 }
 
 .circuit {
+  width: 20%;
+  font-size: 2rem;
+  font-weight: 700;
 }
 
-.choose-circuit {
-  background-color: #ecf7f8;
-  border-radius: 0.5rem;
-  color: black;
+.view {
+  font-size: 1rem;
+  font-weight: 200;
+  padding-bottom: 1rem;
+}
+
+select {
+  appearance: none;
+  background-color: transparent;
+  border: none;
+  padding: 0 1em 0 0;
+  margin: 0;
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: inherit;
+  line-height: inherit;
+  outline: none;
+  grid-area: select;
+}
+
+.circuit-select {
+  display: grid;
+  grid-template-areas: 'select';
+  align-items: center;
+  width: 100%;
+  min-width: 15ch;
+  max-width: 30ch;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #a3ece1;
+}
+
+.circuit-select::after {
+  content: '';
+  width: 0.8em;
+  height: 0.5em;
+  background-color: black;
+  clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+  grid-area: select;
+  justify-self: end;
 }
 
 .contribution-table {
+  width: 60%;
 }
 
 @media only screen and (max-width: 800px) {
@@ -88,10 +131,12 @@
   }
 
   .circuit {
+    width: 70%;
     margin: 2rem;
   }
 
   .contribution-table {
+    width: 80%;
     margin: 1rem;
   }
 }

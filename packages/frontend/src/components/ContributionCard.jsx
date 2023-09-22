@@ -7,7 +7,7 @@ import state from '../contexts/state'
 
 dayjs.extend(relativeTime)
 
-export default observer(({ index, name, hash, createdAt, circuit }) => {
+export default observer(({ index, name, hash, createdAt }) => {
   const { ui } = useContext(state)
   return (
     <div className="card">
@@ -17,7 +17,12 @@ export default observer(({ index, name, hash, createdAt, circuit }) => {
             <strong>{index}</strong>
           </div>
           <div>
-            <strong>{name === 'anonymous contributor' ? 'anon' : name}</strong>
+            <strong>
+              {name === 'anonymous contributor' ||
+              name === 'anonymous cli contributor'
+                ? 'anon'
+                : name.slice(0, 10)}
+            </strong>
           </div>
         </div>
         <div className="card-hash">{hash.slice(0, 20)}...</div>
