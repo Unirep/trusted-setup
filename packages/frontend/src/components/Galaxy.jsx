@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useEffect, useState, useRef } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import init, { CosmoSim } from 'wasm'
+import init, { CosmoSim } from '../../wasm/rust_ffm'
 
 export default observer(() => {
   const [fmm, setFmm] = useState(null)
