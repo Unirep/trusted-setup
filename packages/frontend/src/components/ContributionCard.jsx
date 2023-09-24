@@ -3,7 +3,6 @@ import { observer } from 'mobx-react-lite'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import './contributionCard.css'
-import Galaxy from './Galaxy'
 
 dayjs.extend(relativeTime)
 
