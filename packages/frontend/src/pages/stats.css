@@ -106,6 +106,13 @@ select {
   width: 60%;
 }
 
+.table-heading {
+  display: grid;
+  grid-template-columns: 40% 40% 20%;
+  padding: 1rem 2rem 0.5rem 2.5rem;
+  color: #a3ece1;
+}
+
 @media only screen and (max-width: 800px) {
   .stats-container {
     flex-flow: row wrap;

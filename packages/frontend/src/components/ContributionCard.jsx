@@ -13,15 +13,13 @@ export default observer(({ index, name, hash, createdAt }) => {
     <div className="card">
       <div className="card-text">
         <div className="card-mobile">
-          <div>
-            <strong>{index}</strong>
-          </div>
+          <div className="card-index">{index}</div>
           <div>
             <strong>
               {name === 'anonymous contributor' ||
               name === 'anonymous cli contributor'
                 ? 'anon'
-                : name.slice(0, 10)}
+                : name.slice(0, 12)}
             </strong>
           </div>
         </div>

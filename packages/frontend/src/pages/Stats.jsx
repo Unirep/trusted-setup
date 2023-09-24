@@ -95,6 +95,14 @@ export default observer(() => {
         </div>
 
         <div className="contribution-table">
+          <div className="table-heading">
+            <div style={{ display: 'flex' }}>
+              <div style={{ width: '5rem' }}>index</div>
+              <div>name</div>
+            </div>
+            <div>hash</div>
+            <div>age</div>
+          </div>
           {ceremony.transcript
             .filter((d) => d.circuitName === activeCircuit)
             .map((d) => (
