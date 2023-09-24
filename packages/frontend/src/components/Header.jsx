@@ -2,21 +2,14 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import ServerState from './ServerState'
+import Menu from './Menu'
 import './header.css'
 
 import state from '../contexts/state'
 
 export default observer(({ logoOnly }) => {
   const { ui } = React.useContext(state)
-  const [showDropdown, setShowDropdown] = useState(false)
-
-  const toggleDropdown = () => {
-    if (showDropdown) {
-      setShowDropdown(false)
-    } else {
-      setShowDropdown(true)
-    }
-  }
+  const [isMenuOpened, setIsMenuOpened] = useState(false)
 
   return (
     <>
@@ -58,7 +51,12 @@ export default observer(({ logoOnly }) => {
       )}{' '}
       {!logoOnly && ui.isMobile && (
         <div className="header">
-          <ServerState />
+          <div
+            style={{ marginTop: '2.5rem' }}
+            onClick={() => setIsMenuOpened(true)}
+          >
+            <ServerState />
+          </div>
 
           <div style={{ paddingTop: '1rem' }}>
             <Link to="/">
@@ -69,19 +67,13 @@ export default observer(({ logoOnly }) => {
             </Link>
           </div>
 
-          <div className="menu" onClick={toggleDropdown}>
-            <img src={require('../../public/menu.svg')} alt="menu icon" />
-            {showDropdown ? (
-              <div className="drop">
-                <div className="link right-align">
-                  <Link to="/stats">Stats</Link>
-                </div>
-                <div className="link right-align">
-                  <Link to="/contribute">Contribute</Link>
-                </div>
-              </div>
-            ) : null}
-          </div>
+          <img
+            src={require('../../public/menu.svg')}
+            alt="menu icon"
+            onClick={() => setIsMenuOpened(true)}
+          />
+
+          {isMenuOpened && <Menu closeMenu={() => setIsMenuOpened(false)} />}
         </div>
       )}
     </>
