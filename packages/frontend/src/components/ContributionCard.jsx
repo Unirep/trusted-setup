@@ -14,7 +14,7 @@ export default observer(({ index, name, hash, createdAt, circuit }) => {
         <div>
           <strong>{name === 'anonymous contributor' ? 'anon' : name}</strong>
         </div>
-        <div style={{ paddingTop: '0.5rem' }}>{circuit.slice(0, 1)}</div>
+        <div style={{ paddingTop: '0.5rem' }}>{circuit.slice(0, 16)}</div>
         <div className="card-hash">{hash.slice(0, 20)}..</div>
         <div className="card-flex">
           <div>#{index}</div>
