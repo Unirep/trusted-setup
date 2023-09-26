@@ -1,14 +1,12 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { observer } from 'mobx-react-lite'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import './contributionCard.css'
-import state from '../contexts/state'
 
 dayjs.extend(relativeTime)
 
 export default observer(({ index, name, hash, createdAt }) => {
-  const { ui } = useContext(state)
   return (
     <div className="card">
       <div className="card-text">

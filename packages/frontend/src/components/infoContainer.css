@@ -1,8 +1,13 @@
 .info-container {
   background-color: #a3ece1;
   color: #090909;
+}
+
+.info-content {
   display: grid;
   grid-template-columns: 35% 25% 40%;
+  max-width: 1310px;
+  margin: auto;
 }
 
 .info-left {
@@ -46,11 +51,10 @@
   line-height: 1.2rem;
 }
 
-@media only screen and (max-width: 800px) {
-  .info-container {
-    background-color: #a3ece1;
-    color: #090909;
+@media only screen and (max-width: 850px) {
+  .info-content {
     display: block;
+    margin: 0;
   }
 
   .info-left {
@@ -87,5 +91,15 @@
 
   .info-right {
     padding: 2rem 2.5rem 3rem;
+  }
+
+  .info-text {
+    padding: 0 5rem;
+  }
+}
+
+@media only screen and (max-width: 650px) {
+  .info-text {
+    padding: 0;
   }
 }

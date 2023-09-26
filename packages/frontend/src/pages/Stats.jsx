@@ -20,7 +20,7 @@ export default observer(() => {
   }, [ceremony.circuitNames])
 
   return (
-    <>
+    <div className="stats-content">
       <Header />
 
       <div className="stats-container">
@@ -97,7 +97,7 @@ export default observer(() => {
         <div className="contribution-table">
           <div className="table-heading">
             <div style={{ display: 'flex' }}>
-              <div style={{ width: '5rem' }}>index</div>
+              <div className="table-index">index</div>
               <div>name</div>
             </div>
             <div>hash</div>
@@ -119,6 +119,6 @@ export default observer(() => {
       </div>
 
       <Footer />
-    </>
+    </div>
   )
 })
