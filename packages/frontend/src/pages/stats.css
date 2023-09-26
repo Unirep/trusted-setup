@@ -1,6 +1,6 @@
 .stats-container {
   display: flex;
-  padding: 8rem 2rem 2rem 4rem;
+  padding: 8rem 2rem 8rem 4rem;
 }
 
 .stats-heading {
@@ -116,7 +116,7 @@ select {
 @media only screen and (max-width: 800px) {
   .stats-container {
     flex-flow: row wrap;
-    padding: 2rem;
+    padding: 2rem 2rem 5rem;
   }
 
   .stats-heading {

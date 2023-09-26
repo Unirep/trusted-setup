@@ -14,7 +14,7 @@
 
 .info-bottom {
   position: absolute;
-  bottom: 2rem;
+  bottom: 3rem;
   left: 6em;
 }
 
@@ -63,6 +63,7 @@
     font-size: 2rem;
     font-weight: 600;
     padding: 5rem 2rem 0.5rem;
+    text-align: center;
   }
 
   .info-post-button {

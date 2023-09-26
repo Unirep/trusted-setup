@@ -12,13 +12,23 @@ export default ({ title, texts, button }) => {
           <>
             <div className="info-stripe"></div>
             <div className="info-bottom">
-              <div className="info-title">{title}</div>
+              <div
+                className="info-title"
+                style={{ fontSize: `${title.length > 24 ? '3rem' : '4rem'}` }}
+              >
+                {title}
+              </div>
               {button}
             </div>
           </>
         ) : (
           <>
-            <div className="info-title">{title}</div>
+            <div
+              className="info-title"
+              style={{ fontSize: `${title.length > 24 ? '1.5rem' : '2rem'}` }}
+            >
+              {title}
+            </div>
             <div className="info-post-button">{button}</div>
           </>
         )}

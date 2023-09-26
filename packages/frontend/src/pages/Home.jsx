@@ -18,7 +18,6 @@ export default observer(() => {
   }
   return (
     <>
-      {/* <div className="hero-bg"> */}
       <video autoPlay muted loop poster playsInLine>
         <source
           src={require('../../public/unirep-ceremony-hero.mp4')}
@@ -47,7 +46,6 @@ export default observer(() => {
             </Link>
           </div>
         </div>
-        {/* </div> */}
 
         <InfoContainer
           title="What is UniRep ceremony?"
