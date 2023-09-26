@@ -159,6 +159,15 @@ ${hashText}
       this.startKeepalive()
     } else if (url.searchParams.get('joinQueue')) {
       const name = url.searchParams.get('name')
+
+      if (url.searchParams.get('github_access_token')) {
+        localStorage.setItem(
+          'github_access_token',
+          url.searchParams.get('github_access_token')
+        )
+        url.searchParams.delete('github_access_token')
+      }
+
       const queue = [...data.validQueues].pop()
       url.searchParams.delete('joinQueue')
       url.searchParams.delete('name')
