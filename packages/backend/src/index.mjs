@@ -44,7 +44,7 @@ try {
   const backup = new Backup(db)
   backup.start()
 } catch (err) {
-  console.log('Error starting backup system, aborting')
+  console.log('Error starting backup system, aborting:', err)
 }
 
 const deviceAuth = new DeviceAuth(db)

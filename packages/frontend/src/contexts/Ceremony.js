@@ -445,6 +445,7 @@ ${hashText}
       this.connected = _client.connected
     } catch (err) {
       this.client = null
+      console.error(err)
       return
     }
     this.client.addConnectedHandler(() => {
