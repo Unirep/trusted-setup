@@ -5,6 +5,7 @@ import {
 } from '../config.mjs'
 import fetch from 'node-fetch'
 import { catchError } from '../catchError.mjs'
+import { Octokit } from 'octokit'
 
 const GITHUB_URL = process.env.GITHUB_URL ?? 'https://github.com'
 const GITHUB_API_URL = process.env.GITHUB_URL ?? 'https://api.github.com'
@@ -26,6 +27,7 @@ export default ({ app, wsApp, db, ceremony }) => {
       const url = new URL('/login/oauth/authorize', GITHUB_URL)
       url.searchParams.append('client_id', GITHUB_CLIENT_ID)
       url.searchParams.append('redirect_uri', GITHUB_REDIRECT_URI)
+      url.searchParams.append('scope', 'gist')
       url.searchParams.append('state', state._id)
       url.searchParams.append('allow_signup', 'false')
       res.redirect(url.toString())
@@ -121,6 +123,34 @@ export default ({ app, wsApp, db, ceremony }) => {
         _url.searchParams.append('github_access_token', access_token)
         res.redirect(_url.toString())
       }
+    })
+  )
+
+  app.get(
+    '/post/github',
+    catchError(async (req, res) => {
+      const { access_token, content } = req.query
+      const octokit = new Octokit({
+        request: {
+          fetch: fetch,
+        },
+        auth: access_token,
+      })
+
+      const filename = `unirep-trusted-setup-${+new Date()}.log`
+      const data = {
+        description: 'Post of Unirep trusted setup',
+        files: {},
+        headers: {
+          'x-github-api-version': '2022-11-28',
+        },
+      }
+      data.files[filename] = {
+        content,
+      }
+
+      const response = await octokit.request('POST /gists', data)
+      res.json(response)
     })
   )
 }

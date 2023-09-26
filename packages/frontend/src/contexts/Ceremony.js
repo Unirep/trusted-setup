@@ -132,6 +132,13 @@ ${hashText}
     if (!HTTP_SERVER) {
       return
     }
+    if (url.searchParams.get('github_access_token')) {
+      localStorage.setItem(
+        'github_access_token',
+        url.searchParams.get('github_access_token')
+      )
+      url.searchParams.delete('github_access_token')
+    }
     if (!this.bootstrapData) {
       await this.bootstrap()
     }
@@ -152,6 +159,7 @@ ${hashText}
     const { data } = await this.client.send('user.info', {
       token: this.authToken,
     })
+
     this.inQueue = data.inQueue
     if (data.inQueue) {
       this.timeoutAt = data.timeoutAt
@@ -159,20 +167,15 @@ ${hashText}
       this.startKeepalive()
     } else if (url.searchParams.get('joinQueue')) {
       const name = url.searchParams.get('name')
-
-      if (url.searchParams.get('github_access_token')) {
-        localStorage.setItem(
-          'github_access_token',
-          url.searchParams.get('github_access_token')
-        )
-        url.searchParams.delete('github_access_token')
-      }
-
       const queue = [...data.validQueues].pop()
       url.searchParams.delete('joinQueue')
       url.searchParams.delete('name')
       window.history.pushState({}, null, url.toString())
       await this.join(name, queue)
+    } else if (url.searchParams.get('postGist')) {
+      url.searchParams.delete('postGist')
+      window.history.pushState({}, null, url.toString())
+      await this.postGist()
     }
     this.userId = data.userId
     if (data.active) {
@@ -238,14 +241,15 @@ ${hashText}
     this.ingestState(data)
   }
 
-  async oauth(name, path) {
+  async oauth(name, path, joinQueue, postGist) {
     const url = new URL(path, HTTP_SERVER)
     url.searchParams.set('token', this.authToken)
     const currentUrl = new URL(window.location.href)
     const dest = new URL('/contribute', currentUrl.origin)
     // dest.searchParams.set('s', currentUrl.searchParams.get('s'))
-    dest.searchParams.set('joinQueue', 'true')
-    dest.searchParams.set('name', name)
+    joinQueue && dest.searchParams.set('joinQueue', true)
+    joinQueue && dest.searchParams.set('name', name)
+    postGist && dest.searchParams.set('postGist', true)
     url.searchParams.set('redirectDestination', dest.toString())
     window.location.replace(url.toString())
   }
@@ -472,6 +476,15 @@ ${hashText}
       // this.queueLength = data.queueLength
       if (this.isActive) this.contribute()
     })
+  }
+
+  async postGist() {
+    const apiURL = new URL('/post/github', HTTP_SERVER)
+    const access_token = localStorage.getItem('github_access_token')
+    apiURL.searchParams.append('access_token', access_token)
+    apiURL.searchParams.append('content', this.contributionText)
+    const response = await fetch(apiURL.toString()).then((r) => r.json())
+    console.log(response)
   }
 }
 

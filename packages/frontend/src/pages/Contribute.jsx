@@ -97,6 +97,15 @@ export default observer(() => {
     ]
   }
 
+  const postOnGithub = async () => {
+    const access_token = localStorage.getItem('github_access_token')
+    if (!access_token) {
+      await ceremony.oauth(name, '/oauth/github', false, true)
+    } else {
+      await ceremony.postGist()
+    }
+  }
+
   return (
     <>
       <ToastContainer position="top-center" theme="colored" />
@@ -210,7 +219,12 @@ export default observer(() => {
                                 if (option.type === 'none') {
                                   await ceremony.join(name, 'open')
                                 } else {
-                                  await ceremony.oauth(name, option.path)
+                                  await ceremony.oauth(
+                                    name,
+                                    option.path,
+                                    true,
+                                    false
+                                  )
                                 }
                               }}
                             >
@@ -330,6 +344,7 @@ export default observer(() => {
                       fontWeight: '600',
                       backgroundColor: 'black',
                     }}
+                    onClick={postOnGithub}
                   >
                     Post on Github
                   </Button>
