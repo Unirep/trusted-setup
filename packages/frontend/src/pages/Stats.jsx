@@ -10,8 +10,17 @@ import state from '../contexts/state'
 
 export default observer(() => {
   const { ui, ceremony } = React.useContext(state)
+  const [activeCircuit, setActiveCircuit] = React.useState(
+    ceremony.circuitNames[0]
+  )
+  React.useEffect(() => {
+    if (!activeCircuit) {
+      setActiveCircuit(ceremony.circuitNames[0])
+    }
+  }, [ceremony.circuitNames])
+
   return (
-    <>
+    <div className="stats-content">
       <Header />
 
       <div className="stats-container">
@@ -58,7 +67,8 @@ export default observer(() => {
       </div>
 
       <div className="contribution-container">
-        {ceremony.transcript.map((d) => (
+        {/* old style displaying cards with cosmos images */}
+        {/* {ceremony.transcript.map((d) => (
           <ContributionCard
             key={d._id}
             index={d.index}
@@ -67,10 +77,48 @@ export default observer(() => {
             createdAt={d.createdAt}
             circuit={d.circuitName}
           ></ContributionCard>
-        ))}
+        ))} */}
+
+        <div className="circuit">
+          <div>Contributions</div>
+          <div className="view">view by circuit:</div>
+          <div className="circuit-select">
+            <select
+              onChange={(e) => setActiveCircuit(e.target.value)}
+              value={activeCircuit}
+            >
+              {ceremony.circuitNames.map((name) => (
+                <option key={name}>{name}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="contribution-table">
+          <div className="table-heading">
+            <div style={{ display: 'flex' }}>
+              <div className="table-index">index</div>
+              <div>name</div>
+            </div>
+            <div>hash</div>
+            <div>age</div>
+          </div>
+          {ceremony.transcript
+            .filter((d) => d.circuitName === activeCircuit)
+            .map((d) => (
+              <ContributionCard
+                key={d._id}
+                index={d.index}
+                name={d.name}
+                hash={d.hash}
+                createdAt={d.createdAt}
+                circuit={d.circuitName}
+              ></ContributionCard>
+            ))}
+        </div>
       </div>
 
       <Footer />
-    </>
+    </div>
   )
 })

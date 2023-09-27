@@ -2,6 +2,8 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   padding: 2rem 4rem 0;
+  max-width: 1400px;
+  margin: auto;
 }
 
 .header-flex {
@@ -32,16 +34,18 @@ a:visited {
   color: #a3ece1;
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 850px) {
   .header {
     display: flex;
     justify-content: space-between;
     padding: 2rem 1rem;
   }
 
-  .header-text {
-    font-size: 0.7rem;
-    padding-left: 0;
+  .drop {
+    padding: 1rem 1rem 0 0;
+    position: absolute;
+    left: 63%;
+    z-index: 1;
   }
 
   .right-align {

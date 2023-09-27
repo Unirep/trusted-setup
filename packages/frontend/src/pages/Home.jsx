@@ -18,32 +18,12 @@ export default observer(() => {
   }
   return (
     <>
-      {/* <div className="hero-bg"> */}
       <video autoPlay muted loop poster playsInLine>
         <source
           src={require('../../public/unirep-ceremony-hero.mp4')}
           type="video/mp4"
         />
       </video>
-      {/* <img
-          className="cosmos-1"
-          src={require('../../public/cosmos1.svg')}
-          alt="cosmic image"
-        />
-        {!ui.isMobile ? (
-          <>
-            <img
-              className="cosmos-2"
-              src={require('../../public/cosmos2.svg')}
-              alt="cosmic image"
-            />
-            <img
-              className="cosmos-3"
-              src={require('../../public/cosmos3.svg')}
-              alt="cosmic image"
-            />
-          </>
-        ) : null} */}
       <div className="content">
         <Header />
 
@@ -66,7 +46,6 @@ export default observer(() => {
             </Link>
           </div>
         </div>
-        {/* </div> */}
 
         <InfoContainer
           title="What is UniRep ceremony?"
@@ -80,7 +59,7 @@ export default observer(() => {
         <div className="bottom-container">
           <div className="contribution-heading">Latest contributions</div>
           <div className="contributions">
-            {ceremony.transcript.map((d) => (
+            {ceremony.transcript.slice(0, 5).map((d) => (
               <ContributionCard
                 key={d._id}
                 index={d.index}

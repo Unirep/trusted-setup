@@ -3,6 +3,8 @@
   justify-content: space-between;
   align-items: baseline;
   padding: 4rem 6rem 6rem 8rem;
+  max-width: 1310px;
+  margin: auto;
 }
 
 .footer-flex {
@@ -22,9 +24,9 @@
   color: #f6f6f6;
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 1150px) {
   .footer {
-    padding: 2rem;
+    padding: 2rem 2rem 5rem;
     align-items: center;
     justify-content: space-around;
   }

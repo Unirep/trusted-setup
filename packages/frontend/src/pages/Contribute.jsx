@@ -91,7 +91,7 @@ export default observer(() => {
       : []
 
     return [
-      "Hey, I'm {userId} and I have contributed to the UniRep ceremony.",
+      'I just contributed to the UniRep trusted setup ceremony!',
       'My circuit hashes are as follows:',
       ...circuitKeys,
     ]

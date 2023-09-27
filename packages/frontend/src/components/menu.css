@@ -1,0 +1,28 @@
+.menu-container {
+  position: fixed;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.menu-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 10rem;
+}
+
+.menu-content a:link {
+  font-size: 1.5rem;
+}
+
+.menu-contribute {
+  border: 1px solid #a3ece1;
+  border-radius: 1.5rem;
+  padding: 0.5rem 5rem;
+  margin: 1.5rem 0 4rem;
+}
