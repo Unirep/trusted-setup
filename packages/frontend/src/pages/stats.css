@@ -93,6 +93,7 @@ select {
   font-size: 1rem;
   cursor: pointer;
   background-color: #a3ece1;
+  color: black;
 }
 
 .circuit-select::after {

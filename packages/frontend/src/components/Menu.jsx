@@ -24,7 +24,7 @@ export default observer(({ closeMenu }) => {
         </div>
 
         <img
-          src={require('../../public/close.svg')}
+          src={require('../../public/menu_close.svg')}
           alt="close menu icon"
           onClick={closeMenu}
         />

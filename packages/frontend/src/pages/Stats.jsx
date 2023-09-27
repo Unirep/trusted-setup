@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import Header from '../components/Header'
 import ContributionCard from '../components/ContributionCard'
+import Pagination from '../components/Pagination'
 import Footer from '../components/Footer'
 import { HTTP_SERVER } from '../config'
 import './stats.css'
@@ -9,10 +10,18 @@ import './stats.css'
 import state from '../contexts/state'
 
 export default observer(() => {
-  const { ui, ceremony } = React.useContext(state)
-  const [activeCircuit, setActiveCircuit] = React.useState(
-    ceremony.circuitNames[0]
+  const { ui, ceremony } = useContext(state)
+  const [activeCircuit, setActiveCircuit] = useState(ceremony.circuitNames[0])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [recordsPerPage] = useState(10)
+  const indexOfLastRecord = currentPage * recordsPerPage
+  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage
+  const data = ceremony.transcript.filter(
+    (d) => d.circuitName === activeCircuit
   )
+  const currentRecords = data.slice(indexOfFirstRecord, indexOfLastRecord)
+  const nPages = Math.ceil(data.length / recordsPerPage)
+
   React.useEffect(() => {
     if (!activeCircuit) {
       setActiveCircuit(ceremony.circuitNames[0])
@@ -56,7 +65,7 @@ export default observer(() => {
                   ).toString()}
                 >
                   <img
-                    src={require('../../public/download_arrow.svg')}
+                    src={require('../../public/arrow_download.svg')}
                     alt="download arrow"
                   />
                 </a>
@@ -103,18 +112,23 @@ export default observer(() => {
             <div>hash</div>
             <div>age</div>
           </div>
-          {ceremony.transcript
-            .filter((d) => d.circuitName === activeCircuit)
-            .map((d) => (
-              <ContributionCard
-                key={d._id}
-                index={d.index}
-                name={d.name}
-                hash={d.hash}
-                createdAt={d.createdAt}
-                circuit={d.circuitName}
-              ></ContributionCard>
-            ))}
+
+          {currentRecords.map((d) => (
+            <ContributionCard
+              key={d._id}
+              index={d.index}
+              name={d.name}
+              hash={d.hash}
+              createdAt={d.createdAt}
+              circuit={d.circuitName}
+            ></ContributionCard>
+          ))}
+
+          <Pagination
+            nPages={nPages}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
         </div>
       </div>
 
