@@ -46,8 +46,8 @@ varying vec3 vPosition;
 varying float vMass;
 
 void main() {
-    vec3 color = vMass * vec3(236., 46., 0.) + (1. - vMass) * vec3(1., 94., 158.);
-    if (vMass > 1.) color = vec3(255., 255., 0.);
+    vec3 color = vMass * vec3(163., 236., 225.) + (1. - vMass) * vec3(230., 72., 16.);
+    if (vMass > 1.) color = vec3(254., 228., 203.);
     gl_FragColor = vec4(color / 255., 1.0);
 }
 
@@ -146,7 +146,7 @@ export default observer(() => {
       // create plane
       const planeGeometry = new THREE.PlaneGeometry(AU, AU, 8, 8)
       const planeMaterial = new THREE.MeshBasicMaterial({
-        color: 0x049ef4,
+        color: 0x4d4d4d,
         wireframe: true,
         transparent: true,
         opacity: 0.1,
@@ -184,7 +184,7 @@ export default observer(() => {
         blackHoleCount += 1
         mass = new Float32Array(mass.length + 1)
           .fill(1, 0, N_plummer)
-          .fill(10, N_particles, mass.length + 1)
+          .fill(3, N_particles, mass.length + 1)
         particleGeometry.setAttribute(
           'mass',
           new THREE.BufferAttribute(mass, 1)
