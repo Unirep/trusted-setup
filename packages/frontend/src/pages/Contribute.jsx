@@ -9,6 +9,7 @@ import Tooltip from '../components/Tooltip'
 import Button from '../components/Button'
 import ServerState from '../components/ServerState'
 import InfoContainer from '../components/InfoContainer'
+import { HTTP_SERVER } from '../config'
 import state from '../contexts/state'
 import './contribute.css'
 
@@ -104,6 +105,16 @@ export default observer(() => {
     } else {
       await ceremony.postGist()
     }
+  }
+
+  const postOnTwitter = async () => {
+    const url = new URL('/oauth/twitter', HTTP_SERVER)
+    url.searchParams.set('token', ceremony.authToken)
+    const currentUrl = new URL(window.location.href)
+    const dest = new URL('/contribute', currentUrl.origin)
+    url.searchParams.set('redirectDestination', dest.toString())
+    url.searchParams.set('content', ceremony.contributionText)
+    window.location.replace(url.toString())
   }
 
   return (
@@ -323,8 +334,9 @@ export default observer(() => {
                       fontWeight: '600',
                     }}
                     onClick={async () => {
-                      navigator.clipboard.writeText(ceremony.contributionText)
-                      await new Promise((r) => setTimeout(r, 1000))
+                      // navigator.clipboard.writeText(ceremony.contributionText)
+                      // await new Promise((r) => setTimeout(r, 1000))
+                      postOnTwitter()
                     }}
                     loadingText="Copied!"
                   >

@@ -11,6 +11,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.345.0",
     "anondb": "^0.0.21",
+    "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
     "especial": "^0.1.0-beta-3",
     "ethers": "^5.7.2",
