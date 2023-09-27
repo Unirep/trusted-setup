@@ -4,6 +4,30 @@ import './pagination.css'
 
 export default observer(({ nPages, currentPage, setCurrentPage }) => {
   const pageNumbers = [...Array(nPages + 1).keys()].slice(1)
+  let paginationNumbers = []
+  if (pageNumbers) {
+    let showMax = 5
+    let endPage
+    let startPage
+
+    if (pageNumbers <= showMax) {
+      startPage = 1
+      endPage = pageNumbers.length
+    } else {
+      startPage = currentPage
+      if (
+        startPage != pageNumbers.length &&
+        startPage + 1 != pageNumbers.length
+      ) {
+        endPage = currentPage + showMax - 1
+      } else {
+        endPage = pageNumbers.length
+      }
+    }
+    for (let i = startPage; i <= endPage; i++) {
+      paginationNumbers.push(i)
+    }
+  }
 
   const nextPage = () => {
     if (currentPage !== nPages) setCurrentPage(currentPage + 1)
@@ -21,7 +45,7 @@ export default observer(({ nPages, currentPage, setCurrentPage }) => {
         />
       </div>
 
-      {pageNumbers.map((pgNum) => (
+      {paginationNumbers.map((pgNum) => (
         <div
           key={pgNum}
           className={`page-item ${currentPage == pgNum ? 'active' : ''}`}
