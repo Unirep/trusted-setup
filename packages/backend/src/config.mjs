@@ -56,13 +56,13 @@ export const CEREMONY_IMAGE_PATH =
   process.env.CEREMONY_IMAGE_PATH ?? '/static/logo.svg'
 export const ATTESTATION_URL =
   process.env.ATTESTATION_URL ??
-  'https://github.com/Unirep/trusted-setup/issues/1'
+  'https://github.com/Unirep/trusted-setup/issues/10'
 
 // CIRCUIT CONFIG
 
 const ptauPath = path.join(
   __dirname,
-  '../circuits/powersOfTau28_hez_final_17.ptau'
+  '../circuits/powersOfTau28_hez_final_18.ptau'
 )
 
 export const authOptions = [
