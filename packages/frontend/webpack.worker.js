@@ -69,12 +69,6 @@ module.exports = (env, argv) => ({
     new webpack.DefinePlugin({
       NODE_ENV: `'${argv.mode}'` ?? `'development'`,
     }),
-    new HtmlWebpackPlugin({
-      template: 'public/index.html',
-      filename: 'index.html',
-      inlineSource: '.(js|css)',
-      favicon: 'public/favicon.ico',
-    }),
   ],
   optimization: {
     minimizer: [`...`, new CssMinimizerPlugin()],
