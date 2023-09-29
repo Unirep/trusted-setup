@@ -49,10 +49,8 @@ export default observer(() => {
 
         <InfoContainer
           title="What is UniRep ceremony?"
-          texts={[
-            'UniRep is a Zero-Knowledge Protocol for user data & reputation management. We use pioneering technology to offer a space for developers and users alike to explore the potential of privacy-centered online interactions.',
-            'We are releasing the official version and it’s to generate a structured reference string (SRS) which is needed for the commitments to work. An SRS is secure as long as at least one participant in the ceremony successfully conceals their secret.',
-            'This is a multi-party ceremony: each contributor creates a secret and runs a computation to mix in with previous contributions. Then, the output is made public and passed to the next contributor. To guard against attempts to corrupt the ceremony, participants need an Ethereum address or GitHub account with an established history to participate. The final output of the Ceremony will be included in a future upgrade to help scale the Ethereum network.',
+          texts={['UniRep is a zero-knowledge protocol for user data & reputation management. We use pioneering technology to offer a space for developers and users alike to explore the potential of privacy-centered online interactions. We are planning to include a secure set of proving keys with our official release so the system can be used out of the box. Proving keys are secure so long as the intermediate values from at least one contribution was destroyed.'
+          'This is a multi-party ceremony: each contributor creates a secret and runs a computation to mix in with previous contributions. Then, the output is made public and passed to the next contributor. To guard against attempts to corrupt the ceremony, users must have a GitHub or Discord account to participate. The final output will be released with the official UniRep 2.0 package.',
           ]}
         />
 
