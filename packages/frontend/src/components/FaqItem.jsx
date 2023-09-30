@@ -10,12 +10,12 @@ export default observer(({ Id, question, answer, Index, setIndex }) => {
         <div>{question}</div>
         {Index !== Id ? (
           <img
-            src={require('../../public/dropdown_arrow.svg')}
+            src={require('../../public/arrow_dropdown.svg')}
             alt="arrow pointing down"
           />
         ) : (
           <img
-            src={require('../../public/collapse_arrow.svg')}
+            src={require('../../public/arrow_collapse.svg')}
             alt="arrow pointing up"
           />
         )}
