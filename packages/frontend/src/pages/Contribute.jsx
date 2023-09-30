@@ -16,6 +16,7 @@ import './contribute.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import init, { CosmoSim } from '../../wasm'
+import { ethers } from 'ethers'
 
 const ContributeState = {
   loading: 0,
@@ -50,8 +51,11 @@ void main() {
     if (vMass > 1.) color = vec3(254., 228., 203.);
     gl_FragColor = vec4(color / 255., 1.0);
 }
+`
 
-  `
+const hashString = (s) => {
+  return ethers.utils.keccak256(ethers.utils.toUtf8Bytes(s))
+}
 
 export default observer(() => {
   const [fmm, setFmm] = useState(null)
@@ -134,6 +138,7 @@ export default observer(() => {
 
       // create particle buffers
       const particleGeometry = new THREE.BufferGeometry()
+      const initialRandomParticlesCount = 10
       let blackHoleCount = 0
       let positions = new Float32Array(3 * N_plummer)
       let mass = new Float32Array(N_particles).fill(1, 0, N_plummer)
@@ -153,6 +158,18 @@ export default observer(() => {
         side: THREE.DoubleSide,
       })
 
+      // create hidden plane
+      const hiddenPlaneGeometry = new THREE.PlaneGeometry(
+        10 * AU,
+        10 * AU,
+        8,
+        8
+      )
+      const hiddenPlaneMaterial = new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: 0.0,
+      })
+
       // for particle colors
       const particleShader = new THREE.ShaderMaterial({
         vertexShader: vertexShaderSrc,
@@ -166,21 +183,21 @@ export default observer(() => {
       const vFOV = THREE.MathUtils.degToRad(camera.fov) // convert vertical fov to radians
       const scene_height = 2 * Math.tan(vFOV / 2) * camera.position.z // visible height
       const scene_width = scene_height * camera.aspect
-      const boundingRect = canvas.getBoundingClientRect()
+      const rect = canvas.getBoundingClientRect()
+      const particleSystem = new THREE.Points(particleGeometry, particleShader)
+      const plane = new THREE.Mesh(planeGeometry, planeMaterial)
+      const hiddenPlane = new THREE.Mesh(
+        hiddenPlaneGeometry,
+        hiddenPlaneMaterial
+      )
 
-      canvas.addEventListener('mouseup', (e) => {
-        if (!e.shiftKey) return
-        const _x = e.clientX - boundingRect.left - width / 2
-        const _y = e.clientY - boundingRect.top - height / 2
-        const px =
-          scene_width *
-          (_x / width) *
-          (1 + Math.abs(Math.sin(cameraControls.getAzimuthalAngle())))
-        const py =
-          -scene_height *
-          (_y / height) *
-          (1 + Math.abs(Math.cos(cameraControls.getPolarAngle())))
-        fmm.insert_particle(px, py, 0, 1e29)
+      scene.add(camera)
+      scene.add(particleSystem)
+      scene.add(plane)
+      scene.add(hiddenPlane)
+
+      const insertParticle = (_x, _y) => {
+        fmm.insert_particle(_x, _y, 0, 1e28)
         blackHoleCount += 1
         mass = new Float32Array(mass.length + 1)
           .fill(1, 0, N_plummer)
@@ -190,13 +207,31 @@ export default observer(() => {
           new THREE.BufferAttribute(mass, 1)
         )
         particleGeometry.attributes.mass.needsUpdate = true
-      })
-      const particleSystem = new THREE.Points(particleGeometry, particleShader)
-      const plane = new THREE.Mesh(planeGeometry, planeMaterial)
+      }
 
-      scene.add(camera)
-      scene.add(particleSystem)
-      scene.add(plane)
+      let hash = hashString(name)
+      for (let i = 0; i < initialRandomParticlesCount; i++) {
+        const a = hash.slice(2, hash.length / 2)
+        const b = hash.slice(hash.length / 2)
+        const r = parseInt(`0x${a}`, 16) % AU
+        const theta = parseInt(`0x${b}`, 16) % (2 * Math.PI)
+        insertParticle(r * Math.cos(theta), r * Math.sin(theta))
+        hash = hashString(hash)
+      }
+
+      canvas.addEventListener('dblclick', (e) => {
+        console.log('clicked', name)
+        const _x = ((e.clientX - rect.left) / rect.width) * 2 - 1
+        const _y = -((e.clientY - rect.top - 70) / rect.height) * 2 + 1
+        const mouse = new THREE.Vector2(_x, _y)
+        const raycaster = new THREE.Raycaster()
+        raycaster.setFromCamera(mouse, camera)
+        const hit = raycaster.intersectObject(hiddenPlane)
+        if (!hit.length) return
+        const px = hit[0].point.x
+        const py = hit[0].point.y
+        insertParticle(px, py)
+      })
 
       function render() {
         var seconds = clock.getDelta()

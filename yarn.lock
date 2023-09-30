@@ -9998,9 +9998,6 @@ walk-up-path@^1.0.0:
   resolved "https://registry.npmjs.org/walk-up-path/-/walk-up-path-1.0.0.tgz"
   integrity sha512-hwj/qMDUEjCU5h0xr90KGCf0tg0/LgJbmOWgrWKYlcJZM7XvquvUJZ0G/HMGr7F7OQMOUuPHWP9JpriinkAlkg==
 
-"wasm@file:packages/frontend/pkg":
-  version "0.1.0"
-
 wasmbuilder@0.0.16:
   version "0.0.16"
   resolved "https://registry.npmjs.org/wasmbuilder/-/wasmbuilder-0.0.16.tgz"
