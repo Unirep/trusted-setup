@@ -60,7 +60,7 @@ export default observer(() => {
           <div>
             2. Run <strong>npx trusted-setup</strong>
           </div>
-          <div>3. Use neednewurl.here to contribute to UniRep</div>
+          <div>3. Use "https://http.ceremony.unirep.io" to contribute to UniRep</div>
         </>
       ),
     },
