@@ -60,7 +60,13 @@ export default observer(() => {
           <div>
             2. Run <strong>npx trusted-setup</strong>
           </div>
-          <div>3. Use "https://http.ceremony.unirep.io" to contribute to UniRep</div>
+          <div>
+            3. Use{' '}
+            <div style={{ fontSize: '0.9rem', fontWeight: '600' }}>
+              https://http.ceremony.unirep.io
+            </div>{' '}
+            to contribute to UniRep
+          </div>
         </>
       ),
     },
