@@ -436,8 +436,7 @@ export default observer(() => {
           <div className="canvas-container">
             <canvas id="cosmo"></canvas>
             <p>
-              Unirep Multiverse generator. Drop your own stars & create your own
-              verse. Shift + click to add stars.
+              <b>Double click to add stars.</b>
             </p>
           </div>
 
