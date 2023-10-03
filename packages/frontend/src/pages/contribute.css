@@ -41,7 +41,8 @@
 
 .upper-left-anchor {
   height: 60vh;
-  padding-left: 6rem;
+  min-width: 550px;
+  padding-right: 6rem;
 }
 
 .contribute-main {
