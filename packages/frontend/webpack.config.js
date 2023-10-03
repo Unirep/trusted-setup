@@ -1,6 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const Dotenv = require('dotenv-webpack')
-// const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin')
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
@@ -74,6 +73,7 @@ module.exports = (env, argv) => ({
       template: 'public/index.html',
       filename: 'index.html',
       inlineSource: '.(js|css)',
+      favicon: 'public/favicon.ico',
     }),
     new MiniCssExtractPlugin(),
     // new HtmlWebpackInlineSourcePlugin(),
