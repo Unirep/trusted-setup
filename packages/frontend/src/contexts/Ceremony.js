@@ -13,7 +13,7 @@ export default class Queue {
   ceremonyState = {}
   timeoutAt = null
   contributing = false
-  contributionName = null
+  contributionName = 'Anon'
   contributionHashes = null
   loadingInitial = true
   inQueue = false
@@ -248,7 +248,7 @@ ${hashText}
     const dest = new URL('/contribute', currentUrl.origin)
     // dest.searchParams.set('s', currentUrl.searchParams.get('s'))
     joinQueue && dest.searchParams.set('joinQueue', true)
-    joinQueue && dest.searchParams.set('name', name)
+    // joinQueue && dest.searchParams.set('name', name)
     postGist && dest.searchParams.set('postGist', true)
     url.searchParams.set('redirectDestination', dest.toString())
     window.location.replace(url.toString())
@@ -256,7 +256,9 @@ ${hashText}
 
   async join(name, queueName) {
     this.contributionHashes = null
-    this.contributionName = name.trim()
+    if (name.length > 0) {
+      this.contributionName = name.trim()
+    }
     // join the queue
     const { data: _data } = await this.client.send('ceremony.join', {
       token: this.authToken,

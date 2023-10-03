@@ -117,7 +117,8 @@ export default ({ app, wsApp, db, ceremony }) => {
         res.status(204).end()
       } else {
         const _url = new URL(_state.redirectDestination)
-        _url.searchParams.append('github_access_token', access_token)
+        _url.searchParams.set('github_access_token', access_token)
+        _url.searchParams.set('name', `Github#${user.login}`)
         res.redirect(_url.toString())
       }
     })
