@@ -110,33 +110,8 @@ export default ({ app, wsApp, db, ceremony }) => {
         res.status(204).end()
       } else {
         const _url = new URL(_state.redirectDestination)
-        _url.searchParams.set('res', JSON.stringify(response))
         res.redirect(_url.toString())
       }
     })
   )
-
-  // app.get(
-  //   '/post/twitter',
-  //   catchError(async (req, res) => {
-  //     const { access_token, content } = req.query
-  //     const data = {
-  //       text: content
-  //     }
-  //     const url = new URL('/2/tweets', TWITTER_API_URL)
-
-  //     const response = await fetch(url.toString(), {
-  //         method: 'POST',
-  //         headers: {
-  //             authorization: `Bearer ${access_token}`,
-  //             'user-agent': "v2CreateTweetJS",
-  //             'content-type': "application/json",
-  //             accept: "application/json"
-  //         },
-  //         body: data
-  //     })
-  //     console.log(response)
-  //     res.json(response)
-  //   })
-  // )
 }
