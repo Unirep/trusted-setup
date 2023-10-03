@@ -113,7 +113,10 @@ export default observer(() => {
     const currentUrl = new URL(window.location.href)
     const dest = new URL('/contribute', currentUrl.origin)
     url.searchParams.set('redirectDestination', dest.toString())
-    url.searchParams.set('content', ceremony.contributionText)
+    url.searchParams.set(
+      'content',
+      `🌟 Unirep Ceremony 🌟 \nUsing 【${ceremony.name}】 to knitting together the constellation that unveil our journey. \n\n Generate your verse and contribute on ${HTTP_SERVER}`
+    )
     window.location.replace(url.toString())
   }
 
