@@ -285,7 +285,7 @@ export default observer(() => {
     url.searchParams.set('redirectDestination', dest.toString())
     url.searchParams.set(
       'content',
-      `🌟 Unirep Ceremony 🌟 \nUsing 【${ceremony.name}】 to knitting together the constellation that unveil our journey. \n\nGenerate your verse and contribute on ${HTTP_SERVER}`
+      `🌟 Unirep Ceremony 🌟 \nUsing 【${ceremony.name}】 to knitting together the constellation that unveil our journey. \n\nGenerate your verse and contribute on ${currentUrl.origin}`
     )
     window.location.replace(url.toString())
   }
