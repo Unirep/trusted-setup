@@ -111,7 +111,7 @@ export default observer(() => {
 
   React.useEffect(() => {
     if (cosmoCanvasReady) {
-      const width = window.innerWidth * 0.9
+      const width = window.innerWidth > 1310 ? 1310 : window.innerWidth * 0.9
       const height = window.innerHeight * 0.5
 
       const canvas = document.getElementById('cosmo')
@@ -440,58 +440,64 @@ export default observer(() => {
       {cosmoCanvasReady && (
         <div className="content">
           <Header logoOnly={true} />
-          <div className="canvas-container">
-            <canvas id="cosmo"></canvas>
-            <p>
-              <b>Double click to add stars.</b>
-            </p>
+          <div className="contribute-container">
+            <div className="canvas-container">
+              <canvas id="cosmo"></canvas>
+              <p>
+                <b>Double click to add stars.</b>
+              </p>
+            </div>
           </div>
 
           {contributeState === ContributeState.contributing && (
             <div className="contribute-container" style={{ height: 'auto' }}>
-              <div className="contribute-child padding">
-                <h2>Contribution in progress</h2>
-                Please stay put while your machine makes contributions.
-              </div>
-              <div className="contribute-child padding">
-                {contributeState === ContributeState.contributing && (
-                  <p>
-                    {ceremony.contributionUpdates.map((text, i) => (
-                      <div key={i}>{text}</div>
-                    ))}
-                  </p>
-                )}
+              <div className="contribute-wrapper">
+                <div className="contribute-child padding">
+                  <h2>Contribution in progress</h2>
+                  Please stay put while your machine makes contributions.
+                </div>
+                <div className="contribute-child padding">
+                  {contributeState === ContributeState.contributing && (
+                    <p>
+                      {ceremony.contributionUpdates.map((text, i) => (
+                        <div key={i}>{text}</div>
+                      ))}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           )}
 
           {contributeState === ContributeState.finished && (
             <>
-              <div className="contribute-container" style={{ height: 'auto' }}>
-                <div className="contribute-child padding">
-                  <h2 className="mint-color">Contribution completed!</h2>
-                  Thank you for contributing.
-                </div>
-                <div className="contribute-child padding">
-                  <p>
-                    You can continue to create your verse here or Share & Invite
-                    others to contribute.
-                  </p>
-                  <Button
-                    style={{
-                      borderRadius: '24px',
-                      color: 'black',
-                      padding: '12px 24px',
-                      fontWeight: '600',
-                    }}
-                    onClick={async () => {
-                      navigator.clipboard.writeText(ceremony.contributionText)
-                      await new Promise((r) => setTimeout(r, 1000))
-                    }}
-                    loadingText="Copied!"
-                  >
-                    Share on Twitter
-                  </Button>
+              <div className="contribute-container">
+                <div className="contribute-wrapper" style={{ height: 'auto' }}>
+                  <div className="contribute-child padding">
+                    <h2 className="mint-color">Contribution completed!</h2>
+                    Thank you for contributing.
+                  </div>
+                  <div className="contribute-child padding">
+                    <p>
+                      You can continue to create your verse here or Share &
+                      Invite others to contribute.
+                    </p>
+                    <Button
+                      style={{
+                        borderRadius: '24px',
+                        color: 'black',
+                        padding: '12px 24px',
+                        fontWeight: '600',
+                      }}
+                      onClick={async () => {
+                        navigator.clipboard.writeText(ceremony.contributionText)
+                        await new Promise((r) => setTimeout(r, 1000))
+                      }}
+                      loadingText="Copied!"
+                    >
+                      Share on Twitter
+                    </Button>
+                  </div>
                 </div>
               </div>
               <InfoContainer

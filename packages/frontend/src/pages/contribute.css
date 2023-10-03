@@ -1,8 +1,16 @@
 .contribute-container {
+  width: 100vw;
   display: flex;
+  justify-content: center;
 }
 
-.contribute-container h2 {
+.contribute-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1310px;
+}
+
+.contribute-wrapper h2 {
   margin: 0.5rem 0;
 }
 
@@ -101,6 +109,7 @@
 
 .canvas-container {
   width: 90vw;
+  max-width: 1310px;
   margin: 2rem 5vw;
   border-radius: 8px;
   background: linear-gradient(135.45deg, #fee4cb 0%, #dbf2f2 95.26%);
@@ -115,5 +124,13 @@
 @media only screen and (max-width: 850px) {
   .contribute-main p {
     width: 100%;
+  }
+
+  .contribute-wrapper {
+    display: block;
+  }
+
+  .contribute-child {
+    width: 100vw;
   }
 }
