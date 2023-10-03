@@ -68,7 +68,7 @@ export default observer(() => {
   const [error, setError] = React.useState('')
   const [cosmoCanvasReady, setCosmoCanvasReady] = React.useState(false)
   const { hash } = useLocation()
-  const { ceremony } = React.useContext(state)
+  const { ceremony, ui } = React.useContext(state)
   const [contributeState, setContributeState] = React.useState(
     !ceremony.connected || ceremony.loadingInitial
       ? ContributeState.loading
@@ -272,8 +272,13 @@ export default observer(() => {
       <ToastContainer position="top-center" theme="colored" />
 
       {!cosmoCanvasReady && (
-        <div className="contribute-container contribute-bg contribute-whole-page">
-          <div className="contribute-child upper-left-anchor">
+        <div
+          className={
+            !ui.isMobile &&
+            'contribute-container contribute-bg contribute-whole-page'
+          }
+        >
+          <div className={!ui.isMobile && 'contribute-child upper-left-anchor'}>
             <div className="contribute-main">
               <Link
                 to="/"
@@ -425,9 +430,11 @@ export default observer(() => {
                 )}
             </div>
           </div>
-          <div className="contribute-child">
-            <img src={require('../../public/cosmos1.svg')} />
-          </div>
+          {!ui.isMobile && (
+            <div className="contribute-child">
+              <img src={require('../../public/cosmos1.svg')} />
+            </div>
+          )}
         </div>
       )}
       {cosmoCanvasReady && (

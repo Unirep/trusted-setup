@@ -58,6 +58,7 @@
 
 .contribute-field {
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
   align-items: center;
   gap: 1rem;
@@ -109,4 +110,10 @@
 .canvas-container p {
   text-align: center;
   padding-bottom: 1rem;
+}
+
+@media only screen and (max-width: 850px) {
+  .contribute-main p {
+    width: 100%;
+  }
 }
