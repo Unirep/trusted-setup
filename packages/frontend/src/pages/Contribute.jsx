@@ -2,6 +2,7 @@ import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { Link, useLocation } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
+import { useState, useRef } from 'react'
 import 'react-toastify/dist/ReactToastify.css'
 
 import Header from '../components/Header'
@@ -13,6 +14,11 @@ import { HTTP_SERVER } from '../config'
 import state from '../contexts/state'
 import './contribute.css'
 
+import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import init, { CosmoSim } from '../../wasm'
+import { ethers } from 'ethers'
+
 const ContributeState = {
   loading: 0,
   normal: 1,
@@ -22,7 +28,43 @@ const ContributeState = {
   offline: 5,
 }
 
+const vertexShaderSrc = `
+  varying vec3 vPosition;
+  varying float vMass;
+
+  attribute float mass;
+
+  void main() {
+    vPosition = position;
+    vMass = mass;
+
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.);
+    gl_PointSize = max(1., vMass);
+  }
+`
+
+const fragmentShaderSrc = `
+varying vec3 vPosition;
+varying float vMass;
+
+void main() {
+    vec3 color = vMass * vec3(163., 236., 225.) + (1. - vMass) * vec3(230., 72., 16.);
+    if (vMass > 1.) color = vec3(254., 228., 203.);
+    gl_FragColor = vec4(color / 255., 1.0);
+}
+`
+
+const hashString = (s) => {
+  return ethers.utils.keccak256(ethers.utils.toUtf8Bytes(s))
+}
+
 export default observer(() => {
+  const [fmm, setFmm] = useState(null)
+
+  const N_plummer = 8000
+  const N_particles = 42000
+  const AU = 1e11
+
   const [name, setName] = React.useState('')
   const [error, setError] = React.useState('')
   const [cosmoCanvasReady, setCosmoCanvasReady] = React.useState(false)
@@ -33,7 +75,6 @@ export default observer(() => {
       ? ContributeState.loading
       : ContributeState.normal
   )
-
   React.useEffect(() => {
     if (!ceremony.connected) setContributeState(ContributeState.offline)
     else if (ceremony.loadingInitial)
@@ -64,6 +105,12 @@ export default observer(() => {
   }, [error])
 
   React.useEffect(() => {
+    init().then(() => {
+      setFmm(new CosmoSim(N_plummer, 5 * AU, N_plummer * 1e24, 10 * AU))
+    })
+  }, [])
+
+  React.useEffect(() => {
     if (cosmoCanvasReady) {
       const width = window.innerWidth * 0.9
       const height = window.innerHeight * 0.5
@@ -71,18 +118,141 @@ export default observer(() => {
       const canvas = document.getElementById('cosmo')
       canvas.width = width
       canvas.height = height
+      const renderer = new THREE.WebGLRenderer({ antialias: true, canvas })
 
-      const ctx = canvas.getContext('2d')
-      ctx.font = '2rem Azeret Mono'
-      ctx.fillStyle = 'white'
-      ctx.textAlign = 'center'
-      ctx.fillText(
-        "Bhargov's cosmo should be here.",
-        canvas.width / 2,
-        canvas.height / 2
+      // set camera
+      let camera = new THREE.PerspectiveCamera(
+        // fov
+        35,
+        // aspect
+        width / height,
+        // near
+        0.01,
+        // far
+        10000 * AU
       )
+      const defaultZoom = 1.7 * AU
+      camera.position.set(0, 0, defaultZoom)
+
+      const scene = new THREE.Scene()
+      let clock = new THREE.Clock()
+
+      // create particle buffers
+      const particleGeometry = new THREE.BufferGeometry()
+      const initialRandomParticlesCount = 10
+      let blackHoleCount = 0
+      let positions = new Float32Array(3 * N_plummer)
+      let mass = new Float32Array(N_particles).fill(1, 0, N_plummer)
+      particleGeometry.setAttribute(
+        'position',
+        new THREE.BufferAttribute(positions, 3)
+      )
+      particleGeometry.setAttribute('mass', new THREE.BufferAttribute(mass, 1))
+
+      // create plane
+      const planeGeometry = new THREE.PlaneGeometry(AU, AU, 8, 8)
+      const planeMaterial = new THREE.MeshBasicMaterial({
+        color: 0x4d4d4d,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.1,
+        side: THREE.DoubleSide,
+      })
+
+      // create hidden plane
+      const hiddenPlaneGeometry = new THREE.PlaneGeometry(
+        10 * AU,
+        10 * AU,
+        8,
+        8
+      )
+      const hiddenPlaneMaterial = new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: 0.0,
+      })
+
+      // for particle colors
+      const particleShader = new THREE.ShaderMaterial({
+        vertexShader: vertexShaderSrc,
+        fragmentShader: fragmentShaderSrc,
+        uniforms: {},
+      })
+
+      const cameraControls = new OrbitControls(camera, renderer.domElement)
+      cameraControls.noPan = false
+
+      const vFOV = THREE.MathUtils.degToRad(camera.fov) // convert vertical fov to radians
+      const scene_height = 2 * Math.tan(vFOV / 2) * camera.position.z // visible height
+      const scene_width = scene_height * camera.aspect
+      const rect = canvas.getBoundingClientRect()
+      const particleSystem = new THREE.Points(particleGeometry, particleShader)
+      const plane = new THREE.Mesh(planeGeometry, planeMaterial)
+      const hiddenPlane = new THREE.Mesh(
+        hiddenPlaneGeometry,
+        hiddenPlaneMaterial
+      )
+
+      scene.add(camera)
+      scene.add(particleSystem)
+      scene.add(plane)
+      scene.add(hiddenPlane)
+
+      const insertParticle = (_x, _y) => {
+        fmm.insert_particle(_x, _y, 0, 1e28)
+        blackHoleCount += 1
+        mass = new Float32Array(mass.length + 1)
+          .fill(1, 0, N_plummer)
+          .fill(3, N_particles, mass.length + 1)
+        particleGeometry.setAttribute(
+          'mass',
+          new THREE.BufferAttribute(mass, 1)
+        )
+        particleGeometry.attributes.mass.needsUpdate = true
+      }
+
+      let hash = hashString(name)
+      for (let i = 0; i < initialRandomParticlesCount; i++) {
+        const a = hash.slice(2, hash.length / 2)
+        const b = hash.slice(hash.length / 2)
+        const r = parseInt(`0x${a}`, 16) % AU
+        const theta = parseInt(`0x${b}`, 16) % (2 * Math.PI)
+        insertParticle(r * Math.cos(theta), r * Math.sin(theta))
+        hash = hashString(hash)
+      }
+
+      canvas.addEventListener('dblclick', (e) => {
+        console.log('clicked', name)
+        const _x = ((e.clientX - rect.left) / rect.width) * 2 - 1
+        const _y = -((e.clientY - rect.top - 70) / rect.height) * 2 + 1
+        const mouse = new THREE.Vector2(_x, _y)
+        const raycaster = new THREE.Raycaster()
+        raycaster.setFromCamera(mouse, camera)
+        const hit = raycaster.intersectObject(hiddenPlane)
+        if (!hit.length) return
+        const px = hit[0].point.x
+        const py = hit[0].point.y
+        insertParticle(px, py)
+      })
+
+      function render() {
+        var seconds = clock.getDelta()
+        if (seconds > 1) {
+          seconds = 1
+        }
+        const timestep = seconds * 60 * 60 * 24 * 15 * 4
+        fmm.simulate(timestep)
+        positions = fmm.get_position()
+
+        const buf = new THREE.BufferAttribute(new Float32Array(positions), 3)
+        particleGeometry.setAttribute('position', buf)
+        particleGeometry.attributes.position.needsUpdate = true
+
+        renderer.render(scene, camera)
+        requestAnimationFrame(render)
+      }
+      requestAnimationFrame(render)
     }
-  }, [cosmoCanvasReady])
+  }, [cosmoCanvasReady, fmm])
 
   const splitContributionText = () => {
     const circuitKeys = ceremony.contributionHashes
@@ -92,7 +262,7 @@ export default observer(() => {
       : []
 
     return [
-      "Hey, I'm {userId} and I have contributed to the UniRep ceremony.",
+      'I just contributed to the UniRep trusted setup ceremony!',
       'My circuit hashes are as follows:',
       ...circuitKeys,
     ]
@@ -292,10 +462,10 @@ export default observer(() => {
         <div className="content">
           <Header logoOnly={true} />
           <div className="canvas-container">
-            <canvas id="cosmo">Bhargav canvas should be here.</canvas>
+            <canvas id="cosmo"></canvas>
             <p>
-              Unirep Multiverse generator. Drop the force & create your own
-              verse.
+              Unirep Multiverse generator. Drop your own stars & create your own
+              verse. Shift + click to add stars.
             </p>
           </div>
 

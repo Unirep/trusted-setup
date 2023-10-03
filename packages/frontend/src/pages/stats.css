@@ -1,6 +1,16 @@
+.stats-content {
+  background: linear-gradient(
+    rgba(38, 38, 38, 0.35),
+    #000000,
+    rgba(38, 38, 38, 0.35)
+  );
+}
+
 .stats-container {
   display: flex;
-  padding: 8rem 2rem 2rem 4rem;
+  padding: 8rem 2rem 6rem 4rem;
+  max-width: 1310px;
+  margin: auto;
 }
 
 .stats-heading {
@@ -37,27 +47,103 @@
 }
 
 .contribution-container {
-  width: 100%;
+  max-width: 1310px;
+  margin: auto;
   display: flex;
-  overflow-x: scroll;
-  scrollbar-color: #a3ece1;
-  scrollbar-width: 0.5em;
-  padding-bottom: 8rem;
-  background: linear-gradient(
-    rgba(38, 38, 38, 0.35),
-    #000000,
-    rgba(38, 38, 38, 0.35)
-  );
+  justify-content: space-around;
+  padding: 0 2rem 5rem 4rem;
 }
 
-@media only screen and (max-width: 800px) {
+.circuit {
+  width: 35%;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.view {
+  font-size: 1rem;
+  font-weight: 200;
+  padding-bottom: 1rem;
+}
+
+select {
+  appearance: none;
+  background-color: transparent;
+  border: none;
+  padding: 0 1em 0 0;
+  margin: 0;
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: inherit;
+  line-height: inherit;
+  outline: none;
+  grid-area: select;
+}
+
+.circuit-select {
+  display: grid;
+  grid-template-areas: 'select';
+  align-items: center;
+  width: 100%;
+  min-width: 25ch;
+  max-width: 25ch;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #a3ece1;
+  color: black;
+}
+
+.circuit-select::after {
+  content: '';
+  width: 0.8em;
+  height: 0.5em;
+  background-color: black;
+  clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+  grid-area: select;
+  justify-self: end;
+}
+
+.contribution-table {
+  width: 65%;
+  padding-top: 3rem;
+}
+
+.table-heading {
+  display: grid;
+  grid-template-columns: 40% 40% 20%;
+  padding: 2rem 2rem 0.5rem 2rem;
+  color: #a3ece1;
+}
+
+.table-index {
+  width: 5rem;
+}
+
+@media only screen and (max-width: 1150px) {
   .stats-container {
     flex-flow: row wrap;
-    padding: 2rem;
+  }
+
+  .contribution-container {
+    flex-direction: column;
+  }
+
+  .contribution-table {
+    width: 90%;
+    margin: auto;
+  }
+}
+
+@media only screen and (max-width: 850px) {
+  .stats-container {
+    padding-top: 4rem;
   }
 
   .stats-heading {
-    font-size: 3.5rem;
+    font-size: 3rem;
     font-weight: 600;
     padding-bottom: 1rem;
   }
@@ -67,5 +153,21 @@
     height: 5rem;
     margin: 1rem 3rem;
     padding-top: 1rem;
+  }
+
+  .contribution-container {
+    padding: 0 0rem 5rem 0rem;
+  }
+
+  .table-heading {
+    display: none;
+  }
+
+  .circuit {
+    width: 100%;
+    font-size: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }

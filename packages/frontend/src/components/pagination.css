@@ -1,0 +1,22 @@
+nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  padding-top: 1.5rem;
+}
+
+.page-item {
+  cursor: pointer;
+}
+
+.active {
+  color: black;
+  background-color: #a3ece1;
+  height: 2rem;
+  width: 2rem;
+  border-radius: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
