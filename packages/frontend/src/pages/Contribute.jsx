@@ -273,7 +273,7 @@ export default observer(() => {
 
       {!cosmoCanvasReady && (
         <div className="contribute-container contribute-bg contribute-whole-page">
-          <div className="contribute-child align-right">
+          <div className="contribute-child upper-left-anchor">
             <div className="contribute-main">
               <Link
                 to="/"

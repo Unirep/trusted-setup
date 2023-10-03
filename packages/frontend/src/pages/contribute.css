@@ -31,8 +31,9 @@
   flex-direction: column;
 }
 
-.align-right {
-  align-items: flex-end;
+.upper-left-anchor {
+  height: 60vh;
+  padding-left: 6rem;
 }
 
 .contribute-main {
