@@ -144,6 +144,7 @@ ${hashText}
     }
     await this.connect()
     this.authToken = localStorage.getItem(this.localStorageKey('authToken'))
+    this.contributionName = localStorage.getItem('contributionName') ?? 'Anon'
     const hashText = localStorage.getItem(
       this.localStorageKey('contributionHashes')
     )
@@ -258,6 +259,7 @@ ${hashText}
     this.contributionHashes = null
     if (name.length > 0) {
       this.contributionName = name.trim()
+      localStorage.setItem('contributionName', name.trim())
     }
     // join the queue
     const { data: _data } = await this.client.send('ceremony.join', {
