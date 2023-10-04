@@ -262,7 +262,7 @@ export default observer(() => {
       : []
 
     return [
-      'I just contributed to the UniRep trusted setup ceremony!',
+      `I, as ${ceremony.contributionName}, just contributed to the UniRep trusted setup ceremony!`,
       'My circuit hashes are as follows:',
       ...circuitKeys,
     ]
@@ -285,7 +285,7 @@ export default observer(() => {
     url.searchParams.set('redirectDestination', dest.toString())
     url.searchParams.set(
       'content',
-      `🌟 Unirep Ceremony 🌟 \nUsing 【${ceremony.name}】 to knitting together the constellation that unveil our journey. \n\nGenerate your verse and contribute on ${currentUrl.origin}`
+      `🌟 Unirep Ceremony 🌟 \nUsing 【${ceremony.contributionName}】 to knitting together the constellation that unveil our journey. \n\nGenerate your verse and contribute on ${currentUrl.origin}`
     )
     window.location.replace(url.toString())
   }
