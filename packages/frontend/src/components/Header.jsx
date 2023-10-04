@@ -55,7 +55,7 @@ export default observer(({ logoOnly }) => {
             style={{ marginTop: '2.5rem' }}
             onClick={() => setIsMenuOpened(true)}
           >
-            <ServerState />
+            <ServerState shrink={true} />
           </div>
 
           <div style={{ paddingTop: '1rem' }}>
