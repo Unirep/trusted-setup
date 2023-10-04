@@ -37,12 +37,11 @@
   flex-wrap: wrap;
   display: flex;
   flex-direction: column;
+  width: 550px;
 }
 
 .upper-left-anchor {
   height: 60vh;
-  width: 550px;
-  padding-right: 6rem;
 }
 
 .contribute-main {
