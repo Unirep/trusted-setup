@@ -101,6 +101,7 @@ select {
   line-height: inherit;
   outline: none;
   grid-area: select;
+  color: black;
 }
 
 .circuit-select {
