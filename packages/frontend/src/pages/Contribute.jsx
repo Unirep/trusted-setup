@@ -273,10 +273,9 @@ export default observer(() => {
 
       {!cosmoCanvasReady && (
         <div
-          className={
-            !ui.isMobile &&
-            'contribute-container contribute-bg contribute-whole-page'
-          }
+          className={`contribute-bg ${
+            !ui.isMobile && 'contribute-container contribute-whole-page'
+          }`}
         >
           <div className="contribute-wrapper">
             <div
@@ -440,11 +439,10 @@ export default observer(() => {
                   )}
               </div>
             </div>
-            {!ui.isMobile && (
-              <div className="contribute-child">
-                <img src={require('../../public/cosmos1.svg')} />
-              </div>
-            )}
+
+            <div className={ui.isMobile ? 'footer-bg' : 'contribute-child'}>
+              <img src={require('../../public/cosmos1.svg')} />
+            </div>
           </div>
         </div>
       )}
