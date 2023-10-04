@@ -488,7 +488,7 @@ ${hashText}
     apiURL.searchParams.append('access_token', access_token)
     apiURL.searchParams.append('content', this.contributionText)
     const response = await fetch(apiURL.toString()).then((r) => r.json())
-    console.log(response)
+    return response.data.html_url
   }
 }
 

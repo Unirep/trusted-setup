@@ -89,14 +89,6 @@ export default observer(() => {
       })
       url.searchParams.delete('twitter_post_url')
       window.history.pushState({}, null, url.toString())
-    } else if (url.searchParams.get('gist_post_url')) {
-      console.log(url.searchParams.get('gist_post_url'))
-      setPostMessage({
-        platform: 'gist',
-        url: url.searchParams.get('gist_post_url'),
-      })
-      url.searchParams.delete('gist_post_url')
-      window.history.pushState({}, null, url.toString())
     }
   }, [])
 
@@ -298,7 +290,8 @@ export default observer(() => {
     if (!access_token) {
       await ceremony.oauth(name, '/oauth/github', false, true)
     } else {
-      await ceremony.postGist()
+      const url = await ceremony.postGist()
+      setPostMessage({ platform: 'gist', url })
     }
   }
 
