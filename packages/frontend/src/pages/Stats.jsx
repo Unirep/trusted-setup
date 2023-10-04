@@ -96,16 +96,6 @@ export default observer(() => {
             ))}
           </div>
         ) : null}
-
-        {/* {ui.isMobile && detailIsOpen ?
-          <div className='stats-details'>
-            <div>Expand detail</div>
-            <img
-              src={require('../../public/arrow_collapse.svg')}
-              alt="collapse arrow"
-            />
-          </div>
-        : null } */}
       </div>
 
       <div className="contribution-container">

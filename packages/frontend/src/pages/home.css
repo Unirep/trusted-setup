@@ -129,7 +129,7 @@ video {
   }
 
   .contributions {
-    width: 80%;
+    width: 90%;
   }
 
   .faq-container {
@@ -176,6 +176,10 @@ video {
 
   .hero-text {
     margin: 3rem;
+  }
+
+  .contributions {
+    width: 90%;
   }
 
   .faq-container {
