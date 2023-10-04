@@ -1,8 +1,9 @@
 import React from 'react'
+import { useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { Link, useLocation } from 'react-router-dom'
+
 import { ToastContainer, toast } from 'react-toastify'
-import { useState, useRef } from 'react'
 import 'react-toastify/dist/ReactToastify.css'
 
 import Header from '../components/Header'
@@ -13,6 +14,7 @@ import InfoContainer from '../components/InfoContainer'
 import { HTTP_SERVER } from '../config'
 import state from '../contexts/state'
 import './contribute.css'
+import Popup from '../components/Popup'
 
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
@@ -67,6 +69,7 @@ export default observer(() => {
 
   const [name, setName] = React.useState('')
   const [error, setError] = React.useState('')
+  const [postMessage, setPostMessage] = React.useState({})
   const [cosmoCanvasReady, setCosmoCanvasReady] = React.useState(false)
   const { hash } = useLocation()
   const { ceremony } = React.useContext(state)
@@ -75,6 +78,28 @@ export default observer(() => {
       ? ContributeState.loading
       : ContributeState.normal
   )
+
+  React.useEffect(() => {
+    const url = new URL(window.location)
+    if (url.searchParams.get('twitter_post_url')) {
+      console.log(url.searchParams.get('twitter_post_url'))
+      setPostMessage({
+        platform: 'twitter',
+        url: url.searchParams.get('twitter_post_url'),
+      })
+      url.searchParams.delete('twitter_post_url')
+      window.history.pushState({}, null, url.toString())
+    } else if (url.searchParams.get('gist_post_url')) {
+      console.log(url.searchParams.get('gist_post_url'))
+      setPostMessage({
+        platform: 'gist',
+        url: url.searchParams.get('gist_post_url'),
+      })
+      url.searchParams.delete('gist_post_url')
+      window.history.pushState({}, null, url.toString())
+    }
+  }, [])
+
   React.useEffect(() => {
     if (!ceremony.connected) setContributeState(ContributeState.offline)
     else if (ceremony.loadingInitial)
@@ -290,9 +315,33 @@ export default observer(() => {
     window.location.replace(url.toString())
   }
 
+  const gotoPost = () => {
+    window.open(postMessage.url, '_blank')
+    setPostMessage({})
+  }
+
   return (
     <>
       <ToastContainer position="top-center" theme="colored" />
+      <Popup
+        open={postMessage.platform}
+        onClose={() => setPostMessage({})}
+        title="Post Successfully!"
+        content={`Post on ${postMessage.platform} successfully.`}
+        button={
+          <Button
+            style={{
+              borderRadius: '24px',
+              color: 'black',
+              padding: '12px 24px',
+              fontWeight: '600',
+            }}
+            onClick={gotoPost}
+          >
+            Go to post
+          </Button>
+        }
+      />
 
       {!cosmoCanvasReady && (
         <div className="contribute-container contribute-bg contribute-whole-page">
