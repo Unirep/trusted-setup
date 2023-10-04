@@ -280,7 +280,11 @@ export default observer(() => {
         >
           <div className="contribute-wrapper">
             <div
-              className={!ui.isMobile && 'contribute-child upper-left-anchor'}
+              className={
+                !ui.isMobile
+                  ? 'contribute-child upper-left-anchor'
+                  : 'padding padding-top'
+              }
             >
               <div className="contribute-main">
                 <Link

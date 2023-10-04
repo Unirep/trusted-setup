@@ -55,6 +55,10 @@
   padding: 0 5vw 5vh 5vw;
 }
 
+.padding-top {
+  padding-top: 5vh;
+}
+
 .contribute-main p {
   width: 550px;
   line-height: 28px;
@@ -124,7 +128,7 @@
 
 @media only screen and (max-width: 850px) {
   .contribute-main p {
-    width: 100%;
+    width: 90%;
   }
 
   .contribute-wrapper {
@@ -132,6 +136,6 @@
   }
 
   .contribute-child {
-    width: 100vw;
+    width: 90vw;
   }
 }
