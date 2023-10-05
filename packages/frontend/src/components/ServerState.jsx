@@ -2,7 +2,7 @@ import React from 'react'
 import state from '../contexts/state'
 import { observer } from 'mobx-react-lite'
 
-export default observer(() => {
+export default observer(({ shrink = false }) => {
   const { ceremony, ui } = React.useContext(state)
 
   return (
@@ -13,7 +13,7 @@ export default observer(() => {
         }.svg`)}
         alt="sparkles"
       />
-      {!ui.isMobile ? (
+      {!shrink ? (
         <div>
           <div className="header-text">
             Server:{' '}
