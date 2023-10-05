@@ -82,12 +82,15 @@ export default observer(() => {
   React.useEffect(() => {
     const url = new URL(window.location)
     if (url.searchParams.get('twitter_post_url')) {
-      console.log(url.searchParams.get('twitter_post_url'))
       setPostMessage({
         platform: 'twitter',
         url: url.searchParams.get('twitter_post_url'),
       })
       url.searchParams.delete('twitter_post_url')
+      window.history.pushState({}, null, url.toString())
+    } else if (url.searchParams.get('postGist')) {
+      postOnGithub()
+      url.searchParams.delete('postGist')
       window.history.pushState({}, null, url.toString())
     }
   }, [])

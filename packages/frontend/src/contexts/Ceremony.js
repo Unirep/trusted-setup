@@ -173,10 +173,6 @@ ${hashText}
       url.searchParams.delete('name')
       window.history.pushState({}, null, url.toString())
       await this.join(name, queue)
-    } else if (url.searchParams.get('postGist')) {
-      url.searchParams.delete('postGist')
-      window.history.pushState({}, null, url.toString())
-      await this.postGist()
     }
     this.userId = data.userId
     if (data.active) {
