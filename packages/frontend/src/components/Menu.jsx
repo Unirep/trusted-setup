@@ -11,7 +11,7 @@ export default observer(({ closeMenu }) => {
     <div className="menu-container">
       <div className="header">
         <div style={{ marginTop: '2.5rem' }}>
-          <ServerState />
+          <ServerState shrink={true} />
         </div>
 
         <div style={{ paddingTop: '1rem' }}>
@@ -37,7 +37,7 @@ export default observer(({ closeMenu }) => {
           <Link to="/contribute">Contribute</Link>
         </div>
 
-        <ServerState />
+        <ServerState shrink={true} />
 
         <div>
           <div className="header-text">
