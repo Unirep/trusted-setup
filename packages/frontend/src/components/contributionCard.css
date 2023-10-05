@@ -34,16 +34,12 @@
 }
 
 @media only screen and (max-width: 700px) {
-  .card {
-    width: fit-content;
-    padding: 0.5rem;
-  }
-
   .card-text {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     font-size: 1rem;
+    padding: 1rem 2rem;
   }
 }
 

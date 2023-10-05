@@ -11,6 +11,7 @@ import state from '../contexts/state'
 
 export default observer(() => {
   const { ui, ceremony } = useContext(state)
+  const [detailIsOpen, setDetailIsOpen] = useState(true)
   const [activeCircuit, setActiveCircuit] = useState(ceremony.circuitNames[0])
   const [currentPage, setCurrentPage] = useState(1)
   const [recordsPerPage] = useState(10)
@@ -27,6 +28,14 @@ export default observer(() => {
       setActiveCircuit(ceremony.circuitNames[0])
     }
   }, [ceremony.circuitNames])
+
+  const toggleDetailOpen = () => {
+    if (detailIsOpen) {
+      setDetailIsOpen(false)
+    } else {
+      setDetailIsOpen(true)
+    }
+  }
 
   return (
     <div className="stats-content">
@@ -52,27 +61,41 @@ export default observer(() => {
           </div>
         </div>
 
-        <div className="stats-categories">
-          {ceremony.ceremonyState.circuitStats?.map((c) => (
-            <div className="stat-item" key={c.name}>
-              <div>{c.name}</div>
-              <div className="stat-count">
-                <div>{c.contributionCount}</div>
-                <a
-                  href={new URL(
-                    `/contribution/${c.name}/latest`,
-                    HTTP_SERVER
-                  ).toString()}
-                >
-                  <img
-                    src={require('../../public/arrow_download.svg')}
-                    alt="download arrow"
-                  />
-                </a>
+        {ui.isMobile ? (
+          <div className="stats-details" onClick={toggleDetailOpen}>
+            <div>{detailIsOpen ? 'Close detail' : 'Expand detail'}</div>
+            <img
+              src={require(`../../public/arrow_${
+                detailIsOpen ? 'collapse' : 'dropdown'
+              }.svg`)}
+              alt="expand or collapse arrow"
+            />
+          </div>
+        ) : null}
+
+        {detailIsOpen ? (
+          <div className="stats-categories">
+            {ceremony.ceremonyState.circuitStats?.map((c) => (
+              <div className="stat-item" key={c.name}>
+                <div>{c.name}</div>
+                <div className="stat-count">
+                  <div>{c.contributionCount}</div>
+                  <a
+                    href={new URL(
+                      `/contribution/${c.name}/latest`,
+                      HTTP_SERVER
+                    ).toString()}
+                  >
+                    <img
+                      src={require('../../public/arrow_download.svg')}
+                      alt="download arrow"
+                    />
+                  </a>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : null}
       </div>
 
       <div className="contribution-container">
@@ -89,7 +112,7 @@ export default observer(() => {
         ))} */}
 
         <div className="circuit">
-          <div>Contributions</div>
+          <div className="circuit-heading">Contributions</div>
           <div className="view">view by circuit:</div>
           <div className="circuit-select">
             <select

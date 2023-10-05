@@ -18,12 +18,21 @@ export default observer(() => {
   }
   return (
     <>
-      <video autoPlay muted loop poster playsInLine>
-        <source
-          src={require('../../public/unirep-ceremony-hero.mp4')}
-          type="video/mp4"
-        />
-      </video>
+      {ui.isMobile ? (
+        <div className="cosmos-bg">
+          <img
+            src={require('../../public/cosmos1.svg')}
+            alt="cosmos portal image"
+          />
+        </div>
+      ) : (
+        <video autoPlay muted loop poster playsInLine>
+          <source
+            src={require('../../public/unirep-ceremony-hero.mp4')}
+            type="video/mp4"
+          />
+        </video>
+      )}
       <div className="content">
         <Header />
 

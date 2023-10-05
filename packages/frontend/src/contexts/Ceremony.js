@@ -53,7 +53,7 @@ export default class Queue {
     const hashText = Object.entries(this.contributionHashes ?? {})
       .map(([circuitName, hash]) => `${circuitName}: ${hash}`)
       .join('\n\n')
-    return `I just contributed to the unirep dev trusted setup ceremony. You can too [here](https://dev.trusted-setup.unirep.io).
+    return `I just contributed to the unirep dev trusted setup ceremony. You can too [here](https://ceremony.unirep.io).
 My circuit hashes are as follows:
 
 ${hashText}
@@ -238,7 +238,7 @@ ${hashText}
     this.ingestState(data)
   }
 
-  async oauth(name, path, joinQueue, postGist) {
+  async oauth(path, joinQueue, postGist) {
     const url = new URL(path, HTTP_SERVER)
     url.searchParams.set('token', this.authToken)
     const currentUrl = new URL(window.location.href)
