@@ -10,6 +10,7 @@ video {
 .content {
   position: relative;
   height: 100vh;
+  overflow-x: hidden;
 }
 
 .hero-container {
@@ -69,6 +70,7 @@ video {
 
 .contributions {
   width: 60%;
+  max-width: 1100px;
   padding: 3rem 0;
 }
 
@@ -105,6 +107,17 @@ video {
 }
 
 @media only screen and (max-width: 1150px) {
+  .cosmos-bg {
+    object-fit: cover;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    position: fixed;
+    top: 13%;
+  }
+
   .hero-container {
     padding: 5rem 6rem 8rem;
   }
@@ -118,7 +131,7 @@ video {
   }
 
   .contributions {
-    width: 80%;
+    width: 90%;
   }
 
   .faq-container {
@@ -151,6 +164,10 @@ video {
 }
 
 @media only screen and (max-width: 650px) {
+  .cosmos-bg {
+    top: 18%;
+  }
+
   .hero-container {
     padding: 3rem 0rem 7rem;
   }
@@ -161,6 +178,10 @@ video {
 
   .hero-text {
     margin: 3rem;
+  }
+
+  .contributions {
+    width: 90%;
   }
 
   .faq-container {

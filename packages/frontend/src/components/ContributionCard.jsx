@@ -3,10 +3,12 @@ import { observer } from 'mobx-react-lite'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import './contributionCard.css'
+import state from '../contexts/state'
 
 dayjs.extend(relativeTime)
 
 export default observer(({ index, name, hash, createdAt }) => {
+  const { ui } = React.useContext(state)
   return (
     <div className="card">
       <div className="card-text">
@@ -21,7 +23,9 @@ export default observer(({ index, name, hash, createdAt }) => {
             </strong>
           </div>
         </div>
-        <div className="card-hash">{hash.slice(0, 20)}...</div>
+        <div className="card-hash">
+          {ui.isMobile ? hash.slice(0, 25) : hash.slice(0, 20)}...
+        </div>
         <div>{dayjs(createdAt).from(dayjs())}</div>
       </div>
     </div>
