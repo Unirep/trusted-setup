@@ -14,6 +14,10 @@
 }
 
 .stats-heading {
+  background: linear-gradient(135.45deg, #efc197 0%, #5bd7c4 95.26%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   font-size: 4rem;
   font-weight: 700;
   padding-bottom: 2rem;
@@ -21,6 +25,16 @@
 
 .stats-link {
   padding: 0.5rem 0;
+}
+
+.stats-details {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #f6f6f6;
+  margin: 2rem 1rem 1rem 0;
+  padding-bottom: 1rem;
+  font-size: 1.5rem;
 }
 
 .stats-categories {
@@ -55,9 +69,16 @@
 }
 
 .circuit {
-  width: 35%;
-  font-size: 2.5rem;
+  width: fit-content;
+  font-size: 3rem;
   font-weight: 700;
+}
+
+.circuit-heading {
+  background: linear-gradient(135.45deg, #efc197 0%, #5bd7c4 95.26%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .view {
@@ -68,6 +89,7 @@
 
 select {
   appearance: none;
+  -webkit-appearance: none;
   background-color: transparent;
   border: none;
   padding: 0 1em 0 0;
@@ -79,6 +101,7 @@ select {
   line-height: inherit;
   outline: none;
   grid-area: select;
+  color: black;
 }
 
 .circuit-select {
@@ -125,21 +148,29 @@ select {
 @media only screen and (max-width: 1150px) {
   .stats-container {
     flex-flow: row wrap;
+    margin: 0 1rem;
   }
 
   .contribution-container {
     flex-direction: column;
+    margin: 0 2rem;
+    padding: 0;
+  }
+
+  .circuit {
+    font-size: 2.5rem;
   }
 
   .contribution-table {
-    width: 90%;
+    width: 100%;
     margin: auto;
+    padding-top: 1rem;
   }
 }
 
 @media only screen and (max-width: 850px) {
   .stats-container {
-    padding-top: 4rem;
+    padding: 1rem 0 1rem 1.5rem;
   }
 
   .stats-heading {
@@ -149,25 +180,33 @@ select {
   }
 
   .stat-item {
-    width: 14rem;
-    height: 5rem;
-    margin: 1rem 3rem;
-    padding-top: 1rem;
+    width: 100%;
+    height: 4rem;
+    margin: 0.5rem 0;
+    padding: 1rem 0;
+    border-bottom: 1px dashed #454545;
+  }
+
+  .stat-count {
+    width: 100%;
   }
 
   .contribution-container {
-    padding: 0 0rem 5rem 0rem;
+    padding: 3rem 0rem 5rem;
   }
 
   .table-heading {
     display: none;
   }
 
-  .circuit {
+  .contribution-table {
+    margin: auto;
     width: 100%;
+  }
+}
+
+@media only screen and (max-width: 850px) {
+  .circuit {
     font-size: 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
   }
 }
