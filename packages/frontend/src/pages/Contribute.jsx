@@ -460,12 +460,12 @@ export default observer(() => {
 
           {contributeState === ContributeState.contributing && (
             <div className="contribute-container" style={{ height: 'auto' }}>
-              <div className="contribute-wrapper">
-                <div className="contribute-child padding">
+              <div className="contribute-wrapper wrapper2">
+                <div className="contribute-child padding2">
                   <h2>Contribution in progress</h2>
                   Please stay put while your machine makes contributions.
                 </div>
-                <div className="contribute-child padding">
+                <div className="contribute-child padding2">
                   {contributeState === ContributeState.contributing && (
                     <p>
                       {ceremony.contributionUpdates.map((text, i) => (
@@ -481,12 +481,15 @@ export default observer(() => {
           {contributeState === ContributeState.finished && (
             <>
               <div className="contribute-container">
-                <div className="contribute-wrapper" style={{ height: 'auto' }}>
-                  <div className="contribute-child padding">
+                <div
+                  className="contribute-wrapper wrapper2"
+                  style={{ height: 'auto' }}
+                >
+                  <div className="contribute-child padding2">
                     <h2 className="mint-color">Contribution completed!</h2>
                     Thank you for contributing.
                   </div>
-                  <div className="contribute-child padding">
+                  <div className="contribute-child padding2">
                     <p>
                       You can continue to create your verse here or Share &
                       Invite others to contribute.
