@@ -140,12 +140,16 @@
 
 .canvas-container p {
   text-align: center;
-  padding-bottom: 1rem;
+  /* padding-bottom: 1rem; */
 }
 
 @media only screen and (max-width: 1200px) {
   .padding2 {
     margin: 0 3rem;
+  }
+
+  .canvas-container {
+    margin: 0 5vw 1rem;
   }
 }
 
