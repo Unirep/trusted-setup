@@ -11,7 +11,7 @@ import state from '../contexts/state'
 
 export default observer(() => {
   const { ui, ceremony } = useContext(state)
-  const [detailIsOpen, setDetailIsOpen] = useState(false)
+  const [detailIsOpen, setDetailIsOpen] = useState(true)
   const [activeCircuit, setActiveCircuit] = useState(ceremony.circuitNames[0])
   const [currentPage, setCurrentPage] = useState(1)
   const [recordsPerPage] = useState(10)
