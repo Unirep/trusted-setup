@@ -58,9 +58,7 @@ export default observer(() => {
           </div>
           <div className="faq-cli">
             3. Use:
-            <div style={{ fontWeight: '600' }}>
-              https://http.ceremony.unirep.io
-            </div>
+            <div className="faq-url">https://http.ceremony.unirep.io</div>
             to contribute
           </div>
         </>
