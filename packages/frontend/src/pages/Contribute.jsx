@@ -74,16 +74,19 @@ export default observer(() => {
       ? ContributeState.loading
       : ContributeState.normal
   )
+  const [disableLink, setDisableLink] = React.useState(false)
   React.useEffect(() => {
     if (!ceremony.connected) setContributeState(ContributeState.offline)
     else if (ceremony.loadingInitial)
       setContributeState(ContributeState.loading)
     else if (ceremony.inQueue) {
+      setDisableLink(true)
       if (ceremony.isActive) {
         setContributeState(ContributeState.contributing)
         setTimeout(() => setCosmoCanvasReady(true), 1000) // test to wait for 1 sec to setup the cosmo canvas
       } else setContributeState(ContributeState.queueing)
     } else if (ceremony.contributionHashes) {
+      setDisableLink(false)
       setContributeState(ContributeState.finished)
       setTimeout(() => setCosmoCanvasReady(true), 1000) // test to wait for 1 sec to setup the cosmo canvas
     } else setContributeState(ContributeState.normal)
@@ -287,14 +290,14 @@ export default observer(() => {
             >
               <div className="contribute-main">
                 <Link
-                  to="/"
-                  style={{
-                    pointerEvents:
-                      contributeState === ContributeState.queueing ||
-                      contributeState === ContributeState.contributing
-                        ? 'none'
-                        : '',
-                  }}
+                  to={`${disableLink ? '' : '/'}`}
+                  // style={{
+                  //   pointerEvents:
+                  //     contributeState === ContributeState.queueing ||
+                  //     contributeState === ContributeState.contributing
+                  //       ? 'none'
+                  //       : '',
+                  // }}
                 >
                   <img
                     src={require('../../public/logo_footer.svg')}
@@ -448,7 +451,7 @@ export default observer(() => {
       )}
       {cosmoCanvasReady && (
         <div className="content">
-          <Header logoOnly={true} />
+          <Header logoOnly={true} disableLink={disableLink} />
           <div className="contribute-container">
             <div className="canvas-container">
               <canvas id="cosmo"></canvas>
