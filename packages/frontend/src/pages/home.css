@@ -107,6 +107,11 @@ video {
   margin-bottom: 2rem;
 }
 
+.faq-cli {
+  display: flex;
+  gap: 1rem;
+}
+
 @media only screen and (max-width: 1150px) {
   .cosmos-bg {
     object-fit: cover;
@@ -176,5 +181,10 @@ video {
 
   .hero-text {
     margin: 3rem;
+  }
+
+  .faq-cli {
+    flex-direction: column;
+    gap: 0;
   }
 }
