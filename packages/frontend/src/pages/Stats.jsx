@@ -11,7 +11,7 @@ import state from '../contexts/state'
 
 export default observer(() => {
   const { ui, ceremony } = useContext(state)
-  const [detailIsOpen, setDetailIsOpen] = useState(true)
+  const [detailIsOpen, setDetailIsOpen] = useState(false)
   const [activeCircuit, setActiveCircuit] = useState(ceremony.circuitNames[0])
   const [currentPage, setCurrentPage] = useState(1)
   const [recordsPerPage] = useState(10)
@@ -52,13 +52,13 @@ export default observer(() => {
               Full transcript
             </a>
           </div>
-          <div className="stats-link">
+          {/* <div className="stats-link">
             {ceremony.attestationUrl ? (
               <a href={ceremony.attestationUrl} target="_blank">
                 Public attestations
               </a>
             ) : null}
-          </div>
+          </div> */}
         </div>
 
         {ui.isMobile ? (
