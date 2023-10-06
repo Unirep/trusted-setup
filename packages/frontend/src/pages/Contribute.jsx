@@ -456,7 +456,10 @@ export default observer(() => {
             <div className="canvas-container">
               <canvas id="cosmo"></canvas>
               <p>
-                <b>Double click to add stars.</b>
+                <b className="canvas-message">
+                  Zoom and rotate to explore your verse, double click to add
+                  stars.
+                </b>
               </p>
             </div>
           </div>
@@ -494,8 +497,8 @@ export default observer(() => {
                   </div>
                   <div className="contribute-child padding2">
                     <p>
-                      You can continue to create your verse here or Share &
-                      Invite others to contribute.
+                      You can continue to explore your verse here. Share &
+                      invite others to contribute!
                     </p>
                     <Button
                       style={{

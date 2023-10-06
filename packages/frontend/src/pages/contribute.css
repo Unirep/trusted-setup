@@ -165,4 +165,8 @@
   .contribute-child {
     width: 86vw;
   }
+
+  .canvas-message {
+    font-size: 0.8rem;
+  }
 }
