@@ -320,8 +320,8 @@ export default observer(() => {
                   contributeState === ContributeState.queueing ||
                   contributeState === ContributeState.contributing) && (
                   <p>
-                    Beyond digital horizons, a nebulous archway glimmers -
-                    UniRep, the path to a realm where privacy's song fills the
+                    Beyond digital horizons, a nebulous archway glimmers... join
+                    UniRep on the path to a realm where privacy's song fills the
                     air.
                   </p>
                 )}
