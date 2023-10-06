@@ -74,16 +74,19 @@ export default observer(() => {
       ? ContributeState.loading
       : ContributeState.normal
   )
+  const [disableLink, setDisableLink] = React.useState(false)
   React.useEffect(() => {
     if (!ceremony.connected) setContributeState(ContributeState.offline)
     else if (ceremony.loadingInitial)
       setContributeState(ContributeState.loading)
     else if (ceremony.inQueue) {
+      setDisableLink(true)
       if (ceremony.isActive) {
         setContributeState(ContributeState.contributing)
         setTimeout(() => setCosmoCanvasReady(true), 1000) // test to wait for 1 sec to setup the cosmo canvas
       } else setContributeState(ContributeState.queueing)
     } else if (ceremony.contributionHashes) {
+      setDisableLink(false)
       setContributeState(ContributeState.finished)
       setTimeout(() => setCosmoCanvasReady(true), 1000) // test to wait for 1 sec to setup the cosmo canvas
     } else setContributeState(ContributeState.normal)
@@ -287,14 +290,14 @@ export default observer(() => {
             >
               <div className="contribute-main">
                 <Link
-                  to="/"
-                  style={{
-                    pointerEvents:
-                      contributeState === ContributeState.queueing ||
-                      contributeState === ContributeState.contributing
-                        ? 'none'
-                        : '',
-                  }}
+                  to={`${disableLink ? '' : '/'}`}
+                  // style={{
+                  //   pointerEvents:
+                  //     contributeState === ContributeState.queueing ||
+                  //     contributeState === ContributeState.contributing
+                  //       ? 'none'
+                  //       : '',
+                  // }}
                 >
                   <img
                     src={require('../../public/logo_footer.svg')}
@@ -317,8 +320,8 @@ export default observer(() => {
                   contributeState === ContributeState.queueing ||
                   contributeState === ContributeState.contributing) && (
                   <p>
-                    Beyond digital horizons, a nebulous archway glimmers -
-                    UniRep, the path to a realm where privacy's song fills the
+                    Beyond digital horizons, a nebulous archway glimmers... join
+                    UniRep on the path to a realm where privacy's song fills the
                     air.
                   </p>
                 )}
@@ -327,19 +330,35 @@ export default observer(() => {
                   hash === '#cli' && (
                     <div className="contribute-cli-field">
                       <h4>Contribute by CLI</h4>
-                      <ul>
+                      <div>
                         <li>
-                          Install{' '}
+                          download{' '}
                           <a
                             href="https://github.com/Unirep/trusted-setup"
                             blank="_"
                           >
-                            trusted-setup package
-                          </a>
+                            trusted-setup
+                          </a>{' '}
+                          package
                         </li>
-                        <li>npx trusted-setup</li>
-                        <li>Use: https://setup.unirep.io (need to update)</li>
-                      </ul>
+                        <div style={{ height: '1rem' }}></div>
+                        <li>
+                          run:{' '}
+                          <code className="cli">
+                            <img
+                              src={require('../../public/copy.svg')}
+                              alt="copy icon"
+                              onClick={() =>
+                                navigator.clipboard.writeText(
+                                  'npx trusted-setup https://http.ceremony.unirep.io'
+                                )
+                              }
+                              className="copy"
+                            />
+                            npx trusted-setup https://http.ceremony.unirep.io
+                          </code>
+                        </li>
+                      </div>
                     </div>
                   )}
                 {contributeState === ContributeState.normal &&
@@ -416,7 +435,7 @@ export default observer(() => {
                       <strong>Authenticated.</strong>
                     </p>
                     <p>
-                      Please hold until the portal opens, there
+                      Please hold until the portal opens, there{' '}
                       {ceremony.queueLength > 1
                         ? `are ${ceremony.queueLength} people `
                         : `is ${ceremony.queueLength} person `}{' '}
@@ -448,24 +467,27 @@ export default observer(() => {
       )}
       {cosmoCanvasReady && (
         <div className="content">
-          <Header logoOnly={true} />
+          <Header logoOnly={true} disableLink={disableLink} />
           <div className="contribute-container">
             <div className="canvas-container">
               <canvas id="cosmo"></canvas>
               <p>
-                <b>Double click to add stars.</b>
+                <b className="canvas-message">
+                  Zoom and rotate to explore your verse, double click to add
+                  stars.
+                </b>
               </p>
             </div>
           </div>
 
           {contributeState === ContributeState.contributing && (
             <div className="contribute-container" style={{ height: 'auto' }}>
-              <div className="contribute-wrapper">
-                <div className="contribute-child padding">
+              <div className="contribute-wrapper wrapper2">
+                <div className="contribute-child padding2">
                   <h2>Contribution in progress</h2>
                   Please stay put while your machine makes contributions.
                 </div>
-                <div className="contribute-child padding">
+                <div className="contribute-child padding2">
                   {contributeState === ContributeState.contributing && (
                     <p>
                       {ceremony.contributionUpdates.map((text, i) => (
@@ -481,15 +503,18 @@ export default observer(() => {
           {contributeState === ContributeState.finished && (
             <>
               <div className="contribute-container">
-                <div className="contribute-wrapper" style={{ height: 'auto' }}>
-                  <div className="contribute-child padding">
+                <div
+                  className="contribute-wrapper wrapper2"
+                  style={{ height: 'auto' }}
+                >
+                  <div className="contribute-child padding2">
                     <h2 className="mint-color">Contribution completed!</h2>
                     Thank you for contributing.
                   </div>
-                  <div className="contribute-child padding">
+                  <div className="contribute-child padding2">
                     <p>
-                      You can continue to create your verse here or Share &
-                      Invite others to contribute.
+                      You can continue to explore your verse here. Share &
+                      invite others to contribute!
                     </p>
                     <Button
                       style={{
@@ -530,138 +555,6 @@ export default observer(() => {
           )}
         </div>
       )}
-
-      {/* <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            borderTop: '1px solid black',
-            paddingTop: '4px',
-            flexWrap: 'wrap',
-          }}
-        >
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {ceremony.bootstrapData?.ceremonyDescription ? (
-              <div
-                style={{
-                  maxWidth: '300px',
-                  border: '1px solid black',
-                  padding: '4px',
-                  marginBottom: '8px',
-                }}
-              >
-                {ceremony.bootstrapData?.ceremonyDescription}
-              </div>
-            ) : null}
-            {ceremony.loadingInitial ? <div>Loading...</div> : null}
-            {!ceremony.inQueue &&
-            !ceremony.loadingInitial &&
-            !ceremony.contributionHashes ? (
-              <div>
-                <div style={{ marginBottom: '8px' }}>
-                  Join the ceremony by choosing a way to authenticate.
-                </div>
-                <div style={{ display: 'flex' }}>
-                  <input
-                    type="text"
-                    placeholder="contributor name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                  <div style={{ width: '4px' }} />
-                  <Tooltip text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique." />
-                </div>
-                <div style={{ height: '4px' }} />
-                <div style={{ display: 'flex' }}>
-                  {ceremony.bootstrapData?.authOptions?.map((option) => (
-                    <Button
-                      style={{ marginRight: '2px' }}
-                      key={option.name}
-                      onClick={async () => {
-                        if (option.type === 'none') {
-                          await ceremony.join(name, 'open')
-                        } else {
-                          await ceremony.oauth(name, option.path)
-                        }
-                      }}
-                    >
-                      {option.displayName}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-            {!ceremony.isActive && ceremony.inQueue ? (
-              <div>
-                <div>Ceremony</div>
-                <div style={{ height: '4px' }} />
-                <div>
-                  You are currently number {ceremony.queuePosition} in the
-                  queue, please wait until your turn.
-                </div>
-                <div style={{ height: '4px' }} />
-                <div>
-                  This tab <strong>must</strong> remain active for you to stay
-                  in the queue!
-                </div>
-                <div style={{ height: '4px' }} />
-                <div>
-                  Try pulling this tab into it's own window. Don't minimize the
-                  window.
-                </div>
-              </div>
-            ) : null}
-            {ceremony.isActive && ceremony.inQueue ? (
-              <div>
-                <div>It's your turn!</div>
-                <div>Please wait while your machine makes contributions.</div>
-                <div>
-                  {ceremony.contributionUpdates.map((text, i) => (
-                    <div key={i} style={{ fontSize: '10px' }}>
-                      {text}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-            {ceremony.contributionHashes ? (
-              <div style={{ marginTop: '8px' }}>
-                <div style={{ display: 'flex' }}>
-                  <div>
-                    <div>
-                      <strong>Thank you for contributing!</strong>
-                    </div>
-                    <div>
-                      {ceremony.attestationUrl ? (
-                        <>
-                          Share this text publicly, perhaps{' '}
-                          <a href={ceremony.attestationUrl} target="_blank">
-                            here
-                          </a>
-                        </>
-                      ) : (
-                        'Share this text publicly'
-                      )}
-                    </div>
-                  </div>
-                  <div style={{ flex: 1, minWidth: '4px' }} />
-                  <Button
-                    onClick={async () => {
-                      navigator.clipboard.writeText(ceremony.contributionText)
-                      await new Promise((r) => setTimeout(r, 1000))
-                    }}
-                    loadingText="Copied!"
-                  >
-                    Copy
-                  </Button>
-                </div>
-                <div style={{ maxWidth: '400px', overflow: 'scroll' }}>
-                  <code>{ceremony.contributionText}</code>
-                </div>
-              </div>
-            ) : null}
-          </div>
-        </div> */}
     </>
   )
 })

@@ -93,9 +93,10 @@ video {
 }
 
 .faq-container {
+  width: 60%;
   max-width: 1100px;
-  margin: auto;
-  padding: 7rem 18rem 7rem;
+  margin: 7rem auto;
+  /* padding: 7rem 18rem 7rem; */
   text-align: left;
 }
 
@@ -105,6 +106,25 @@ video {
   font-weight: 700;
   margin-bottom: 2rem;
 }
+
+.cli {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.copy {
+  cursor: pointer;
+}
+
+/* .faq-cli {
+  display: flex;
+  gap: 1rem;
+}
+
+.faq-url {
+  font-weight: 700;
+} */
 
 @media only screen and (max-width: 1150px) {
   .cosmos-bg {
@@ -135,7 +155,8 @@ video {
   }
 
   .faq-container {
-    padding: 7rem 12rem 0;
+    width: 80%;
+    margin-bottom: 3rem;
   }
 }
 
@@ -151,10 +172,6 @@ video {
   .contribution-heading {
     font-size: 2rem;
     font-weight: 600;
-  }
-
-  .faq-container {
-    padding: 7rem 8rem 0;
   }
 
   .faq-heading {
@@ -180,11 +197,16 @@ video {
     margin: 3rem;
   }
 
-  .contributions {
-    width: 90%;
+  .cli {
+    font-size: 0.9rem;
   }
 
-  .faq-container {
-    padding: 7rem 3rem 0;
+  /* .faq-cli {
+    flex-direction: column;
+    gap: 0;
   }
+
+  .faq-url {
+    font-size: 0.8rem;
+  } */
 }

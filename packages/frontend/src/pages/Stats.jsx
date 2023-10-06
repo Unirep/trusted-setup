@@ -52,13 +52,13 @@ export default observer(() => {
               Full transcript
             </a>
           </div>
-          <div className="stats-link">
+          {/* <div className="stats-link">
             {ceremony.attestationUrl ? (
               <a href={ceremony.attestationUrl} target="_blank">
                 Public attestations
               </a>
             ) : null}
-          </div>
+          </div> */}
         </div>
 
         {ui.isMobile ? (
