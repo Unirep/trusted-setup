@@ -107,14 +107,24 @@ video {
   margin-bottom: 2rem;
 }
 
-.faq-cli {
+.cli {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.copy {
+  cursor: pointer;
+}
+
+/* .faq-cli {
   display: flex;
   gap: 1rem;
 }
 
 .faq-url {
   font-weight: 700;
-}
+} */
 
 @media only screen and (max-width: 1150px) {
   .cosmos-bg {
@@ -187,12 +197,16 @@ video {
     margin: 3rem;
   }
 
-  .faq-cli {
+  .cli {
+    font-size: 0.9rem;
+  }
+
+  /* .faq-cli {
     flex-direction: column;
     gap: 0;
   }
 
   .faq-url {
     font-size: 0.8rem;
-  }
+  } */
 }

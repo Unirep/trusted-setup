@@ -330,19 +330,35 @@ export default observer(() => {
                   hash === '#cli' && (
                     <div className="contribute-cli-field">
                       <h4>Contribute by CLI</h4>
-                      <ul>
+                      <div>
                         <li>
-                          Install{' '}
+                          download{' '}
                           <a
                             href="https://github.com/Unirep/trusted-setup"
                             blank="_"
                           >
-                            trusted-setup package
-                          </a>
+                            trusted-setup
+                          </a>{' '}
+                          package
                         </li>
-                        <li>npx trusted-setup</li>
-                        <li>Use: https://setup.unirep.io (need to update)</li>
-                      </ul>
+                        <div style={{ height: '1rem' }}></div>
+                        <li>
+                          run:{' '}
+                          <code className="cli">
+                            <img
+                              src={require('../../public/copy.svg')}
+                              alt="copy icon"
+                              onClick={() =>
+                                navigator.clipboard.writeText(
+                                  'npx trusted-setup https://http.ceremony.unirep.io'
+                                )
+                              }
+                              className="copy"
+                            />
+                            npx trusted-setup https://http.ceremony.unirep.io
+                          </code>
+                        </li>
+                      </div>
                     </div>
                   )}
                 {contributeState === ContributeState.normal &&

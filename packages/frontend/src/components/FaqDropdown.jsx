@@ -50,9 +50,23 @@ export default observer(() => {
             >
               trusted-setup
             </a>{' '}
-            package from npm and follow these simple steps:
+            package from npm and run
           </div>
-          <div style={{ paddingTop: '0.5rem' }}>1. Install the package</div>
+          <code className="cli">
+            <img
+              src={require('../../public/copy.svg')}
+              alt="copy icon"
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  'npx trusted-setup https://http.ceremony.unirep.io'
+                )
+              }
+              className="copy"
+            />
+            npx trusted-setup https://http.ceremony.unirep.io
+          </code>
+          {/* </div> */}
+          {/* <div style={{ paddingTop: '0.5rem' }}>1. Install the package</div>
           <div>
             2. Run <strong>npx trusted-setup</strong>
           </div>
@@ -60,7 +74,7 @@ export default observer(() => {
             3. Use:
             <div className="faq-url">https://http.ceremony.unirep.io</div>
             to contribute
-          </div>
+          </div> */}
         </>
       ),
     },
