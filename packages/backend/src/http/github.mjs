@@ -10,11 +10,35 @@ import { Octokit } from 'octokit'
 const GITHUB_URL = process.env.GITHUB_URL ?? 'https://github.com'
 const GITHUB_API_URL = process.env.GITHUB_URL ?? 'https://api.github.com'
 
+async function post(access_token, content) {
+  const octokit = new Octokit({
+    request: {
+      fetch: fetch,
+    },
+    auth: access_token,
+  })
+
+  const filename = `unirep-trusted-setup-${+new Date()}.log`
+  const data = {
+    description: 'Post of Unirep trusted setup',
+    files: {},
+    headers: {
+      'x-github-api-version': '2022-11-28',
+    },
+  }
+  data.files[filename] = {
+    content,
+  }
+
+  const response = await octokit.request('POST /gists', data)
+  return response.data.html_url
+}
+
 export default ({ app, wsApp, db, ceremony }) => {
   app.get(
     '/oauth/github',
     catchError(async (req, res) => {
-      const { token } = req.query
+      const { token, content } = req.query
       const auth = await db.findOne('Auth', {
         where: { token },
       })
@@ -23,6 +47,7 @@ export default ({ app, wsApp, db, ceremony }) => {
         type: 'github',
         redirectDestination: req.query.redirectDestination,
         userId: auth.userId,
+        data: content,
       })
       const url = new URL('/login/oauth/authorize', GITHUB_URL)
       url.searchParams.set('client_id', GITHUB_CLIENT_ID)
@@ -69,7 +94,7 @@ export default ({ app, wsApp, db, ceremony }) => {
           accept: 'application/json',
         },
       })
-      const { access_token, scope, token_type } = await auth.json()
+      const { access_token } = await auth.json()
       const apiUrl = new URL('/user', GITHUB_API_URL)
       const user = await fetch(apiUrl.toString(), {
         headers: {
@@ -113,12 +138,21 @@ export default ({ app, wsApp, db, ceremony }) => {
         accountAgeMs: Math.max(0, +new Date() - +signupAt),
         type: 'github',
       })
+
+      let postUrl
+      if (_state.data) {
+        postUrl = await post(access_token, _state.data)
+      }
+
       if (!_state.redirectDestination) {
         res.status(204).end()
       } else {
         const _url = new URL(_state.redirectDestination)
         _url.searchParams.set('github_access_token', access_token)
         _url.searchParams.set('name', `Github#${user.login}`)
+        if (postUrl) {
+          _url.searchParams.set('gist_post_url', postUrl)
+        }
         res.redirect(_url.toString())
       }
     })
@@ -128,27 +162,8 @@ export default ({ app, wsApp, db, ceremony }) => {
     '/post/github',
     catchError(async (req, res) => {
       const { access_token, content } = req.query
-      const octokit = new Octokit({
-        request: {
-          fetch: fetch,
-        },
-        auth: access_token,
-      })
-
-      const filename = `unirep-trusted-setup-${+new Date()}.log`
-      const data = {
-        description: 'Post of Unirep trusted setup',
-        files: {},
-        headers: {
-          'x-github-api-version': '2022-11-28',
-        },
-      }
-      data.files[filename] = {
-        content,
-      }
-
-      const response = await octokit.request('POST /gists', data)
-      res.json(response)
+      const url = await post(access_token, content)
+      res.json({ url })
     })
   )
 }

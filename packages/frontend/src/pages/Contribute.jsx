@@ -88,9 +88,12 @@ export default observer(() => {
       })
       url.searchParams.delete('twitter_post_url')
       window.history.pushState({}, null, url.toString())
-    } else if (url.searchParams.get('postGist')) {
-      postOnGithub()
-      url.searchParams.delete('postGist')
+    } else if (url.searchParams.get('gist_post_url')) {
+      setPostMessage({
+        platform: 'gist',
+        url: url.searchParams.get('gist_post_url'),
+      })
+      url.searchParams.delete('gist_post_url')
       window.history.pushState({}, null, url.toString())
     }
   }, [])
@@ -291,7 +294,14 @@ export default observer(() => {
   const postOnGithub = async () => {
     const access_token = localStorage.getItem('github_access_token')
     if (!access_token) {
-      await ceremony.oauth('/oauth/github', false, true)
+      console.log('no access token, new url')
+      const url = new URL('/oauth/github', HTTP_SERVER)
+      url.searchParams.set('token', ceremony.authToken)
+      const currentUrl = new URL(window.location.href)
+      const dest = new URL('/contribute', currentUrl.origin)
+      url.searchParams.set('redirectDestination', dest.toString())
+      url.searchParams.set('content', ceremony.contributionText)
+      window.location.replace(url.toString())
     } else {
       const url = await ceremony.postGist()
       setPostMessage({ platform: 'gist', url })
@@ -448,7 +458,7 @@ export default observer(() => {
                                 if (option.type === 'none') {
                                   await ceremony.join(name, 'open')
                                 } else {
-                                  await ceremony.oauth(option.path, true, false)
+                                  await ceremony.oauth(option.path)
                                 }
                               }}
                             >

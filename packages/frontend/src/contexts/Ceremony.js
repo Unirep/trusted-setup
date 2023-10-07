@@ -138,6 +138,7 @@ ${hashText}
         url.searchParams.get('github_access_token')
       )
       url.searchParams.delete('github_access_token')
+      window.history.pushState({}, null, url.toString())
     }
     if (!this.bootstrapData) {
       await this.bootstrap()
@@ -173,6 +174,9 @@ ${hashText}
       url.searchParams.delete('name')
       window.history.pushState({}, null, url.toString())
       await this.join(name, queue)
+    } else if (url.searchParams.get('name')) {
+      url.searchParams.delete('name')
+      window.history.pushState({}, null, url.toString())
     }
     this.userId = data.userId
     if (data.active) {
@@ -238,15 +242,12 @@ ${hashText}
     this.ingestState(data)
   }
 
-  async oauth(path, joinQueue, postGist) {
+  async oauth(path) {
     const url = new URL(path, HTTP_SERVER)
     url.searchParams.set('token', this.authToken)
     const currentUrl = new URL(window.location.href)
     const dest = new URL('/contribute', currentUrl.origin)
-    // dest.searchParams.set('s', currentUrl.searchParams.get('s'))
     joinQueue && dest.searchParams.set('joinQueue', true)
-    // joinQueue && dest.searchParams.set('name', name)
-    postGist && dest.searchParams.set('postGist', true)
     url.searchParams.set('redirectDestination', dest.toString())
     window.location.replace(url.toString())
   }
@@ -484,7 +485,7 @@ ${hashText}
     apiURL.searchParams.append('access_token', access_token)
     apiURL.searchParams.append('content', this.contributionText)
     const response = await fetch(apiURL.toString()).then((r) => r.json())
-    return response.data.html_url
+    return response.url
   }
 }
 
