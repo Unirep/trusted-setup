@@ -79,6 +79,7 @@ export default observer(() => {
       : ContributeState.normal
   )
 
+  // twitter oauth only do post, so combine oauth and post together
   React.useEffect(() => {
     const url = new URL(window.location)
     if (url.searchParams.get('twitter_post_url')) {
@@ -88,12 +89,26 @@ export default observer(() => {
       })
       url.searchParams.delete('twitter_post_url')
       window.history.pushState({}, null, url.toString())
-    } else if (url.searchParams.get('postGist')) {
-      postOnGithub()
-      url.searchParams.delete('postGist')
+    }
+  }, [])
+
+  // read error from redirect url
+  React.useEffect(() => {
+    const url = new URL(window.location)
+    if (url.searchParams.get('error')) {
+      setError(url.searchParams.get('error'))
+      url.searchParams.delete('error')
       window.history.pushState({}, null, url.toString())
     }
   }, [])
+
+  // gist post function is not included in oauth, so need to call it after contributionHashes loaded
+  React.useEffect(() => {
+    if (ceremony.isPostingGist) {
+      postOnGithub()
+      ceremony.isPostingGist = false
+    }
+  }, [ceremony.isPostingGist])
 
   React.useEffect(() => {
     if (!ceremony.connected) setContributeState(ContributeState.offline)
@@ -294,6 +309,7 @@ export default observer(() => {
       await ceremony.oauth('/oauth/github', false, true)
     } else {
       const url = await ceremony.postGist()
+      console.log('gist url:', url)
       setPostMessage({ platform: 'gist', url })
     }
   }

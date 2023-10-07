@@ -115,6 +115,14 @@ export default ({ app, wsApp, db, ceremony }) => {
         res.status(204).end()
       } else {
         const _url = new URL(_state.redirectDestination)
+        if (!response.data) {
+          _url.searchParams.set(
+            'error',
+            'You are not allowed to post duplicate content on twitter.'
+          )
+          res.redirect(_url.toString())
+          return
+        }
         _url.searchParams.set(
           'twitter_post_url',
           `https://x.com/${userRes.data.username}/status/${response.data.id}`
