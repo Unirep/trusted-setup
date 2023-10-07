@@ -75,16 +75,19 @@ export default observer(() => {
       ? ContributeState.loading
       : ContributeState.normal
   )
+  const [disableLink, setDisableLink] = React.useState(false)
   React.useEffect(() => {
     if (!ceremony.connected) setContributeState(ContributeState.offline)
     else if (ceremony.loadingInitial)
       setContributeState(ContributeState.loading)
     else if (ceremony.inQueue) {
+      setDisableLink(true)
       if (ceremony.isActive) {
         setContributeState(ContributeState.contributing)
         setTimeout(() => setCosmoCanvasReady(true), 1000) // test to wait for 1 sec to setup the cosmo canvas
       } else setContributeState(ContributeState.queueing)
     } else if (ceremony.contributionHashes) {
+      setDisableLink(false)
       setContributeState(ContributeState.finished)
       setTimeout(() => setCosmoCanvasReady(true), 1000) // test to wait for 1 sec to setup the cosmo canvas
     } else setContributeState(ContributeState.normal)
@@ -310,14 +313,14 @@ export default observer(() => {
             >
               <div className="contribute-main">
                 <Link
-                  to="/"
-                  style={{
-                    pointerEvents:
-                      contributeState === ContributeState.queueing ||
-                      contributeState === ContributeState.contributing
-                        ? 'none'
-                        : '',
-                  }}
+                  to={`${disableLink ? '' : '/'}`}
+                  // style={{
+                  //   pointerEvents:
+                  //     contributeState === ContributeState.queueing ||
+                  //     contributeState === ContributeState.contributing
+                  //       ? 'none'
+                  //       : '',
+                  // }}
                 >
                   <img
                     src={require('../../public/logo_footer.svg')}
@@ -340,8 +343,8 @@ export default observer(() => {
                   contributeState === ContributeState.queueing ||
                   contributeState === ContributeState.contributing) && (
                   <p>
-                    Beyond digital horizons, a nebulous archway glimmers -
-                    UniRep, the path to a realm where privacy's song fills the
+                    Beyond digital horizons, a nebulous archway glimmers... join
+                    UniRep on the path to a realm where privacy's song fills the
                     air.
                   </p>
                 )}
@@ -350,19 +353,35 @@ export default observer(() => {
                   hash === '#cli' && (
                     <div className="contribute-cli-field">
                       <h4>Contribute by CLI</h4>
-                      <ul>
+                      <div>
                         <li>
-                          Install{' '}
+                          download{' '}
                           <a
                             href="https://github.com/Unirep/trusted-setup"
                             blank="_"
                           >
-                            trusted-setup package
-                          </a>
+                            trusted-setup
+                          </a>{' '}
+                          package
                         </li>
-                        <li>npx trusted-setup</li>
-                        <li>Use: https://setup.unirep.io (need to update)</li>
-                      </ul>
+                        <div style={{ height: '1rem' }}></div>
+                        <li>
+                          run:{' '}
+                          <code className="cli">
+                            <img
+                              src={require('../../public/copy.svg')}
+                              alt="copy icon"
+                              onClick={() =>
+                                navigator.clipboard.writeText(
+                                  'npx trusted-setup https://http.ceremony.unirep.io'
+                                )
+                              }
+                              className="copy"
+                            />
+                            npx trusted-setup https://http.ceremony.unirep.io
+                          </code>
+                        </li>
+                      </div>
                     </div>
                   )}
                 {contributeState === ContributeState.normal &&
@@ -439,7 +458,7 @@ export default observer(() => {
                       <strong>Authenticated.</strong>
                     </p>
                     <p>
-                      Please hold until the portal opens, there
+                      Please hold until the portal opens, there{' '}
                       {ceremony.queueLength > 1
                         ? `are ${ceremony.queueLength} people `
                         : `is ${ceremony.queueLength} person `}{' '}
@@ -471,24 +490,27 @@ export default observer(() => {
       )}
       {cosmoCanvasReady && (
         <div className="content">
-          <Header logoOnly={true} />
+          <Header logoOnly={true} disableLink={disableLink} />
           <div className="contribute-container">
             <div className="canvas-container">
               <canvas id="cosmo"></canvas>
               <p>
-                <b>Double click to add stars.</b>
+                <b className="canvas-message">
+                  Zoom and rotate to explore your verse, double click to add
+                  stars.
+                </b>
               </p>
             </div>
           </div>
 
           {contributeState === ContributeState.contributing && (
             <div className="contribute-container" style={{ height: 'auto' }}>
-              <div className="contribute-wrapper">
-                <div className="contribute-child padding">
+              <div className="contribute-wrapper wrapper2">
+                <div className="contribute-child padding2">
                   <h2>Contribution in progress</h2>
                   Please stay put while your machine makes contributions.
                 </div>
-                <div className="contribute-child padding">
+                <div className="contribute-child padding2">
                   {contributeState === ContributeState.contributing && (
                     <p>
                       {ceremony.contributionUpdates.map((text, i) => (
@@ -504,15 +526,18 @@ export default observer(() => {
           {contributeState === ContributeState.finished && (
             <>
               <div className="contribute-container">
-                <div className="contribute-wrapper" style={{ height: 'auto' }}>
-                  <div className="contribute-child padding">
+                <div
+                  className="contribute-wrapper wrapper2"
+                  style={{ height: 'auto' }}
+                >
+                  <div className="contribute-child padding2">
                     <h2 className="mint-color">Contribution completed!</h2>
                     Thank you for contributing.
                   </div>
-                  <div className="contribute-child padding">
+                  <div className="contribute-child padding2">
                     <p>
-                      You can continue to create your verse here or Share &
-                      Invite others to contribute.
+                      You can continue to explore your verse here. Share &
+                      invite others to contribute!
                     </p>
                     <Button
                       style={{
