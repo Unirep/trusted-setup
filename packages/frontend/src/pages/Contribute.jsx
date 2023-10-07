@@ -97,8 +97,6 @@ export default observer(() => {
     const url = new URL(window.location)
     if (url.searchParams.get('error')) {
       setError(url.searchParams.get('error'))
-      url.searchParams.delete('error')
-      window.history.pushState({}, null, url.toString())
     }
   }, [])
 
@@ -134,7 +132,12 @@ export default observer(() => {
   React.useEffect(() => {
     if (error.length > 0) {
       toast.error('error: ' + error, {
-        onClose: () => setError(''),
+        onClose: () => {
+          setError('')
+          const url = new URL(window.location)
+          url.searchParams.delete('error')
+          window.history.pushState({}, null, url.toString())
+        },
       })
     }
   }, [error])
