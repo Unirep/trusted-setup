@@ -611,11 +611,7 @@ export default observer(() => {
                         padding: '12px 24px',
                         fontWeight: '600',
                       }}
-                      onClick={async () => {
-                        navigator.clipboard.writeText(ceremony.contributionText)
-                        await new Promise((r) => setTimeout(r, 1000))
-                      }}
-                      loadingText="Copied!"
+                      onClick={async () => postOnTwitter()}
                     >
                       Share on Twitter
                     </Button>
