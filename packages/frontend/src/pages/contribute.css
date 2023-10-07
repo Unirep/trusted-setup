@@ -121,13 +121,13 @@
   gap: 0.5rem;
 }
 
-.contribute-cli-field {
+/* .contribute-cli-field {
   max-width: 550px;
   border-radius: 0.5rem;
   border: white 1px solid;
   padding: 0 1rem 2rem;
   margin-top: 0.5rem;
-}
+} */
 
 .canvas-container {
   width: 90vw;

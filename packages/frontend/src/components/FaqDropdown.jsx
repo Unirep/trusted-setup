@@ -4,6 +4,11 @@ import FaqItem from './FaqItem'
 
 export default observer(() => {
   const [Index, setIndex] = React.useState(1)
+  const [copied, setCopied] = React.useState(false)
+  const confirmCopied = () => {
+    setCopied(true)
+    setTimeout(() => setCopied(false), 5000)
+  }
   const faqs = [
     {
       id: 1,
@@ -46,16 +51,23 @@ export default observer(() => {
             Alternatively, you can use our CLI tool.
           </div>
           <div className="cli">
-            <img
-              src={require('../../public/copy.svg')}
-              alt="copy icon"
-              onClick={() =>
-                navigator.clipboard.writeText(
-                  'npx trusted-setup https://http.ceremony.unirep.io'
-                )
-              }
-              className="copy"
-            />
+            {!copied ? (
+              <img
+                src={require('../../public/copy.svg')}
+                alt="copy icon"
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    'npx trusted-setup https://http.ceremony.unirep.io'
+                  )
+                  confirmCopied()
+                }}
+                className="copy"
+              />
+            ) : (
+              <div style={{ fontSize: '1.2rem', paddingRight: '0.8rem' }}>
+                ☑️
+              </div>
+            )}
             npx trusted-setup https://http.ceremony.unirep.io
           </div>
           {/* </div> */}
