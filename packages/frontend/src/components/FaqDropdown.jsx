@@ -11,13 +11,13 @@ export default observer(() => {
       A: (
         <div>
           The Celestial Call is a momentous occasion within the UniRep
-          multiverse. It's a ritualistic gathering, if you will, that allows
-          participants to contribute their unique 'sparks' to the project. Each
-          spark—your contribution—adds to the secure and anonymous framework of
-          UniRep, strengthening its fabric and expanding its reach into the
-          privacy-first multiverse. This is not merely a technical exercise but
-          an alignment of visions, a shared undertaking that invites you to be a
-          part of a new reality where privacy is the norm.
+          multiverse. It's a ritualistic gathering that allows participants to
+          contribute their unique 'sparks' to the project. Each contribution
+          adds to the secure and anonymous framework of UniRep, strengthening
+          its fabric and expanding its reach into the privacy-first multiverse.
+          This is not merely a technical exercise but an alignment of visions; a
+          shared undertaking that invites you to be a part of a new reality
+          where privacy is the norm.
         </div>
       ),
     },
@@ -26,15 +26,12 @@ export default observer(() => {
       Q: <div>Why does UniRep need a ceremony?</div>,
       A: (
         <div>
-          In technical terms, the ceremony is essential for setting up a secure
-          and trustless system, especially one based on zero-knowledge proofs
-          like UniRep. But beyond that, it's about collective creation. The
-          ceremony, or The Celestial Call, is an invitation for you to partake
-          in something larger than yourself. It ensures that no single entity
-          has control over the system, reinforcing the idea of decentralization
-          and the communal ownership of technology for societal good. It's both
-          an inception and a passage—a way to kickstart the project while
-          involving the community intimately in its creation and maintenance.
+          The Celestial Call ceremony will generate the secure proving keys that
+          enable UniRep's trustless zero-knowledge system. It ensures that no
+          single entity has control over the system, reinforcing the values of
+          decentralization communal ownership of technology for societal good.
+          It's both an inception and a passage — a way to kickstart the project
+          while involving the community in its creation and maintenance.
         </div>
       ),
     },
@@ -44,29 +41,40 @@ export default observer(() => {
       A: (
         <>
           <div>
-            You can contribute in three different ways: by authenticating via
-            GitHub, Discord, or opting for a 'free ride' without any
-            authentication. Alternatively, you can use our CLI tool. Just
-            download the{' '}
+            You can choose to contribute by authenticating via GitHub or
+            Discord, or opting for a 'free ride' without any authentication.
+            Alternatively, you can use our CLI tool. Just download the{' '}
             <a
               href="https://www.npmjs.com/package/trusted-setup"
               target="blank"
             >
               trusted-setup
             </a>{' '}
-            package from npm and follow these simple steps:
+            package from npm and run
           </div>
-          <div style={{ paddingTop: '0.5rem' }}>1. Install the package</div>
+          <code className="cli">
+            <img
+              src={require('../../public/copy.svg')}
+              alt="copy icon"
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  'npx trusted-setup https://http.ceremony.unirep.io'
+                )
+              }
+              className="copy"
+            />
+            npx trusted-setup https://http.ceremony.unirep.io
+          </code>
+          {/* </div> */}
+          {/* <div style={{ paddingTop: '0.5rem' }}>1. Install the package</div>
           <div>
             2. Run <strong>npx trusted-setup</strong>
           </div>
-          <div>
-            3. Use{' '}
-            <div style={{ fontSize: '0.9rem', fontWeight: '600' }}>
-              https://http.ceremony.unirep.io
-            </div>{' '}
-            to contribute to UniRep
-          </div>
+          <div className="faq-cli">
+            3. Use:
+            <div className="faq-url">https://http.ceremony.unirep.io</div>
+            to contribute
+          </div> */}
         </>
       ),
     },
@@ -90,7 +98,7 @@ export default observer(() => {
       A: (
         <div>
           The ceremony is planned to run for 64 days, beginning on October 10th,
-          2023, and concluding on December 12th, 2023. After this period, we'll
+          2023 and concluding on December 12th, 2023. After this period, we'll
           compile all contributions, finalize the transcripts, and unveil the
           collaborative multiverse. You are welcome to revisit and verify your
           individual contribution and the final result.
@@ -102,12 +110,11 @@ export default observer(() => {
       Q: <div>Are there rewards for contributing?</div>,
       A: (
         <div>
-          While the Celestial Call is about building a public good and
-          fortifying the protocol's security, there are no financial incentives
-          like airdrops or tokens. Your contribution stands as a vital support
-          to UniRep's secure foundation, and for that, we extend our deepest
-          gratitude. Your efforts help construct a shared experience grounded in
-          privacy and community.
+          The Celestial Call is about building a public good and fortifying the
+          protocol's security; there are no financial incentives like airdrops
+          or tokens. Your contribution is a vital support to UniRep's secure
+          foundation, and we extend our deepest gratitude for your participation
+          in this endeavor to unite privacy and community.
         </div>
       ),
     },

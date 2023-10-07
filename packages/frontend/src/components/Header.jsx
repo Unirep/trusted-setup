@@ -7,7 +7,7 @@ import './header.css'
 
 import state from '../contexts/state'
 
-export default observer(({ logoOnly }) => {
+export default observer(({ logoOnly, disableLink }) => {
   const { ui } = React.useContext(state)
   const [isMenuOpened, setIsMenuOpened] = useState(false)
 
@@ -19,7 +19,7 @@ export default observer(({ logoOnly }) => {
           style={{ display: 'flex', justifyContent: 'center' }}
         >
           <div style={{ textAlign: 'center' }}>
-            <Link to="/">
+            <Link to={`${disableLink ? '' : '/'}`}>
               <img
                 src={require('../../public/logo_header.svg')}
                 alt="unirep ceremony logo"
@@ -55,7 +55,7 @@ export default observer(({ logoOnly }) => {
             style={{ marginTop: '2.5rem' }}
             onClick={() => setIsMenuOpened(true)}
           >
-            <ServerState />
+            <ServerState shrink={true} />
           </div>
 
           <div style={{ paddingTop: '1rem' }}>
