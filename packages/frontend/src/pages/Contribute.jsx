@@ -460,9 +460,11 @@ export default observer(() => {
               </div>
             </div>
 
-            <div className={ui.isMobile ? 'footer-bg' : 'contribute-child'}>
+            {/* <div className={ui.isMobile ? 'footer-bg' : 'contribute-child'}> */}
+            <div className="portal-bg">
               <img src={require('../../public/cosmos1.svg')} />
             </div>
+            {/* </div> */}
           </div>
         </div>
       )}

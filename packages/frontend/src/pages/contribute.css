@@ -5,8 +5,9 @@
 }
 
 .contribute-wrapper {
-  display: flex;
-  flex-wrap: wrap;
+  /* display: flex; */
+  /* flex-wrap: wrap; */
+  display: block;
   max-width: 1310px;
 }
 
@@ -31,6 +32,20 @@
   width: 100%;
   height: 100%;
   min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.portal-bg {
+  position: fixed;
+  z-index: -1;
+  bottom: 0;
+  top: 18%;
+  left: 15%;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  opacity: 45%;
 }
 
 .contribute-whole-page {
@@ -51,12 +66,12 @@
   height: 60vh;
 }
 
-.footer-bg {
+/* .footer-bg {
   position: fixed;
   z-index: -1;
   bottom: 1rem;
   margin-left: 5vw;
-}
+} */
 
 .contribute-main {
   display: flex;
@@ -168,5 +183,19 @@
 
   .canvas-message {
     font-size: 0.8rem;
+  }
+
+  .portal-bg {
+    top: 8%;
+    left: 22%;
+  }
+}
+
+@media only screen and (max-width: 650px) {
+  .portal-bg {
+    top: 15%;
+    bottom: 0;
+    left: 15%;
+    opacity: 90%;
   }
 }
