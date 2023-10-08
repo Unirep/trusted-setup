@@ -502,7 +502,11 @@ export default observer(() => {
                                   if (option.type === 'none') {
                                     await ceremony.join(name, 'open')
                                   } else {
-                                    await ceremony.oauth(name, option.path)
+                                    await ceremony.oauth(
+                                      option.path,
+                                      true,
+                                      false
+                                    )
                                   }
                                 }}
                               >
