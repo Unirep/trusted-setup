@@ -4,6 +4,11 @@ import FaqItem from './FaqItem'
 
 export default observer(() => {
   const [Index, setIndex] = React.useState(1)
+  const [copied, setCopied] = React.useState(false)
+  const confirmCopied = () => {
+    setCopied(true)
+    setTimeout(() => setCopied(false), 5000)
+  }
   const faqs = [
     {
       id: 1,
@@ -43,28 +48,28 @@ export default observer(() => {
           <div>
             You can choose to contribute by authenticating via GitHub or
             Discord, or opting for a 'free ride' without any authentication.
-            Alternatively, you can use our CLI tool. Just download the{' '}
-            <a
-              href="https://www.npmjs.com/package/trusted-setup"
-              target="blank"
-            >
-              trusted-setup
-            </a>{' '}
-            package from npm and run
+            Alternatively, you can use our CLI tool.
           </div>
-          <code className="cli">
-            <img
-              src={require('../../public/copy.svg')}
-              alt="copy icon"
-              onClick={() =>
-                navigator.clipboard.writeText(
-                  'npx trusted-setup https://http.ceremony.unirep.io'
-                )
-              }
-              className="copy"
-            />
+          <div className="cli">
+            {!copied ? (
+              <img
+                src={require('../../public/copy.svg')}
+                alt="copy icon"
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    'npx trusted-setup https://http.ceremony.unirep.io'
+                  )
+                  confirmCopied()
+                }}
+                className="copy"
+              />
+            ) : (
+              <div style={{ fontSize: '1.2rem', paddingRight: '0.8rem' }}>
+                ☑️
+              </div>
+            )}
             npx trusted-setup https://http.ceremony.unirep.io
-          </code>
+          </div>
           {/* </div> */}
           {/* <div style={{ paddingTop: '0.5rem' }}>1. Install the package</div>
           <div>

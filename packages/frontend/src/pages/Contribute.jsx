@@ -72,6 +72,7 @@ export default observer(() => {
   const [postMessage, setPostMessage] = React.useState({})
   const [cosmoCanvasReady, setCosmoCanvasReady] = React.useState(false)
   const [disableLink, setDisableLink] = React.useState(false)
+  const [copied, setCopied] = React.useState(false)
 
   const { hash } = useLocation()
   const { ceremony, ui } = React.useContext(state)
@@ -110,6 +111,10 @@ export default observer(() => {
     }
   }, [ceremony.isPostingGist])
 
+  const confirmCopied = () => {
+    setCopied(true)
+    setTimeout(() => setCopied(false), 5000)
+  }
   React.useEffect(() => {
     if (!ceremony.connected) setContributeState(ContributeState.offline)
     else if (ceremony.loadingInitial)
@@ -417,35 +422,31 @@ export default observer(() => {
                   hash &&
                   hash === '#cli' && (
                     <div className="contribute-cli-field">
-                      <h4>Contribute by CLI</h4>
-                      <div>
-                        <li>
-                          download{' '}
-                          <a
-                            href="https://github.com/Unirep/trusted-setup"
-                            blank="_"
+                      <h2 style={{ color: '#A3ECE1' }}>Contribute by CLI</h2>
+                      <div className="cli">
+                        {!copied ? (
+                          <img
+                            src={require('../../public/copy.svg')}
+                            alt="copy icon"
+                            onClick={() => {
+                              navigator.clipboard.writeText(
+                                'npx trusted-setup https://http.ceremony.unirep.io'
+                              )
+                              confirmCopied()
+                            }}
+                            className="copy"
+                          />
+                        ) : (
+                          <div
+                            style={{
+                              fontSize: '1.2rem',
+                              paddingRight: '0.8rem',
+                            }}
                           >
-                            trusted-setup
-                          </a>{' '}
-                          package
-                        </li>
-                        <div style={{ height: '1rem' }}></div>
-                        <li>
-                          run:{' '}
-                          <code className="cli">
-                            <img
-                              src={require('../../public/copy.svg')}
-                              alt="copy icon"
-                              onClick={() =>
-                                navigator.clipboard.writeText(
-                                  'npx trusted-setup https://http.ceremony.unirep.io'
-                                )
-                              }
-                              className="copy"
-                            />
-                            npx trusted-setup https://http.ceremony.unirep.io
-                          </code>
-                        </li>
+                            ☑️
+                          </div>
+                        )}
+                        npx trusted-setup https://http.ceremony.unirep.io
                       </div>
                     </div>
                   )}
@@ -547,9 +548,11 @@ export default observer(() => {
               </div>
             </div>
 
-            <div className={ui.isMobile ? 'footer-bg' : 'contribute-child'}>
+            {/* <div className={ui.isMobile ? 'footer-bg' : 'contribute-child'}> */}
+            <div className="portal-bg">
               <img src={require('../../public/cosmos1.svg')} />
             </div>
+            {/* </div> */}
           </div>
         </div>
       )}
