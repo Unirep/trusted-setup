@@ -77,7 +77,7 @@ module.exports = (env, argv) => ({
       meta: {
         description: {
           name: 'description',
-          contnet:
+          content:
             'Generate your own verse and help secure the UniRep protocol.',
         },
         keyword: { name: 'keywords', content: 'ZKP, trusted setup, ceremony' },
