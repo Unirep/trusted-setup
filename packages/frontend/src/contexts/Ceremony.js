@@ -54,7 +54,7 @@ export default class Queue {
     const hashText = Object.entries(this.contributionHashes ?? {})
       .map(([circuitName, hash]) => `${circuitName}: ${hash}`)
       .join('\n\n')
-    return `I just contributed to the unirep dev trusted setup ceremony. You can too [here](https://ceremony.unirep.io).
+    return `I just contributed to the "Unirep" trusted setup ceremony. You can too [here](https://ceremony.unirep.io).
 My circuit hashes are as follows:
 
 ${hashText}
