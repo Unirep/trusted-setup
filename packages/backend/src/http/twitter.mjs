@@ -87,9 +87,15 @@ export default ({ app, wsApp, db, ceremony }) => {
 
       const authOutcome = await auth.json()
 
+      const userUrl = new URL('/2/users/me', TWITTER_API_URL)
+      const userRes = await fetch(userUrl.toString(), {
+        headers: {
+          authorization: `Bearer ${authOutcome.access_token}`,
+        },
+      }).then((r) => r.json())
+
       const apiurl = new URL('/2/tweets', TWITTER_API_URL)
       const text = _state.data.split('&')[1]
-      console.log('text:', text)
       const data = {
         text,
       }
@@ -104,12 +110,23 @@ export default ({ app, wsApp, db, ceremony }) => {
         },
         body: JSON.stringify(data),
       }).then((r) => r.json())
-      console.log(response)
 
       if (!_state.redirectDestination) {
         res.status(204).end()
       } else {
         const _url = new URL(_state.redirectDestination)
+        if (!response.data) {
+          _url.searchParams.set(
+            'error',
+            'You are not allowed to post duplicate content on twitter.'
+          )
+          res.redirect(_url.toString())
+          return
+        }
+        _url.searchParams.set(
+          'twitter_post_url',
+          `https://x.com/${userRes.data.username}/status/${response.data.id}`
+        )
         res.redirect(_url.toString())
       }
     })

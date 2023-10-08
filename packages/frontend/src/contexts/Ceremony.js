@@ -18,6 +18,7 @@ export default class Queue {
   loadingInitial = true
   inQueue = false
   queueEntry = null
+  isPostingGist = false
 
   contributionUpdates = []
   transcript = []
@@ -171,13 +172,15 @@ ${hashText}
       const queue = [...data.validQueues].pop()
       url.searchParams.delete('joinQueue')
       url.searchParams.delete('name')
-      window.history.pushState({}, null, url.toString())
       await this.join(name, queue)
     } else if (url.searchParams.get('postGist')) {
+      // if postGist is true, this is not needed, delete it in the backend
+      this.isPostingGist = true
+      url.searchParams.delete('name')
       url.searchParams.delete('postGist')
-      window.history.pushState({}, null, url.toString())
-      await this.postGist()
     }
+    window.history.pushState({}, null, url.toString())
+
     this.userId = data.userId
     if (data.active) {
       this.contribute()
@@ -488,7 +491,7 @@ ${hashText}
     apiURL.searchParams.append('access_token', access_token)
     apiURL.searchParams.append('content', this.contributionText)
     const response = await fetch(apiURL.toString()).then((r) => r.json())
-    console.log(response)
+    return response.data.html_url
   }
 }
 
