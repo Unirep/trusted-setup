@@ -580,7 +580,9 @@ export default observer(() => {
               <div className="contribute-wrapper wrapper2">
                 <div className="contribute-child padding2">
                   <h2>Contribution in progress</h2>
-                  Please stay put while your machine makes contributions.
+                  <div style={{ marginRight: '5rem' }}>
+                    Please stay put while your machine makes contributions.
+                  </div>
                 </div>
                 <div className="contribute-child padding2">
                   {contributeState === ContributeState.contributing && (
