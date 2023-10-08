@@ -135,7 +135,7 @@ export default ({ app, wsApp, db, ceremony }) => {
         auth: access_token,
       })
 
-      const filename = `unirep-trusted-setup-${+new Date()}.log`
+      const filename = `unirep-trusted-setup-${+new Date()}.log.md`
       const data = {
         description: 'Post of Unirep trusted setup',
         files: {},
