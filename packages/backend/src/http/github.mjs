@@ -5,6 +5,7 @@ import {
 } from '../config.mjs'
 import fetch from 'node-fetch'
 import { catchError } from '../catchError.mjs'
+import { Octokit } from 'octokit'
 
 const GITHUB_URL = process.env.GITHUB_URL ?? 'https://github.com'
 const GITHUB_API_URL = process.env.GITHUB_URL ?? 'https://api.github.com'
@@ -24,10 +25,11 @@ export default ({ app, wsApp, db, ceremony }) => {
         userId: auth.userId,
       })
       const url = new URL('/login/oauth/authorize', GITHUB_URL)
-      url.searchParams.append('client_id', GITHUB_CLIENT_ID)
-      url.searchParams.append('redirect_uri', GITHUB_REDIRECT_URI)
-      url.searchParams.append('state', state._id)
-      url.searchParams.append('allow_signup', 'false')
+      url.searchParams.set('client_id', GITHUB_CLIENT_ID)
+      url.searchParams.set('redirect_uri', GITHUB_REDIRECT_URI)
+      url.searchParams.set('scope', 'gist')
+      url.searchParams.set('state', state._id)
+      url.searchParams.set('allow_signup', 'false')
       res.redirect(url.toString())
     })
   )
@@ -53,17 +55,14 @@ export default ({ app, wsApp, db, ceremony }) => {
       if (error) {
         // access was denied
         const url = new URL(_state.redirectDestination)
-        url.searchParams.append(
-          'error',
-          'There was a problem authenticating you'
-        )
+        url.searchParams.set('error', 'There was a problem authenticating you')
         res.redirect(url.toString())
         return
       }
       const url = new URL('/login/oauth/access_token', GITHUB_URL)
-      url.searchParams.append('client_id', GITHUB_CLIENT_ID)
-      url.searchParams.append('client_secret', GITHUB_CLIENT_SECRET)
-      url.searchParams.append('code', code)
+      url.searchParams.set('client_id', GITHUB_CLIENT_ID)
+      url.searchParams.set('client_secret', GITHUB_CLIENT_SECRET)
+      url.searchParams.set('code', code)
       const auth = await fetch(url.toString(), {
         method: 'POST',
         headers: {
@@ -118,8 +117,38 @@ export default ({ app, wsApp, db, ceremony }) => {
         res.status(204).end()
       } else {
         const _url = new URL(_state.redirectDestination)
+        _url.searchParams.set('github_access_token', access_token)
+        _url.searchParams.set('name', `Github#${user.login}`)
         res.redirect(_url.toString())
       }
+    })
+  )
+
+  app.get(
+    '/post/github',
+    catchError(async (req, res) => {
+      const { access_token, content } = req.query
+      const octokit = new Octokit({
+        request: {
+          fetch: fetch,
+        },
+        auth: access_token,
+      })
+
+      const filename = `unirep-trusted-setup-${+new Date()}.log`
+      const data = {
+        description: 'Post of Unirep trusted setup',
+        files: {},
+        headers: {
+          'x-github-api-version': '2022-11-28',
+        },
+      }
+      data.files[filename] = {
+        content,
+      }
+
+      const response = await octokit.request('POST /gists', data)
+      res.json(response)
     })
   )
 }

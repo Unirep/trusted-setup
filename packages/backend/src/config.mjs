@@ -45,6 +45,12 @@ export const DISCORD_REDIRECT_URI =
   process.env.DISCORD_REDIRECT_URI ??
   'http://localhost:8000/oauth/discord/callback'
 
+export const TWITTER_CLIENT_ID = process.env.TWITTER_CLIENT_ID
+export const TWITTER_CLIENT_SECRET = process.env.TWITTER_CLIENT_SECRET
+export const TWITTER_REDIRECT_URI =
+  process.env.TWITTER_REDIRECT_URI ??
+  'http://localhost:8000/oauth/twitter/callback'
+
 export const WS_SERVER = process.env.WS_SERVER ?? `ws://127.0.0.1:8001`
 
 export const WELCOME_MESSAGE =

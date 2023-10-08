@@ -1,8 +1,9 @@
 import React from 'react'
+import { useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { Link, useLocation } from 'react-router-dom'
+
 import { ToastContainer, toast } from 'react-toastify'
-import { useState, useRef } from 'react'
 import 'react-toastify/dist/ReactToastify.css'
 
 import Header from '../components/Header'
@@ -10,8 +11,10 @@ import Tooltip from '../components/Tooltip'
 import Button from '../components/Button'
 import ServerState from '../components/ServerState'
 import InfoContainer from '../components/InfoContainer'
+import { HTTP_SERVER } from '../config'
 import state from '../contexts/state'
 import './contribute.css'
+import Popup from '../components/Popup'
 
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
@@ -66,7 +69,11 @@ export default observer(() => {
 
   const [name, setName] = React.useState('')
   const [error, setError] = React.useState('')
+  const [postMessage, setPostMessage] = React.useState({})
   const [cosmoCanvasReady, setCosmoCanvasReady] = React.useState(false)
+  const [disableLink, setDisableLink] = React.useState(false)
+  const [copied, setCopied] = React.useState(false)
+
   const { hash } = useLocation()
   const { ceremony, ui } = React.useContext(state)
   const [contributeState, setContributeState] = React.useState(
@@ -74,8 +81,36 @@ export default observer(() => {
       ? ContributeState.loading
       : ContributeState.normal
   )
-  const [disableLink, setDisableLink] = React.useState(false)
-  const [copied, setCopied] = React.useState(false)
+
+  // twitter oauth only do post, so combine oauth and post together
+  React.useEffect(() => {
+    const url = new URL(window.location)
+    if (url.searchParams.get('twitter_post_url')) {
+      setPostMessage({
+        platform: 'twitter',
+        url: url.searchParams.get('twitter_post_url'),
+      })
+      url.searchParams.delete('twitter_post_url')
+      window.history.pushState({}, null, url.toString())
+    }
+  }, [])
+
+  // read error from redirect url
+  React.useEffect(() => {
+    const url = new URL(window.location)
+    if (url.searchParams.get('error')) {
+      setError(url.searchParams.get('error'))
+    }
+  }, [])
+
+  // gist post function is not included in oauth, so need to call it after contributionHashes loaded
+  React.useEffect(() => {
+    if (ceremony.isPostingGist) {
+      postOnGithub()
+      ceremony.isPostingGist = false
+    }
+  }, [ceremony.isPostingGist])
+
   const confirmCopied = () => {
     setCopied(true)
     setTimeout(() => setCopied(false), 5000)
@@ -106,7 +141,12 @@ export default observer(() => {
   React.useEffect(() => {
     if (error.length > 0) {
       toast.error('error: ' + error, {
-        onClose: () => setError(''),
+        onClose: () => {
+          setError('')
+          const url = new URL(window.location)
+          url.searchParams.delete('error')
+          window.history.pushState({}, null, url.toString())
+        },
       })
     }
   }, [error])
@@ -269,15 +309,63 @@ export default observer(() => {
       : []
 
     return [
-      'I just contributed to the UniRep trusted setup ceremony!',
+      `I, as ${ceremony.contributionName}, just contributed to the UniRep trusted setup ceremony!`,
       'My circuit hashes are as follows:',
       ...circuitKeys,
     ]
   }
 
+  const postOnGithub = async () => {
+    const access_token = localStorage.getItem('github_access_token')
+    if (!access_token) {
+      await ceremony.oauth('/oauth/github', false, true)
+    } else {
+      const url = await ceremony.postGist()
+      console.log('gist url:', url)
+      setPostMessage({ platform: 'gist', url })
+    }
+  }
+
+  const postOnTwitter = async () => {
+    const url = new URL('/oauth/twitter', HTTP_SERVER)
+    url.searchParams.set('token', ceremony.authToken)
+    const currentUrl = new URL(window.location.href)
+    const dest = new URL('/contribute', currentUrl.origin)
+    url.searchParams.set('redirectDestination', dest.toString())
+    url.searchParams.set(
+      'content',
+      `✨ UniRep Ceremony ✨\nI just contributed to UniRep trusted setup ceremony.\nContribute to help secure the UniRep protocol here: ${currentUrl.origin}`
+    )
+    window.location.replace(url.toString())
+  }
+
+  const gotoPost = () => {
+    window.open(postMessage.url, '_blank')
+    setPostMessage({})
+  }
+
   return (
     <>
       <ToastContainer position="top-center" theme="colored" />
+      <Popup
+        open={postMessage.platform}
+        onClose={() => setPostMessage({})}
+        title="Post Successful!"
+        content={`Your contribution was posted on ${postMessage.platform}.`}
+        button={
+          <Button
+            style={{
+              borderRadius: '24px',
+              color: 'black',
+              padding: '12px 24px',
+              fontWeight: '600',
+            }}
+            onClick={gotoPost}
+          >
+            Go to post
+          </Button>
+        }
+      />
 
       {!cosmoCanvasReady && (
         <div
@@ -526,11 +614,7 @@ export default observer(() => {
                         padding: '12px 24px',
                         fontWeight: '600',
                       }}
-                      onClick={async () => {
-                        navigator.clipboard.writeText(ceremony.contributionText)
-                        await new Promise((r) => setTimeout(r, 1000))
-                      }}
-                      loadingText="Copied!"
+                      onClick={async () => postOnTwitter()}
                     >
                       Share on Twitter
                     </Button>
@@ -549,6 +633,7 @@ export default observer(() => {
                       fontWeight: '600',
                       backgroundColor: 'black',
                     }}
+                    onClick={postOnGithub}
                   >
                     Post on Github
                   </Button>

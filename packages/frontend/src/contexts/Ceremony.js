@@ -13,11 +13,12 @@ export default class Queue {
   ceremonyState = {}
   timeoutAt = null
   contributing = false
-  contributionName = null
+  contributionName = 'Anon'
   contributionHashes = null
   loadingInitial = true
   inQueue = false
   queueEntry = null
+  isPostingGist = false
 
   contributionUpdates = []
   transcript = []
@@ -53,7 +54,7 @@ export default class Queue {
     const hashText = Object.entries(this.contributionHashes ?? {})
       .map(([circuitName, hash]) => `${circuitName}: ${hash}`)
       .join('\n\n')
-    return `I just contributed to the unirep dev trusted setup ceremony. You can too [here](https://dev.trusted-setup.unirep.io).
+    return `I just contributed to the unirep dev trusted setup ceremony. You can too [here](https://ceremony.unirep.io).
 My circuit hashes are as follows:
 
 ${hashText}
@@ -132,11 +133,19 @@ ${hashText}
     if (!HTTP_SERVER) {
       return
     }
+    if (url.searchParams.get('github_access_token')) {
+      localStorage.setItem(
+        'github_access_token',
+        url.searchParams.get('github_access_token')
+      )
+      url.searchParams.delete('github_access_token')
+    }
     if (!this.bootstrapData) {
       await this.bootstrap()
     }
     await this.connect()
     this.authToken = localStorage.getItem(this.localStorageKey('authToken'))
+    this.contributionName = localStorage.getItem('contributionName') ?? 'Anon'
     const hashText = localStorage.getItem(
       this.localStorageKey('contributionHashes')
     )
@@ -152,6 +161,7 @@ ${hashText}
     const { data } = await this.client.send('user.info', {
       token: this.authToken,
     })
+
     this.inQueue = data.inQueue
     if (data.inQueue) {
       this.timeoutAt = data.timeoutAt
@@ -162,9 +172,15 @@ ${hashText}
       const queue = [...data.validQueues].pop()
       url.searchParams.delete('joinQueue')
       url.searchParams.delete('name')
-      window.history.pushState({}, null, url.toString())
       await this.join(name, queue)
+    } else if (url.searchParams.get('postGist')) {
+      // if postGist is true, this is not needed, delete it in the backend
+      this.isPostingGist = true
+      url.searchParams.delete('name')
+      url.searchParams.delete('postGist')
     }
+    window.history.pushState({}, null, url.toString())
+
     this.userId = data.userId
     if (data.active) {
       this.contribute()
@@ -229,21 +245,25 @@ ${hashText}
     this.ingestState(data)
   }
 
-  async oauth(name, path) {
+  async oauth(path, joinQueue, postGist) {
     const url = new URL(path, HTTP_SERVER)
     url.searchParams.set('token', this.authToken)
     const currentUrl = new URL(window.location.href)
     const dest = new URL('/contribute', currentUrl.origin)
     // dest.searchParams.set('s', currentUrl.searchParams.get('s'))
-    dest.searchParams.set('joinQueue', 'true')
-    dest.searchParams.set('name', name)
+    joinQueue && dest.searchParams.set('joinQueue', true)
+    // joinQueue && dest.searchParams.set('name', name)
+    postGist && dest.searchParams.set('postGist', true)
     url.searchParams.set('redirectDestination', dest.toString())
     window.location.replace(url.toString())
   }
 
   async join(name, queueName) {
     this.contributionHashes = null
-    this.contributionName = name.trim()
+    if (name.length > 0) {
+      this.contributionName = name.trim()
+      localStorage.setItem('contributionName', name.trim())
+    }
     // join the queue
     const { data: _data } = await this.client.send('ceremony.join', {
       token: this.authToken,
@@ -445,6 +465,7 @@ ${hashText}
       this.connected = _client.connected
     } catch (err) {
       this.client = null
+      console.error(err)
       return
     }
     this.client.addConnectedHandler(() => {
@@ -462,6 +483,15 @@ ${hashText}
       // this.queueLength = data.queueLength
       if (this.isActive) this.contribute()
     })
+  }
+
+  async postGist() {
+    const apiURL = new URL('/post/github', HTTP_SERVER)
+    const access_token = localStorage.getItem('github_access_token')
+    apiURL.searchParams.append('access_token', access_token)
+    apiURL.searchParams.append('content', this.contributionText)
+    const response = await fetch(apiURL.toString()).then((r) => r.json())
+    return response.data.html_url
   }
 }
 
