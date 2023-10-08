@@ -74,6 +74,44 @@ module.exports = (env, argv) => ({
       filename: 'index.html',
       inlineSource: '.(js|css)',
       favicon: 'public/favicon.ico',
+      meta: {
+        description: {
+          name: 'description',
+          contnet:
+            'Generate your own verse and help secure the UniRep protocol.',
+        },
+        keyword: { name: 'keywords', content: 'ZKP, trusted setup, ceremony' },
+        'og:title': { property: 'og:title', content: 'UniRep Ceremony' },
+        'og:description': {
+          property: 'og:description',
+          content:
+            'Generate your own verse and help secure the UniRep protocol.',
+        },
+        'og:type': { property: 'og:type', content: 'website' },
+        'og:url': { property: 'og:url', content: 'https://ceremony.unirep.io' },
+        'og:image': {
+          property: 'og:image',
+          content: 'https://trusted-setup-og.pages.dev/UniRep-Ceremony-OG.png',
+        },
+        'twitter:domain': {
+          name: 'twitter:domain',
+          content: 'ceremony.unirep.io',
+        },
+        'twitter:card': {
+          name: 'twitter:card',
+          content: 'summary_large_image',
+        },
+        'twitter:title': { name: 'twitter:title', content: 'UniRep Ceremony' },
+        'twitter:description': {
+          name: 'twitter:description',
+          content:
+            'Generate your own verse and help secure the UniRep protocol.',
+        },
+        'twitter:image': {
+          name: 'twitter:image',
+          content: 'https://trusted-setup-og.pages.dev/UniRep-Ceremony-OG.png',
+        },
+      },
     }),
     new MiniCssExtractPlugin(),
     // new HtmlWebpackInlineSourcePlugin(),
