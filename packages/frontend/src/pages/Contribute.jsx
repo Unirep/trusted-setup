@@ -329,7 +329,7 @@ export default observer(() => {
     url.searchParams.set('redirectDestination', dest.toString())
     url.searchParams.set(
       'content',
-      `✨ UniRep Ceremony ✨\nI just contributed to UniRep trusted setup ceremony.\nContribute to help secure the UniRep protocol here: ${currentUrl.origin}\n\nGenerate your own verse and help secure the UniRep protocol.`
+      `✨ UniRep Ceremony ✨\nI just contributed to UniRep trusted setup ceremony.\nContribute to help secure the UniRep protocol here: ${currentUrl.origin}`
     )
     window.location.replace(url.toString())
   }
@@ -345,8 +345,8 @@ export default observer(() => {
       <Popup
         open={postMessage.platform}
         onClose={() => setPostMessage({})}
-        title="Post Successfully!"
-        content={`Post on ${postMessage.platform} successfully.`}
+        title="Post Successful!"
+        content={`Your contribution was posted on ${postMessage.platform}.`}
         button={
           <Button
             style={{
