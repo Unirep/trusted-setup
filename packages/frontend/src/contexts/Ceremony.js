@@ -19,6 +19,7 @@ export default class Queue {
   inQueue = false
   queueEntry = null
   isPostingGist = false
+  twitterPostUrl = null
 
   contributionUpdates = []
   transcript = []
@@ -178,6 +179,9 @@ ${hashText}
       this.isPostingGist = true
       url.searchParams.delete('name')
       url.searchParams.delete('postGist')
+    } else if (url.searchParams.get('twitter_post_url')) {
+      this.twitterPostUrl = url.searchParams.get('twitter_post_url')
+      url.searchParams.delete('twitter_post_url')
     }
     window.history.pushState({}, null, url.toString())
 

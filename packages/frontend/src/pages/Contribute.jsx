@@ -82,19 +82,6 @@ export default observer(() => {
       : ContributeState.normal
   )
 
-  // twitter oauth only do post, so combine oauth and post together
-  React.useEffect(() => {
-    const url = new URL(window.location)
-    if (url.searchParams.get('twitter_post_url')) {
-      setPostMessage({
-        platform: 'twitter',
-        url: url.searchParams.get('twitter_post_url'),
-      })
-      url.searchParams.delete('twitter_post_url')
-      window.history.pushState({}, null, url.toString())
-    }
-  }, [])
-
   // read error from redirect url
   React.useEffect(() => {
     const url = new URL(window.location)
@@ -110,6 +97,14 @@ export default observer(() => {
       ceremony.isPostingGist = false
     }
   }, [ceremony.isPostingGist])
+
+  // twitter post url return --> make modify location url only happens in single place = ceremony.load()
+  React.useEffect(() => {
+    if (ceremony.twitterPostUrl) {
+      setPostMessage({ platform: 'twitter', url: ceremony.twitterPostUrl })
+      ceremony.twitterPostUrl = null
+    }
+  }, [ceremony.twitterPostUrl])
 
   const confirmCopied = () => {
     setCopied(true)
