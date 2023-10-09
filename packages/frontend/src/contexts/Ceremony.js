@@ -1,6 +1,7 @@
 import EspecialClient from 'especial/client'
 import { makeAutoObservable, makeObservable, observable } from 'mobx'
 import randomf from 'randomf'
+import { HTTP_SERVER } from '../config'
 
 export default class Queue {
   connection = null
@@ -12,11 +13,13 @@ export default class Queue {
   ceremonyState = {}
   timeoutAt = null
   contributing = false
-  contributionName = null
+  contributionName = 'Anon'
   contributionHashes = null
   loadingInitial = true
   inQueue = false
   queueEntry = null
+  isPostingGist = false
+  twitterPostUrl = null
 
   contributionUpdates = []
   transcript = []
@@ -52,7 +55,7 @@ export default class Queue {
     const hashText = Object.entries(this.contributionHashes ?? {})
       .map(([circuitName, hash]) => `${circuitName}: ${hash}`)
       .join('\n\n')
-    return `I just contributed to the unirep dev trusted setup ceremony. You can too [here](https://dev.trusted-setup.unirep.io).
+    return `I just contributed to the UniRep trusted setup ceremony. You can too [here](https://ceremony.unirep.io).\n\n
 My circuit hashes are as follows:
 
 ${hashText}
@@ -92,25 +95,18 @@ ${hashText}
   }
 
   get imageUrl() {
-    if (!this.HTTP_SERVER) return null
+    if (!HTTP_SERVER) return null
     const imagePath = this.bootstrapData?.ceremonyImagePath
     if (!imagePath) return null
-    return new URL(imagePath, this.HTTP_SERVER).toString()
+    return new URL(imagePath, HTTP_SERVER).toString()
   }
 
   async loadSSR(requestUrl) {
-    const url = new URL(requestUrl)
-    const HTTP_SERVER = url.searchParams.get('s')
     if (!HTTP_SERVER) {
       this.SSR_DATA = {}
       return
     }
-    if (!HTTP_SERVER.startsWith('http')) {
-      this.HTTP_SERVER = `https://${HTTP_SERVER}`
-    } else {
-      this.HTTP_SERVER = HTTP_SERVER
-    }
-    const backendUrl = new URL(this.HTTP_SERVER)
+    const backendUrl = new URL(HTTP_SERVER)
     if (
       backendUrl.hostname === 'localhost' ||
       backendUrl.hostname === '127.0.0.1'
@@ -135,19 +131,22 @@ ${hashText}
       this[key] = (window.CEREMONY_DATA ?? {})[key]
     }
     const url = new URL(window.location)
-    const HTTP_SERVER = url.searchParams.get('s')
     if (!HTTP_SERVER) {
       return
-    } else if (!HTTP_SERVER.startsWith('http')) {
-      this.HTTP_SERVER = `https://${HTTP_SERVER}`
-    } else {
-      this.HTTP_SERVER = HTTP_SERVER
+    }
+    if (url.searchParams.get('github_access_token')) {
+      localStorage.setItem(
+        'github_access_token',
+        url.searchParams.get('github_access_token')
+      )
+      url.searchParams.delete('github_access_token')
     }
     if (!this.bootstrapData) {
       await this.bootstrap()
     }
     await this.connect()
     this.authToken = localStorage.getItem(this.localStorageKey('authToken'))
+    this.contributionName = localStorage.getItem('contributionName') ?? 'Anon'
     const hashText = localStorage.getItem(
       this.localStorageKey('contributionHashes')
     )
@@ -163,6 +162,7 @@ ${hashText}
     const { data } = await this.client.send('user.info', {
       token: this.authToken,
     })
+
     this.inQueue = data.inQueue
     if (data.inQueue) {
       this.timeoutAt = data.timeoutAt
@@ -173,9 +173,18 @@ ${hashText}
       const queue = [...data.validQueues].pop()
       url.searchParams.delete('joinQueue')
       url.searchParams.delete('name')
-      window.history.pushState({}, null, url.toString())
       await this.join(name, queue)
+    } else if (url.searchParams.get('postGist')) {
+      // if postGist is true, this is not needed, delete it in the backend
+      this.isPostingGist = true
+      url.searchParams.delete('name')
+      url.searchParams.delete('postGist')
+    } else if (url.searchParams.get('twitter_post_url')) {
+      this.twitterPostUrl = url.searchParams.get('twitter_post_url')
+      url.searchParams.delete('twitter_post_url')
     }
+    window.history.pushState({}, null, url.toString())
+
     this.userId = data.userId
     if (data.active) {
       this.contribute()
@@ -194,7 +203,7 @@ ${hashText}
   }
 
   async bootstrap() {
-    const url = new URL('/bootstrap', this.HTTP_SERVER)
+    const url = new URL('/bootstrap', HTTP_SERVER)
     const r = await fetch(url.toString())
     if (!r.ok) {
       console.log('error bootstrapping')
@@ -210,7 +219,7 @@ ${hashText}
   }
 
   async loadTranscript() {
-    const url = new URL('/transcript', this.HTTP_SERVER)
+    const url = new URL('/transcript', HTTP_SERVER)
     if (this.transcript.length) {
       url.searchParams.set('afterTimestamp', this.transcript[0].createdAt)
     }
@@ -229,9 +238,9 @@ ${hashText}
   }
 
   async loadStateHttp() {
-    const data = await fetch(
-      new URL('/ceremony', this.HTTP_SERVER).toString()
-    ).then((r) => r.json())
+    const data = await fetch(new URL('/ceremony', HTTP_SERVER).toString()).then(
+      (r) => r.json()
+    )
     this.ingestState(data)
   }
 
@@ -240,21 +249,25 @@ ${hashText}
     this.ingestState(data)
   }
 
-  async oauth(name, path) {
-    const url = new URL(path, this.HTTP_SERVER)
+  async oauth(path, joinQueue, postGist) {
+    const url = new URL(path, HTTP_SERVER)
     url.searchParams.set('token', this.authToken)
     const currentUrl = new URL(window.location.href)
-    const dest = new URL('/', currentUrl.origin)
-    dest.searchParams.set('s', currentUrl.searchParams.get('s'))
-    dest.searchParams.set('joinQueue', 'true')
-    dest.searchParams.set('name', name)
+    const dest = new URL('/contribute', currentUrl.origin)
+    // dest.searchParams.set('s', currentUrl.searchParams.get('s'))
+    joinQueue && dest.searchParams.set('joinQueue', true)
+    // joinQueue && dest.searchParams.set('name', name)
+    postGist && dest.searchParams.set('postGist', true)
     url.searchParams.set('redirectDestination', dest.toString())
     window.location.replace(url.toString())
   }
 
   async join(name, queueName) {
     this.contributionHashes = null
-    this.contributionName = name.trim()
+    if (name.length > 0) {
+      this.contributionName = name.trim()
+      localStorage.setItem('contributionName', name.trim())
+    }
     // join the queue
     const { data: _data } = await this.client.send('ceremony.join', {
       token: this.authToken,
@@ -349,7 +362,7 @@ ${hashText}
   }
 
   async downloadContribution(circuitName, id) {
-    const url = new URL(`/contribution/${id}`, this.HTTP_SERVER)
+    const url = new URL(`/contribution/${id}`, HTTP_SERVER)
     url.searchParams.set('circuitName', circuitName)
     url.searchParams.set('token', this.authToken)
     const res = await fetch(url.toString())
@@ -358,7 +371,7 @@ ${hashText}
   }
 
   async uploadContribution(data, circuitName) {
-    const url = new URL(`/contribution`, this.HTTP_SERVER)
+    const url = new URL(`/contribution`, HTTP_SERVER)
     const formData = new FormData()
     formData.append('contribution', new Blob([data]))
     formData.append('token', this.authToken)
@@ -456,6 +469,7 @@ ${hashText}
       this.connected = _client.connected
     } catch (err) {
       this.client = null
+      console.error(err)
       return
     }
     this.client.addConnectedHandler(() => {
@@ -473,6 +487,15 @@ ${hashText}
       // this.queueLength = data.queueLength
       if (this.isActive) this.contribute()
     })
+  }
+
+  async postGist() {
+    const apiURL = new URL('/post/github', HTTP_SERVER)
+    const access_token = localStorage.getItem('github_access_token')
+    apiURL.searchParams.append('access_token', access_token)
+    apiURL.searchParams.append('content', this.contributionText)
+    const response = await fetch(apiURL.toString()).then((r) => r.json())
+    return response.data.html_url
   }
 }
 

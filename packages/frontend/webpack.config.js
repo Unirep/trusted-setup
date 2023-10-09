@@ -1,5 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-// const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin')
+const Dotenv = require('dotenv-webpack')
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
@@ -47,7 +47,7 @@ module.exports = (env, argv) => ({
         },
       },
       {
-        test: /\.(png|jpg|gif|svg|ico)$/i,
+        test: /\.(mp4|png|jpg|gif|svg|ico)$/i,
         use: [
           {
             loader: 'file-loader',
@@ -66,16 +66,57 @@ module.exports = (env, argv) => ({
     ],
   },
   plugins: [
+    new Dotenv({
+      systemvars: true,
+    }),
     new HtmlWebpackPlugin({
       template: 'public/index.html',
       filename: 'index.html',
       inlineSource: '.(js|css)',
+      favicon: 'public/favicon.ico',
+      meta: {
+        description: {
+          name: 'description',
+          content:
+            'Generate your own verse and help secure the UniRep protocol.',
+        },
+        keyword: { name: 'keywords', content: 'ZKP, trusted setup, ceremony' },
+        'og:title': { property: 'og:title', content: 'UniRep Ceremony' },
+        'og:description': {
+          property: 'og:description',
+          content:
+            'Generate your own verse and help secure the UniRep protocol.',
+        },
+        'og:type': { property: 'og:type', content: 'website' },
+        'og:url': { property: 'og:url', content: 'https://ceremony.unirep.io' },
+        'og:image': {
+          property: 'og:image',
+          content: 'https://trusted-setup-og.pages.dev/UniRep-Ceremony-OG.png',
+        },
+        'twitter:domain': {
+          name: 'twitter:domain',
+          content: 'ceremony.unirep.io',
+        },
+        'twitter:card': {
+          name: 'twitter:card',
+          content: 'summary_large_image',
+        },
+        'twitter:title': { name: 'twitter:title', content: 'UniRep Ceremony' },
+        'twitter:description': {
+          name: 'twitter:description',
+          content:
+            'Generate your own verse and help secure the UniRep protocol.',
+        },
+        'twitter:image': {
+          name: 'twitter:image',
+          content: 'https://trusted-setup-og.pages.dev/UniRep-Ceremony-OG.png',
+        },
+      },
     }),
     new MiniCssExtractPlugin(),
     // new HtmlWebpackInlineSourcePlugin(),
     new webpack.DefinePlugin({
       NODE_ENV: `'${argv.mode}'` ?? `'development'`,
-      'process.env': {},
       'process.argv': [],
       'process.versions': {},
       'process.versions.node': '"12"',

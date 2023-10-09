@@ -136,6 +136,7 @@ export default ({ app, db, ceremony }) => {
         res.status(204).end()
       } else {
         const url = new URL(_state.redirectDestination)
+        url.searchParams.set('name', `Discord#${user.username}`)
         res.redirect(url.toString())
       }
     })

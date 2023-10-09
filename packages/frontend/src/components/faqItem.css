@@ -1,0 +1,20 @@
+.faq-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-bottom: 1px solid #f6f6f6;
+  padding: 1.5rem 0;
+  cursor: pointer;
+}
+
+.faq-answer {
+  padding: 0.5rem 0;
+}
+
+@media only screen and (max-width: 1150px) {
+  .faq-item {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}

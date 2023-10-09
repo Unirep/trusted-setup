@@ -1,0 +1,14 @@
+{
+  "name": "rust-ffm",
+  "version": "0.1.0",
+  "files": [
+    "rust_ffm_bg.wasm",
+    "rust_ffm.js",
+    "rust_ffm.d.ts"
+  ],
+  "module": "rust_ffm.js",
+  "types": "rust_ffm.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

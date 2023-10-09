@@ -2,216 +2,110 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import './home.css'
-import Tooltip from '../components/Tooltip'
-import Button from '../components/Button'
-import ContributionTable from '../components/ContributionTable'
-import Header from './Header'
+import Header from '../components/Header'
 import Welcome from './Welcome'
-
+import ContributionCard from '../components/ContributionCard'
+import FaqDropdown from '../components/FaqDropdown'
+import Footer from '../components/Footer'
+import InfoContainer from '../components/InfoContainer'
 import state from '../contexts/state'
+import { HTTP_SERVER } from '../config'
 
 export default observer(() => {
-  const [name, setName] = React.useState('')
   const { ui, ceremony } = React.useContext(state)
-  if (!ceremony.HTTP_SERVER) {
+  if (!HTTP_SERVER) {
     return <Welcome />
   }
-
   return (
     <>
-      <Header />
-      <div className="container">
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            borderTop: '1px solid black',
-            paddingTop: '4px',
-            flexWrap: 'wrap',
-          }}
-        >
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {ceremony.bootstrapData?.ceremonyDescription ? (
-              <div
-                style={{
-                  maxWidth: '300px',
-                  border: '1px solid black',
-                  padding: '4px',
-                  marginBottom: '8px',
-                }}
-              >
-                {ceremony.bootstrapData?.ceremonyDescription}
-              </div>
-            ) : null}
-            {ceremony.loadingInitial ? <div>Loading...</div> : null}
-            {!ceremony.inQueue &&
-            !ceremony.loadingInitial &&
-            !ceremony.contributionHashes ? (
-              <div>
-                <div style={{ marginBottom: '8px' }}>
-                  Join the ceremony by choosing a way to authenticate.
-                </div>
-                <div style={{ display: 'flex' }}>
-                  <input
-                    type="text"
-                    placeholder="contributor name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                  <div style={{ width: '4px' }} />
-                  <Tooltip text="This name will be permanently associated with this contribution. Choose anything you like, it doesn't have to be unique." />
-                </div>
-                <div style={{ height: '4px' }} />
-                <div style={{ display: 'flex' }}>
-                  {ceremony.bootstrapData?.authOptions?.map((option) => (
-                    <Button
-                      style={{ marginRight: '2px' }}
-                      key={option.name}
-                      onClick={async () => {
-                        if (option.type === 'none') {
-                          await ceremony.join(name, 'open')
-                        } else {
-                          await ceremony.oauth(name, option.path)
-                        }
-                      }}
-                    >
-                      {option.displayName}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-            {!ceremony.isActive && ceremony.inQueue ? (
-              <div>
-                <div>Ceremony</div>
-                <div style={{ height: '4px' }} />
-                <div>
-                  You are currently number {ceremony.queuePosition} in the
-                  queue, please wait until your turn.
-                </div>
-                <div style={{ height: '4px' }} />
-                <div>
-                  > This tab <strong>must</strong> remain active for you to stay
-                  in the queue!
-                </div>
-                <div style={{ height: '4px' }} />
-                <div>
-                  Try pulling this tab into it's own window. Don't minimize the
-                  window.
-                </div>
-              </div>
-            ) : null}
-            {ceremony.isActive && ceremony.inQueue ? (
-              <div>
-                <div>It's your turn!</div>
-                <div>Please wait while your machine makes contributions.</div>
-                <div>
-                  {ceremony.contributionUpdates.map((text, i) => (
-                    <div key={i} style={{ fontSize: '10px' }}>
-                      {text}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-            {ceremony.contributionHashes ? (
-              <div style={{ marginTop: '8px' }}>
-                <div style={{ display: 'flex' }}>
-                  <div>
-                    <div>
-                      <strong>Thank you for contributing!</strong>
-                    </div>
-                    <div>
-                      {ceremony.attestationUrl ? (
-                        <>
-                          Share this text publicly, perhaps{' '}
-                          <a href={ceremony.attestationUrl} target="_blank">
-                            here
-                          </a>
-                        </>
-                      ) : (
-                        'Share this text publicly'
-                      )}
-                    </div>
-                  </div>
-                  <div style={{ flex: 1, minWidth: '4px' }} />
-                  <Button
-                    onClick={async () => {
-                      navigator.clipboard.writeText(ceremony.contributionText)
-                      await new Promise((r) => setTimeout(r, 1000))
-                    }}
-                    loadingText="Copied!"
-                  >
-                    Copy
-                  </Button>
-                </div>
-                <div style={{ maxWidth: '400px', overflow: 'scroll' }}>
-                  <code>{ceremony.contributionText}</code>
-                </div>
-              </div>
-            ) : null}
+      {ui.isMobile ? (
+        <div className="cosmos-bg">
+          <img
+            src={require('../../public/cosmos1.svg')}
+            alt="cosmos portal image"
+          />
+        </div>
+      ) : (
+        <video autoPlay muted loop poster playsInLine>
+          <source
+            src={require('../../public/unirep-ceremony-hero.mp4')}
+            type="video/mp4"
+          />
+        </video>
+      )}
+      <div className="content">
+        <Header />
+
+        <div className="hero-container">
+          <div className="hero-title">THE CELESTIAL CALL</div>
+          <div className="hero-text">
+            The Ceremony is our shared stargazing hour, a symphony of
+            cryptography and purpose. Each contribution is a star ignited,
+            knitting together the constellation that unveils our journey.
           </div>
-          <div style={{ marginTop: ui.isMobile ? '8px' : null }}>
-            <div>Ceremony stats</div>
-            <div style={{ height: '4px' }} />
-            {ceremony.ceremonyState.circuitStats?.map((c) => (
-              <div
-                key={c.name}
-                style={{ display: 'flex', marginBottom: '2px' }}
-              >
-                <div>
-                  <strong>{c.name}</strong>: {c.contributionCount} contributions
-                </div>
-                <div style={{ flex: 1 }} />
-                <a
-                  href={new URL(
-                    `/contribution/${c.name}/latest`,
-                    ceremony.HTTP_SERVER
-                  ).toString()}
-                >
-                  <img
-                    style={{ width: '16px', height: '16px' }}
-                    src={require('../../public/download-arrow.png')}
-                    width={16}
-                  />
-                </a>
-              </div>
+          <div className="hero-text">Do you hear the cosmic call?</div>
+          <div className="flex-center">
+            <Link to="/contribute">
+              <div className="hero-button">Open Chapter (GUI)</div>
+            </Link>
+          </div>
+          <div className="flex-center">
+            <Link to="/contribute#cli">
+              <div className="hero-button-inverse">Use CLI</div>
+            </Link>
+          </div>
+        </div>
+
+        <InfoContainer
+          title="What is UniRep ceremony?"
+          texts={[
+            'UniRep is a zero-knowledge protocol for user data & reputation management. We use pioneering technology to offer a space for developers and users alike to explore the potential of privacy-centered online interactions.',
+            'We are planning to include a secure set of proving keys with our official release so the system can be used out of the box. Proving keys are secure so long as the intermediate values from at least one contribution were destroyed.',
+            'This is a multi-party ceremony: each contributor creates a secret and runs a computation to mix in with previous contributions. Then, the output is made public and passed to the next contributor. To guard against attempts to corrupt the ceremony, users must have a GitHub or Discord account to participate. The final output will be released with the official UniRep 2.0 package.',
+          ]}
+        />
+
+        <div className="bottom-container">
+          <div className="contribution-heading">Latest contributions</div>
+          <div className="contributions">
+            {ceremony.transcript.slice(0, 5).map((d) => (
+              <ContributionCard
+                key={d._id}
+                index={d.index}
+                name={d.name}
+                hash={d.hash}
+                createdAt={d.createdAt}
+                circuit={d.circuitName}
+              ></ContributionCard>
             ))}
-            <div style={{ height: '4px' }} />
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <a
-                href={new URL('/transcript', ceremony.HTTP_SERVER).toString()}
-                target="_blank"
+          </div>
+          <div className="flex-center">
+            <Link to="/stats">
+              <div className="view-cont-button">View all</div>
+            </Link>
+          </div>
+
+          <div className="faq-container">
+            <div className="faq-heading">FAQ</div>
+            <FaqDropdown />
+            <div className="flex-center" style={{ paddingTop: '6rem' }}>
+              <div
+                className="hero-button"
+                style={{ cursor: 'pointer' }}
+                onClick={() =>
+                  window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth',
+                  })
+                }
               >
-                Full transcript
-              </a>
-              <div style={{ height: '4px' }} />
-              {ceremony.attestationUrl ? (
-                <a href={ceremony.attestationUrl} target="_blank">
-                  Public attestations
-                </a>
-              ) : null}
+                back to top
+              </div>
             </div>
           </div>
         </div>
-        <ContributionTable />
-        <div style={{ flex: 1 }} />
-        <div
-          style={{
-            alignSelf: 'center',
-            display: 'flex',
-            padding: '8px',
-            alignItems: 'center',
-          }}
-        >
-          <a href="https://appliedzkp.org" target="_blank">
-            <img
-              src={require('../../public/pse_logo.svg')}
-              width="25px"
-              style={{ cursor: 'pointer' }}
-            />
-          </a>
-        </div>
+
+        <Footer />
       </div>
     </>
   )

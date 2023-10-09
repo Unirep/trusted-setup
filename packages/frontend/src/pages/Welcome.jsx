@@ -81,15 +81,7 @@ export default observer(() => {
           padding: '8px',
           alignItems: 'center',
         }}
-      >
-        <a href="https://appliedzkp.org" target="_blank">
-          <img
-            src={require('../../public/pse_logo.svg')}
-            width="25px"
-            style={{ cursor: 'pointer' }}
-          />
-        </a>
-      </div>
+      ></div>
     </div>
   )
 })

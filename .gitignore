@@ -10,3 +10,5 @@ packages/contracts/contracts/verifiers/
 db/
 circuits/
 dist/
+
+.env
