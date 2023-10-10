@@ -68,16 +68,19 @@ export default observer(() => {
         <div className="bottom-container">
           <div className="contribution-heading">Latest contributions</div>
           <div className="contributions">
-            {ceremony.transcript.slice(0, 5).map((d) => (
-              <ContributionCard
-                key={d._id}
-                index={d.index}
-                name={d.name}
-                hash={d.hash}
-                createdAt={d.createdAt}
-                circuit={d.circuitName}
-              ></ContributionCard>
-            ))}
+            {ceremony.transcript
+              .filter((d) => d.circuitName === 'Sign Up')
+              .slice(0, 5)
+              .map((d) => (
+                <ContributionCard
+                  key={d._id}
+                  index={d.index}
+                  name={d.name}
+                  hash={d.hash}
+                  createdAt={d.createdAt}
+                  circuit={d.circuitName}
+                ></ContributionCard>
+              ))}
           </div>
           <div className="flex-center">
             <Link to="/stats">
